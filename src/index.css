@@ -1,0 +1,306 @@
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;600;700;800&family=Work+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --jadmaa-red: #B12B2B;
+  --jadmaa-red-dark: #8C1E1E;
+  --jadmaa-charcoal: #2B2521;
+  --jadmaa-text: #5C5148;
+  --jadmaa-cream: #FAF6F0;
+  --jadmaa-border: #E8DDD0;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Work Sans', sans-serif;
+    color: #5C5148;
+    background-color: #FAF6F0;
+    margin: 0;
+    padding: 0;
+    overflow-x: clip;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    color: #2B2521;
+    margin: 0;
+  }
+}
+
+/* ==========================================
+   EXACT JADMAA.COM BUTTON STYLES
+   ========================================== */
+.btn-jadmaa-primary {
+  background-color: #B12B2B;
+  color: #ffffff;
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 12px 28px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s ease;
+  border: 1px solid #B12B2B;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.btn-jadmaa-primary:hover {
+  background-color: #8C1E1E;
+  border-color: #8C1E1E;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(177, 43, 43, 0.22);
+}
+
+.btn-jadmaa-primary:active {
+  transform: translateY(0);
+}
+
+.btn-jadmaa-outline {
+  background-color: transparent;
+  color: #B12B2B;
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 12px 28px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s ease;
+  border: 1px solid #B12B2B;
+}
+
+.btn-jadmaa-outline:hover {
+  background-color: #B12B2B;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(177, 43, 43, 0.18);
+}
+
+.btn-jadmaa-outline:active {
+  transform: translateY(0);
+}
+
+/* ==========================================
+   EXACT JADMAA.COM CARD HOVER MOTION
+   ========================================== */
+.jd-card {
+  background-color: #ffffff;
+  border: 1px solid #E8DDD0;
+  border-radius: 12px;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+}
+
+.jd-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 14px 34px rgba(43, 37, 33, 0.10);
+  border-color: #E0CDB8;
+}
+
+/* ==========================================
+   INTERACTIVE IMAGE STYLES & HOVER EFFECTS
+   ========================================== */
+.img-interactive-frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease, border-color 0.3s ease;
+}
+
+.img-interactive-frame img {
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.4s ease;
+  will-change: transform;
+}
+
+.img-interactive-frame:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 36px rgba(43, 37, 33, 0.12);
+}
+
+.img-interactive-frame:hover img {
+  transform: scale(1.05);
+}
+
+/* Float Animation with interactive speedup on hover */
+@keyframes jdHeroFloat {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0); }
+}
+
+.animate-jadmaa-float {
+  animation: jdHeroFloat 4s ease-in-out infinite;
+  will-change: transform;
+  transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+.animate-jadmaa-float:hover {
+  filter: drop-shadow(0 14px 24px rgba(177, 43, 43, 0.25));
+  transform: translateY(-12px) scale(1.02);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-jadmaa-float {
+    animation: none;
+  }
+}
+
+/* ==========================================
+   SITE-WIDE SCROLL ANIMATIONS
+   ========================================== */
+
+/* 1. Default Scroll Reveal (Fade & Rise) */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-on-scroll.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 2. Slide from Left */
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-50px);
+  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-left.is-revealed {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* 3. Slide from Right */
+.reveal-right {
+  opacity: 0;
+  transform: translateX(50px);
+  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-right.is-revealed {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* 4. Scale & Fade */
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.90);
+  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-scale.is-revealed {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* 5. Staggered Grid Container */
+.reveal-stagger {
+  opacity: 1;
+}
+
+.reveal-stagger .reveal-child {
+  opacity: 0;
+  transform: translateY(35px);
+  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-stagger.is-revealed .reveal-child {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-stagger.is-revealed .reveal-child:nth-child(1) { transition-delay: 0.05s; }
+.reveal-stagger.is-revealed .reveal-child:nth-child(2) { transition-delay: 0.15s; }
+.reveal-stagger.is-revealed .reveal-child:nth-child(3) { transition-delay: 0.25s; }
+.reveal-stagger.is-revealed .reveal-child:nth-child(4) { transition-delay: 0.35s; }
+.reveal-stagger.is-revealed .reveal-child:nth-child(5) { transition-delay: 0.45s; }
+.reveal-stagger.is-revealed .reveal-child:nth-child(6) { transition-delay: 0.55s; }
+.reveal-stagger.is-revealed .reveal-child:nth-child(7) { transition-delay: 0.65s; }
+.reveal-stagger.is-revealed .reveal-child:nth-child(8) { transition-delay: 0.75s; }
+
+/* ==========================================
+   SMOOTH PAGE & COMPONENT TRANSITIONS
+   ========================================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-enter {
+  animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Interactive micro-effects */
+.hover-lift {
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(43, 37, 33, 0.08);
+}
+
+/* ==========================================
+   FLOATING WHATSAPP BUTTON
+   ========================================== */
+.whatsapp-float-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 99999;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background-color: #25D366;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s ease;
+}
+
+.whatsapp-float-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.45);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #FAF6F0;
+}
+::-webkit-scrollbar-thumb {
+  background: #D1D5DB;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #B12B2B;
+}

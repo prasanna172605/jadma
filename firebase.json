@@ -1,0 +1,35 @@
+{
+  "functions": {
+    "source": "functions",
+    "runtime": "nodejs20"
+  },
+  "hosting": {
+    "public": "dist",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "function": "app"
+      }
+    ]
+  },
+  "storage": {
+    "rules": "rules/storage.rules"
+  },
+  "database": {
+    "rules": "rules/database.rules"
+  },
+  "emulators": {
+    "auth": 9099,
+    "firestore": 8080,
+    "functions": 5001,
+    "hosting": 5000,
+    "storage": 9199,
+    "ui": 4000,
+    "singleProject": true
+  }
+}

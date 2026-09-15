@@ -1,0 +1,258 @@
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { SEO } from '../components/common/SEO';
+import { mockBranches } from '../data/branches';
+import { Phone, Mail, Send, CheckCircle2, Clock } from 'lucide-react';
+
+export const Contact: React.FC = () => {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const initialCourse = queryParams.get('course') || 'Varma Foundation';
+  const initialBranch = queryParams.get('branch') || 'Thanjavur';
+
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    branch: initialBranch,
+    courseInterest: initialCourse,
+    message: ''
+  });
+  const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    const pCourse = queryParams.get('course');
+    const pBranch = queryParams.get('branch');
+    if (pCourse) setFormData(prev => ({ ...prev, courseInterest: pCourse }));
+    if (pBranch) setFormData(prev => ({ ...prev, branch: pBranch }));
+  }, [location.search]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.name.trim() || !formData.phone.trim()) {
+      alert("Please fill in your name and contact phone number.");
+      return;
+    }
+    setSubmitted(true);
+  };
+
+  return (
+    <>
+      <SEO 
+        title="Contact JADMAA Varmakalai Academy | Admissions & Enquiries"
+        description="Get in touch with JADMAA Varmakalai Academy for course admissions, free demo classes, and branch locations in Thanjavur, Kumbakonam and Ariyalur."
+      />
+
+      <section className="bg-jadmaa-cream py-12 border-b border-jadmaa-border text-left">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3 reveal-on-scroll">
+          <span className="text-xs font-bold text-jadmaa-red uppercase tracking-wider">
+            Admissions & Enquiries
+          </span>
+          <h1 className="font-heading font-extrabold text-4xl text-jadmaa-charcoal">
+            Get in Touch With JADMAA
+          </h1>
+          <p className="text-sm text-jadmaa-textMuted max-w-2xl">
+            Book a free demo class, inquire about course admissions, or consult with our Varmakalai masters.
+          </p>
+        </div>
+      </section>
+
+      <section className="py-16 bg-white border-b border-jadmaa-border text-left">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+          
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+            
+            {/* Left Contact Form */}
+            <div className="lg:col-span-7 bg-jadmaa-cream/60 p-8 rounded-3xl border border-jadmaa-border shadow-sm reveal-left">
+              
+              {submitted ? (
+                <div className="py-12 text-center space-y-4">
+                  <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
+                    <CheckCircle2 className="w-10 h-10" />
+                  </div>
+                  <h3 className="font-heading font-extrabold text-2xl text-jadmaa-charcoal">
+                    Enquiry Submitted Successfully!
+                  </h3>
+                  <p className="text-xs text-jadmaa-textMuted max-w-md mx-auto leading-relaxed">
+                    Thank you, <strong>{formData.name}</strong>. Our admissions team at the <strong>{formData.branch}</strong> branch will call you back on <strong>{formData.phone}</strong> shortly to schedule your session.
+                  </p>
+                  <button
+                    onClick={() => { setSubmitted(false); setFormData({ name: '', email: '', phone: '', branch: 'Thanjavur', courseInterest: 'Varma Foundation', message: '' }); }}
+                    className="px-6 py-2.5 bg-jadmaa-red text-white font-bold text-xs rounded-xl shadow hover:bg-jadmaa-redDark transition-colors"
+                  >
+                    Submit Another Enquiry
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  <div>
+                    <h3 className="font-heading font-extrabold text-2xl text-jadmaa-charcoal">
+                      Send Us a Message
+                    </h3>
+                    <p className="text-xs text-jadmaa-textMuted">Fill out the form below to request a free trial class or course brochure.</p>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <label className="text-xs font-bold text-jadmaa-charcoal">Full Name *</label>
+                      <input 
+                        type="text" 
+                        required
+                        placeholder="e.g. Senthil Kumar"
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-jadmaa-border bg-white text-xs text-jadmaa-charcoal focus:border-jadmaa-red outline-none"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-xs font-bold text-jadmaa-charcoal">Phone Number *</label>
+                      <input 
+                        type="tel" 
+                        required
+                        placeholder="+91 98765 43210"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-jadmaa-border bg-white text-xs text-jadmaa-charcoal focus:border-jadmaa-red outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <label className="text-xs font-bold text-jadmaa-charcoal">Email Address</label>
+                      <input 
+                        type="email" 
+                        placeholder="senthil@example.com"
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-jadmaa-border bg-white text-xs text-jadmaa-charcoal focus:border-jadmaa-red outline-none"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-xs font-bold text-jadmaa-charcoal">Preferred Branch</label>
+                      <select 
+                        value={formData.branch}
+                        onChange={(e) => setFormData({ ...formData, branch: e.target.value })}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-jadmaa-border bg-white text-xs text-jadmaa-charcoal focus:border-jadmaa-red outline-none"
+                      >
+                        <option value="Thanjavur">Thanjavur (HQ)</option>
+                        <option value="Kumbakonam">Kumbakonam</option>
+                        <option value="Ariyalur">Ariyalur</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-jadmaa-charcoal">Course / Program Interest</label>
+                    <select 
+                      value={formData.courseInterest}
+                      onChange={(e) => setFormData({ ...formData, courseInterest: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-jadmaa-border bg-white text-xs text-jadmaa-charcoal focus:border-jadmaa-red outline-none"
+                    >
+                      <option value="Varma Foundation">Varma Foundation & Vital Points</option>
+                      <option value="Intermediate Varma">Intermediate Varma Combat</option>
+                      <option value="Kids Varmakalai">Kids Varmakalai & Fitness</option>
+                      <option value="Womens Self Defence">Women's Tactical Self Defence</option>
+                      <option value="Varma Wellness">Varma Healing & Wellness Therapy</option>
+                      <option value="Complete Master Program">Complete Master Program</option>
+                      <option value="Instructor Pathway">Certified Instructor Pathway</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-jadmaa-charcoal">Your Message or Preferred Timings</label>
+                    <textarea 
+                      rows={4}
+                      placeholder="Please let us know your preferred training time or any questions..."
+                      value={formData.message}
+                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-jadmaa-border bg-white text-xs text-jadmaa-charcoal focus:border-jadmaa-red outline-none"
+                    ></textarea>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full py-3.5 px-6 bg-jadmaa-red hover:bg-jadmaa-redDark text-white font-bold text-sm rounded-xl shadow-lg transition-all flex items-center justify-center space-x-2"
+                  >
+                    <Send className="w-4 h-4" />
+                    <span>Submit Free Demo Class Request</span>
+                  </button>
+
+                </form>
+              )}
+
+            </div>
+
+            {/* Right Contact Info */}
+            <div className="lg:col-span-5 space-y-8 reveal-right">
+              
+              <div className="space-y-4">
+                <h3 className="font-heading font-extrabold text-2xl text-jadmaa-charcoal">
+                  Direct Contact Information
+                </h3>
+                <p className="text-xs text-jadmaa-textMuted leading-relaxed">
+                  Have urgent questions about class timings or therapeutic appointments? Call our central helpline directly.
+                </p>
+
+                <div className="space-y-3 pt-2">
+                  <a 
+                    href="tel:+919345220020"
+                    className="p-4 bg-jadmaa-cream rounded-2xl border border-jadmaa-border flex items-start space-x-3 hover:border-jadmaa-red transition-all group"
+                  >
+                    <Phone className="w-5 h-5 text-jadmaa-red flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
+                    <div>
+                      <p className="text-[10px] text-gray-500 uppercase font-bold">Central Admissions Line</p>
+                      <p className="font-bold text-sm text-jadmaa-charcoal">+91 93452 20020</p>
+                    </div>
+                  </a>
+
+                  <a 
+                    href="mailto:info@jadmaa.com"
+                    className="p-4 bg-jadmaa-cream rounded-2xl border border-jadmaa-border flex items-start space-x-3 hover:border-jadmaa-red transition-all group"
+                  >
+                    <Mail className="w-5 h-5 text-jadmaa-red flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
+                    <div>
+                      <p className="text-[10px] text-gray-500 uppercase font-bold">Official Email</p>
+                      <p className="font-bold text-sm text-jadmaa-charcoal">info@jadmaa.com</p>
+                    </div>
+                  </a>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <h4 className="font-heading font-bold text-base text-jadmaa-charcoal">
+                  Academy Branches Overview
+                </h4>
+                <div className="space-y-3 reveal-stagger">
+                  {mockBranches.map(b => (
+                    <div key={b.id} className="reveal-child p-4 bg-white rounded-xl border border-jadmaa-border text-xs space-y-2 shadow-sm hover:border-jadmaa-red transition-all">
+                      <div className="flex items-center justify-between">
+                        <p className="font-bold text-jadmaa-charcoal text-sm">{b.name}</p>
+                        <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-jadmaa-red/10 text-jadmaa-red">
+                          {b.city}
+                        </span>
+                      </div>
+                      <p className="text-jadmaa-textMuted">{b.address}</p>
+                      <div className="flex items-center justify-between pt-1 border-t border-gray-100 text-[11px]">
+                        <span className="font-semibold text-jadmaa-charcoal">{b.phone}</span>
+                        <span className="text-gray-400 flex items-center space-x-1">
+                          <Clock className="w-3 h-3" />
+                          <span>{b.hours}</span>
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+    </>
+  );
+};

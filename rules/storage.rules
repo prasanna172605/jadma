@@ -1,0 +1,105 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // ================================================================
+    // Helper Functions
+    // ================================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function getUserRole(userId) {
+      return get(/databases/(default)/documents/users/$(userId)).data.role;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && getUserRole(request.auth.uid) == 'admin';
+    }
+
+    function isInstructor() {
+      return isAuthenticated() && getUserRole(request.auth.uid) == 'instructor';
+    }
+
+    function isStudent() {
+      return isAuthenticated() && getUserRole(request.auth.uid) == 'student';
+    }
+
+    // ================================================================
+    // Student Profile Pictures
+    // Path: profiles/{userId}
+    // ================================================================
+    match /profiles/{userId} {
+      // Users can read their own profile picture
+      // Anyone can read (for display in forums, etc.)
+      allow read: if true;
+
+      // Users can upload/update their own profile picture
+      allow write: if isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // ================================================================
+    // Course Materials (PDFs, Ebooks, Videos)
+    // Path: courses/{courseId}/{fileName}
+    // ================================================================
+    match /courses/{courseId}/{allPaths=**} {
+      // Anyone authenticated can read course materials
+      // Students can only read materials for courses they're enrolled in
+      allow read: if isAuthenticated() && (
+        isEnrolledInCourse(courseId) || isAdmin() || isInstructor()
+      );
+
+      // Only admins and instructors can upload/update course materials
+      allow write: if isAdmin() || isInstructor();
+    }
+
+    // ================================================================
+    // Lesson Videos
+    // Path: videos/{courseId}/{lessonId}/{fileName}
+    // ================================================================
+    match /videos/{courseId}/{lessonId}/{allPaths=**} {
+      // Only enrolled students can read lesson videos
+      allow read: if isAuthenticated() && (
+        isEnrolledInCourse(courseId) || isAdmin() || isInstructor()
+      );
+
+      // Only admins and instructors can upload/update videos
+      allow write: if isAdmin() || isInstructor();
+    }
+
+    // ================================================================
+    // Certificates (dynamically generated)
+    // Path: certificates/{userId}/{certificateId}.pdf
+    // ================================================================
+    match /certificates/{userId}/{allPaths=**} {
+      // Users can read their own certificates
+      // Admins can read all
+      allow read: if isAuthenticated() &&
+        (request.auth.uid == userId || isAdmin());
+
+      // Only the system (via Cloud Functions) generates certificates
+      // But allow instructors to upload if they're creating one
+      allow write: if isAdmin() || isInstructor();
+    }
+
+    // ================================================================
+    // Demo Request Attachments
+    // Path: demo-attachments/{fileName}
+    // ================================================================
+    match /demo-attachments/{allPaths=**} {
+      // Anyone can upload (contact form attachments)
+      allow write: if true;
+
+      // Admins can read all
+      allow read: if isAdmin();
+    }
+
+    // ================================================================
+    // Helper: Check if user is enrolled in a course
+    // ================================================================
+    function isEnrolledInCourse(courseId) {
+      return exists(/databases/(default)/documents/enrollments/$(courseId)_$(request.auth.uid)) ||
+             isAdmin() || isInstructor();
+    }
+  }
+}

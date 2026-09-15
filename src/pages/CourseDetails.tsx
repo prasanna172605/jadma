@@ -1,0 +1,302 @@
+import React, { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { SEO } from '../components/common/SEO';
+import { mockCourses } from '../data/courses';
+import { CurriculumAccordion } from '../components/courses/CurriculumAccordion';
+import { CourseCard } from '../components/courses/CourseCard';
+import { 
+  Clock, Star, BookOpen, Award, CheckCircle2, Play 
+} from 'lucide-react';
+
+export const CourseDetails: React.FC = () => {
+  const { slug } = useParams<{ slug: string }>();
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<'overview' | 'curriculum' | 'instructor' | 'faq'>('overview');
+
+  const course = mockCourses.find(c => c.slug === slug || c.id === slug) || mockCourses[0];
+
+  const handleEnrollClick = () => {
+    // Phase 1 frontend mock enrollment workflow
+    alert(`Enrolling in "${course.title}". Redirecting to LMS Student Dashboard...`);
+    navigate(`/learn/${course.id}`);
+  };
+
+  return (
+    <>
+      <SEO 
+        title={`${course.title} | JADMAA Varmakalai`}
+        description={course.description}
+      />
+
+      {/* Course Hero Banner */}
+      <section className="bg-jadmaa-charcoal text-white py-12 border-b-4 border-jadmaa-red text-left">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            
+            <div className="lg:col-span-8 space-y-4">
+              
+              <div className="flex flex-wrap items-center gap-2 text-xs">
+                <span className="px-2.5 py-1 rounded bg-jadmaa-red text-white font-bold">
+                  {course.category}
+                </span>
+                <span className="px-2.5 py-1 rounded bg-gray-800 text-gray-300 font-medium">
+                  {course.level}
+                </span>
+                <div className="flex items-center space-x-1 text-amber-400 font-bold ml-2">
+                  <Star className="w-4 h-4 fill-current" />
+                  <span>{course.rating.toFixed(1)}</span>
+                  <span className="text-gray-400">({course.reviewCount} reviews)</span>
+                </div>
+              </div>
+
+              <h1 className="font-heading font-extrabold text-3xl sm:text-4xl lg:text-5xl text-white leading-tight">
+                {course.title}
+              </h1>
+
+              <p className="text-gray-300 text-sm sm:text-base leading-relaxed max-w-3xl">
+                {course.subtitle || course.description}
+              </p>
+
+              <div className="flex flex-wrap items-center gap-6 text-xs text-gray-300 pt-2">
+                <div className="flex items-center space-x-1.5">
+                  <Clock className="w-4 h-4 text-jadmaa-red" />
+                  <span>Duration: <strong>{course.duration}</strong></span>
+                </div>
+                <div className="flex items-center space-x-1.5">
+                  <BookOpen className="w-4 h-4 text-jadmaa-red" />
+                  <span>Total Lessons: <strong>{course.totalLessons}</strong></span>
+                </div>
+                <div className="flex items-center space-x-1.5">
+                  <Award className="w-4 h-4 text-jadmaa-red" />
+                  <span>Certificate Included</span>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-3 pt-4">
+                <img 
+                  src={course.instructor.avatar} 
+                  alt={course.instructor.name}
+                  className="w-10 h-10 rounded-full border-2 border-jadmaa-red object-cover bg-white" 
+                />
+                <div>
+                  <p className="text-xs text-gray-400">Instructor</p>
+                  <p className="text-sm font-bold text-white">{course.instructor.name}</p>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Right Card / Enrollment Box */}
+            <div className="lg:col-span-4">
+              <div className="bg-white rounded-2xl p-6 text-jadmaa-charcoal shadow-2xl border border-jadmaa-border space-y-6">
+                
+                <div className="relative rounded-xl overflow-hidden aspect-[16/10] bg-gray-100 border border-gray-200 img-interactive-frame group cursor-pointer">
+                  <img 
+                    src={course.thumbnail} 
+                    alt={course.title} 
+                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-108"
+                  />
+                  <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                    <span className="w-12 h-12 rounded-full bg-jadmaa-red text-white flex items-center justify-center shadow-lg group-hover:scale-115 transition-transform">
+                      <Play className="w-5 h-5 fill-current ml-0.5" />
+                    </span>
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <p className="text-[11px] text-jadmaa-textMuted">Includes full access & academy certificate</p>
+                </div>
+
+                <button
+                  onClick={handleEnrollClick}
+                  className="w-full py-3.5 px-4 bg-jadmaa-red hover:bg-jadmaa-redDark text-white font-bold text-sm rounded-xl shadow-lg transition-all"
+                >
+                  {course.isFree ? "Enroll for Free Now" : "Enroll & Start Learning"}
+                </button>
+
+                <div className="space-y-2 text-xs text-jadmaa-textMuted border-t border-gray-100 pt-4">
+                  <p className="flex items-center space-x-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                    <span>LMS Video & Curriculum Access</span>
+                  </p>
+                  <p className="flex items-center space-x-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                    <span>Practical Academy Examination Eligibility</span>
+                  </p>
+                  <p className="flex items-center space-x-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                    <span>Live Q&A Google Meet Sessions</span>
+                  </p>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* Main Tabbed Details Area */}
+      <section className="py-12 bg-white border-b border-jadmaa-border min-h-[600px] text-left">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+          
+          {/* Navigation Tabs */}
+          <div className="flex border-b border-jadmaa-border space-x-6 text-sm font-bold">
+            <button
+              onClick={() => setActiveTab('overview')}
+              className={`pb-3 transition-colors border-b-2 ${
+                activeTab === 'overview' ? 'border-jadmaa-red text-jadmaa-red' : 'border-transparent text-jadmaa-textMuted hover:text-jadmaa-charcoal'
+              }`}
+            >
+              Course Overview
+            </button>
+            <button
+              onClick={() => setActiveTab('curriculum')}
+              className={`pb-3 transition-colors border-b-2 ${
+                activeTab === 'curriculum' ? 'border-jadmaa-red text-jadmaa-red' : 'border-transparent text-jadmaa-textMuted hover:text-jadmaa-charcoal'
+              }`}
+            >
+              Curriculum ({course.modules.length} Modules)
+            </button>
+            <button
+              onClick={() => setActiveTab('instructor')}
+              className={`pb-3 transition-colors border-b-2 ${
+                activeTab === 'instructor' ? 'border-jadmaa-red text-jadmaa-red' : 'border-transparent text-jadmaa-textMuted hover:text-jadmaa-charcoal'
+              }`}
+            >
+              Instructor Profile
+            </button>
+          </div>
+
+          {/* Tab 1: Overview */}
+          {activeTab === 'overview' && (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+              
+              <div className="lg:col-span-8 space-y-8">
+                
+                {/* Description */}
+                <div className="space-y-3">
+                  <h3 className="font-heading font-extrabold text-2xl text-jadmaa-charcoal">
+                    About This Course
+                  </h3>
+                  <p className="text-sm text-jadmaa-textMuted leading-relaxed">
+                    {course.longDescription || course.description}
+                  </p>
+                </div>
+
+                {/* What You'll Learn Box */}
+                <div className="bg-jadmaa-cream/70 p-6 rounded-2xl border border-jadmaa-border space-y-4">
+                  <h4 className="font-heading font-extrabold text-lg text-jadmaa-charcoal flex items-center space-x-2">
+                    <CheckCircle2 className="w-5 h-5 text-jadmaa-red" />
+                    <span>What You'll Learn</span>
+                  </h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {course.whatYouWillLearn.map((item, idx) => (
+                      <div key={idx} className="flex items-start space-x-2 text-xs text-jadmaa-charcoal">
+                        <span className="w-1.5 h-1.5 rounded-full bg-jadmaa-red mt-1.5 flex-shrink-0"></span>
+                        <span>{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Requirements */}
+                <div className="space-y-3">
+                  <h4 className="font-heading font-extrabold text-lg text-jadmaa-charcoal">
+                    Requirements & Prerequisites
+                  </h4>
+                  <ul className="space-y-2 text-xs text-jadmaa-textMuted list-disc pl-5">
+                    {course.requirements.map((req, idx) => (
+                      <li key={idx}>{req}</li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Target Audience */}
+                <div className="space-y-3">
+                  <h4 className="font-heading font-extrabold text-lg text-jadmaa-charcoal">
+                    Who This Course Is For
+                  </h4>
+                  <ul className="space-y-2 text-xs text-jadmaa-textMuted list-disc pl-5">
+                    {course.targetAudience.map((aud, idx) => (
+                      <li key={idx}>{aud}</li>
+                    ))}
+                  </ul>
+                </div>
+
+              </div>
+
+              {/* Sidebar Info */}
+              <div className="lg:col-span-4 space-y-6">
+                <div className="bg-jadmaa-cream/50 p-5 rounded-2xl border border-jadmaa-border space-y-4 text-xs">
+                  <h4 className="font-heading font-bold text-sm text-jadmaa-charcoal">
+                    Certificate Information
+                  </h4>
+                  <div className="flex items-start space-x-3">
+                    <Award className="w-6 h-6 text-jadmaa-red flex-shrink-0" />
+                    <p className="text-jadmaa-textMuted leading-relaxed">
+                      Upon completing all modules and practical evaluation, students receive an accredited <strong>JADMAA Varmakalai Academy</strong> certificate.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          )}
+
+          {/* Tab 2: Curriculum */}
+          {activeTab === 'curriculum' && (
+            <div className="max-w-4xl space-y-6">
+              <div className="flex items-center justify-between">
+                <h3 className="font-heading font-extrabold text-2xl text-jadmaa-charcoal">
+                  Course Modules & Lessons
+                </h3>
+                <span className="text-xs text-jadmaa-textMuted">Click module headers to expand</span>
+              </div>
+              <CurriculumAccordion modules={course.modules} />
+            </div>
+          )}
+
+          {/* Tab 3: Instructor */}
+          {activeTab === 'instructor' && (
+            <div className="max-w-3xl bg-jadmaa-cream/60 p-6 rounded-2xl border border-jadmaa-border space-y-4">
+              <div className="flex items-center space-x-4">
+                <img 
+                  src={course.instructor.avatar} 
+                  alt={course.instructor.name}
+                  className="w-16 h-16 rounded-full border-2 border-jadmaa-red object-cover bg-white" 
+                />
+                <div>
+                  <h3 className="font-heading font-extrabold text-xl text-jadmaa-charcoal">
+                    {course.instructor.name}
+                  </h3>
+                  <p className="text-xs font-semibold text-jadmaa-red">
+                    {course.instructor.title}
+                  </p>
+                </div>
+              </div>
+              <p className="text-xs text-jadmaa-textMuted leading-relaxed">
+                {course.instructor.bio}
+              </p>
+            </div>
+          )}
+
+        </div>
+      </section>
+
+      {/* Related Courses */}
+      <section className="py-12 bg-jadmaa-cream border-b border-jadmaa-border text-left">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+          <h3 className="font-heading font-extrabold text-2xl text-jadmaa-charcoal">
+            Related Varmakalai Programs
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {mockCourses.filter(c => c.id !== course.id).slice(0, 3).map(related => (
+              <CourseCard key={related.id} course={related} hidePrice />
+            ))}
+          </div>
+        </div>
+      </section>
+    </>
+  );
+};

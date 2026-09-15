@@ -1,0 +1,10 @@
+{
+  "projects": {
+    "default": "PLACEHOLDER_PROJECT"
+  },
+  "target": {
+    "default": {
+      "hosting": ["app"]
+    }
+  }
+}
