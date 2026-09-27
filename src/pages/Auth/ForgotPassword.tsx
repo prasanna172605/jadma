@@ -63,7 +63,14 @@ export const ForgotPassword: React.FC = () => {
               <form className="space-y-6" onSubmit={handleSubmit}>
                 {error && (
                   <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded text-sm text-center">
-                    {error}
+                    <p>{error}</p>
+                    {error.toLowerCase().includes("register") && (
+                      <div className="mt-2">
+                        <Link to="/register" className="font-bold underline text-red-700 hover:text-red-900 block mt-1">
+                          Click here to Register Now &rarr;
+                        </Link>
+                      </div>
+                    )}
                   </div>
                 )}
                 
