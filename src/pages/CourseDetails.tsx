@@ -1,25 +1,95 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { SEO } from '../components/common/SEO';
-import { mockCourses } from '../data/courses';
 import { CurriculumAccordion } from '../components/courses/CurriculumAccordion';
 import { CourseCard } from '../components/courses/CourseCard';
 import { 
   Clock, Star, BookOpen, Award, CheckCircle2, Play 
 } from 'lucide-react';
+import { courseApi } from '../lib/api/courseApi';
+import { paymentApi } from '../lib/api/paymentApi';
+import { enrollmentApi } from '../lib/api/enrollmentApi';
+import { useAuth } from '../context/AuthContext';
+import type { Course } from '../types';
 
 export const CourseDetails: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const { user, isLoggedIn } = useAuth();
   const [activeTab, setActiveTab] = useState<'overview' | 'curriculum' | 'instructor' | 'faq'>('overview');
+  
+  const [course, setCourse] = useState<Course | null>(null);
+  const [relatedCourses, setRelatedCourses] = useState<Course[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [enrolling, setEnrolling] = useState(false);
 
-  const course = mockCourses.find(c => c.slug === slug || c.id === slug) || mockCourses[0];
+  useEffect(() => {
+    const fetchCourseData = async () => {
+      try {
+        if (slug) {
+          const courseData = await courseApi.getCourseBySlug(slug);
+          setCourse(courseData);
+        }
+        const allCourses = await courseApi.getCourses();
+        setRelatedCourses(allCourses);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCourseData();
+  }, [slug]);
 
-  const handleEnrollClick = () => {
-    // Phase 1 frontend mock enrollment workflow
-    alert(`Enrolling in "${course.title}". Redirecting to LMS Student Dashboard...`);
-    navigate(`/learn/${course.id}`);
+  const handleEnrollClick = async () => {
+    if (!isLoggedIn) {
+      navigate('/login');
+      return;
+    }
+    
+    if (!course) return;
+    
+    // Check if already enrolled in the frontend state (we could also check via API)
+    if (user?.enrolledCourses?.includes(course.id)) {
+      navigate(`/learn/${course.id}`);
+      return;
+    }
+
+    try {
+      setEnrolling(true);
+      if (course.isFree) {
+        const res = await enrollmentApi.enrollFree(course.id);
+        if (res.success) {
+          alert('Enrolled successfully!');
+          // Ideally refresh user context or update local state
+          navigate(`/learn/${course.id}`);
+        } else {
+          alert(res.error?.message || 'Failed to enroll');
+        }
+      } else {
+        const res = await paymentApi.createOrder(course.id);
+        if (res.success && res.data?.redirectUrl) {
+          // Redirect to PhonePe payment page
+          window.location.href = res.data.redirectUrl;
+        } else {
+          alert(res.error?.message || 'Failed to initiate payment');
+        }
+      }
+    } catch (err: any) {
+      alert('An error occurred during enrollment');
+    } finally {
+      setEnrolling(false);
+    }
   };
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center text-jadmaa-textMuted">Loading course details...</div>;
+  }
+
+  if (error || !course) {
+    return <div className="min-h-screen flex items-center justify-center text-red-500">Error loading course: {error || 'Not found'}</div>;
+  }
 
   return (
     <>
@@ -44,12 +114,12 @@ export const CourseDetails: React.FC = () => {
                 </span>
                 <div className="flex items-center space-x-1 text-amber-400 font-bold ml-2">
                   <Star className="w-4 h-4 fill-current" />
-                  <span>{course.rating.toFixed(1)}</span>
-                  <span className="text-gray-400">({course.reviewCount} reviews)</span>
+                  <span>{course.rating?.toFixed(1) || '5.0'}</span>
+                  <span className="text-gray-400">({course.reviewCount || 0} reviews)</span>
                 </div>
               </div>
 
-              <h1 className="font-heading font-extrabold text-3xl sm:text-4xl lg:text-5xl text-white leading-tight">
+              <h1 className="font-heading font-extrabold text-4xl sm:text-5xl lg:text-5xl text-white leading-tight">
                 {course.title}
               </h1>
 
@@ -74,7 +144,7 @@ export const CourseDetails: React.FC = () => {
 
               <div className="flex items-center space-x-3 pt-4">
                 <img 
-                  src={course.instructor.avatar} 
+                  src={course.instructor.avatar || '/images/logo-1.png'} 
                   alt={course.instructor.name}
                   className="w-10 h-10 rounded-full border-2 border-jadmaa-red object-cover bg-white" 
                 />
@@ -104,28 +174,25 @@ export const CourseDetails: React.FC = () => {
                 </div>
 
                 <div className="space-y-1">
-                  <p className="text-[11px] text-jadmaa-textMuted">Includes full access & academy certificate</p>
+                  <p className="text-base md:text-lg text-jadmaa-textMuted">Includes full access & academy certificate</p>
                 </div>
 
                 <button
                   onClick={handleEnrollClick}
-                  className="w-full py-3.5 px-4 bg-jadmaa-red hover:bg-jadmaa-redDark text-white font-bold text-sm rounded-xl shadow-lg transition-all"
+                  disabled={enrolling}
+                  className="w-full py-3.5 px-4 bg-jadmaa-red hover:bg-jadmaa-redDark text-white font-bold text-sm rounded-xl shadow-lg transition-all disabled:opacity-70 disabled:cursor-not-allowed"
                 >
-                  {course.isFree ? "Enroll for Free Now" : "Enroll & Start Learning"}
+                  {enrolling ? "Processing..." : (course.isFree ? "Enroll for Free Now" : "Enroll & Start Learning")}
                 </button>
 
-                <div className="space-y-2 text-xs text-jadmaa-textMuted border-t border-gray-100 pt-4">
+                <div className="space-y-2 text-sm md:text-lg md:text-xl text-jadmaa-textMuted border-t border-gray-100 pt-4">
                   <p className="flex items-center space-x-2">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                     <span>LMS Video & Curriculum Access</span>
                   </p>
                   <p className="flex items-center space-x-2">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                    <span>Practical Academy Examination Eligibility</span>
-                  </p>
-                  <p className="flex items-center space-x-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                    <span>Live Q&A Google Meet Sessions</span>
+                    <span>Digital Certificate upon completion</span>
                   </p>
                 </div>
 
@@ -176,66 +243,72 @@ export const CourseDetails: React.FC = () => {
                 
                 {/* Description */}
                 <div className="space-y-3">
-                  <h3 className="font-heading font-extrabold text-2xl text-jadmaa-charcoal">
+                  <h3 className="font-heading font-extrabold text-2xl md:text-3xl text-jadmaa-charcoal">
                     About This Course
                   </h3>
-                  <p className="text-sm text-jadmaa-textMuted leading-relaxed">
+                  <p className="text-base md:text-lg text-jadmaa-textMuted leading-relaxed">
                     {course.longDescription || course.description}
                   </p>
                 </div>
 
                 {/* What You'll Learn Box */}
-                <div className="bg-jadmaa-cream/70 p-6 rounded-2xl border border-jadmaa-border space-y-4">
-                  <h4 className="font-heading font-extrabold text-lg text-jadmaa-charcoal flex items-center space-x-2">
-                    <CheckCircle2 className="w-5 h-5 text-jadmaa-red" />
-                    <span>What You'll Learn</span>
-                  </h4>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {course.whatYouWillLearn.map((item, idx) => (
-                      <div key={idx} className="flex items-start space-x-2 text-xs text-jadmaa-charcoal">
-                        <span className="w-1.5 h-1.5 rounded-full bg-jadmaa-red mt-1.5 flex-shrink-0"></span>
-                        <span>{item}</span>
-                      </div>
-                    ))}
+                {course.whatYouWillLearn?.length > 0 && (
+                  <div className="bg-jadmaa-cream/70 p-6 rounded-2xl border border-jadmaa-border space-y-4">
+                    <h4 className="font-heading font-extrabold text-lg text-jadmaa-charcoal flex items-center space-x-2">
+                      <CheckCircle2 className="w-5 h-5 text-jadmaa-red" />
+                      <span>What You'll Learn</span>
+                    </h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {course.whatYouWillLearn.map((item, idx) => (
+                        <div key={idx} className="flex items-start space-x-2 text-sm md:text-lg text-jadmaa-charcoal">
+                          <span className="w-1.5 h-1.5 rounded-full bg-jadmaa-red mt-1.5 flex-shrink-0"></span>
+                          <span>{item}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Requirements */}
-                <div className="space-y-3">
-                  <h4 className="font-heading font-extrabold text-lg text-jadmaa-charcoal">
-                    Requirements & Prerequisites
-                  </h4>
-                  <ul className="space-y-2 text-xs text-jadmaa-textMuted list-disc pl-5">
-                    {course.requirements.map((req, idx) => (
-                      <li key={idx}>{req}</li>
-                    ))}
-                  </ul>
-                </div>
+                {course.requirements?.length > 0 && (
+                  <div className="space-y-3">
+                    <h4 className="font-heading font-extrabold text-lg text-jadmaa-charcoal">
+                      Requirements & Prerequisites
+                    </h4>
+                    <ul className="space-y-2 text-sm md:text-lg md:text-xl text-jadmaa-textMuted list-disc pl-5">
+                      {course.requirements.map((req, idx) => (
+                        <li key={idx}>{req}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
 
                 {/* Target Audience */}
-                <div className="space-y-3">
-                  <h4 className="font-heading font-extrabold text-lg text-jadmaa-charcoal">
-                    Who This Course Is For
-                  </h4>
-                  <ul className="space-y-2 text-xs text-jadmaa-textMuted list-disc pl-5">
-                    {course.targetAudience.map((aud, idx) => (
-                      <li key={idx}>{aud}</li>
-                    ))}
-                  </ul>
-                </div>
+                {course.targetAudience?.length > 0 && (
+                  <div className="space-y-3">
+                    <h4 className="font-heading font-extrabold text-lg text-jadmaa-charcoal">
+                      Who This Course Is For
+                    </h4>
+                    <ul className="space-y-2 text-sm md:text-lg md:text-xl text-jadmaa-textMuted list-disc pl-5">
+                      {course.targetAudience.map((aud, idx) => (
+                        <li key={idx}>{aud}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
 
               </div>
 
               {/* Sidebar Info */}
               <div className="lg:col-span-4 space-y-6">
                 <div className="bg-jadmaa-cream/50 p-5 rounded-2xl border border-jadmaa-border space-y-4 text-xs">
-                  <h4 className="font-heading font-bold text-sm text-jadmaa-charcoal">
+                  <h4 className="font-heading font-bold text-base md:text-lg text-jadmaa-charcoal">
                     Certificate Information
                   </h4>
                   <div className="flex items-start space-x-3">
                     <Award className="w-6 h-6 text-jadmaa-red flex-shrink-0" />
                     <p className="text-jadmaa-textMuted leading-relaxed">
-                      Upon completing all modules and practical evaluation, students receive an accredited <strong>JADMAA Varmakalai Academy</strong> certificate.
+                      Upon completing all modules, students receive an accredited <strong>JADMAA Varmakalai Academy</strong> digital certificate.
                     </p>
                   </div>
                 </div>
@@ -248,10 +321,10 @@ export const CourseDetails: React.FC = () => {
           {activeTab === 'curriculum' && (
             <div className="max-w-4xl space-y-6">
               <div className="flex items-center justify-between">
-                <h3 className="font-heading font-extrabold text-2xl text-jadmaa-charcoal">
+                <h3 className="font-heading font-extrabold text-2xl md:text-3xl text-jadmaa-charcoal">
                   Course Modules & Lessons
                 </h3>
-                <span className="text-xs text-jadmaa-textMuted">Click module headers to expand</span>
+                <span className="text-sm md:text-lg md:text-xl text-jadmaa-textMuted">Click module headers to expand</span>
               </div>
               <CurriculumAccordion modules={course.modules} />
             </div>
@@ -262,7 +335,7 @@ export const CourseDetails: React.FC = () => {
             <div className="max-w-3xl bg-jadmaa-cream/60 p-6 rounded-2xl border border-jadmaa-border space-y-4">
               <div className="flex items-center space-x-4">
                 <img 
-                  src={course.instructor.avatar} 
+                  src={course.instructor.avatar || '/images/logo-1.png'} 
                   alt={course.instructor.name}
                   className="w-16 h-16 rounded-full border-2 border-jadmaa-red object-cover bg-white" 
                 />
@@ -275,7 +348,7 @@ export const CourseDetails: React.FC = () => {
                   </p>
                 </div>
               </div>
-              <p className="text-xs text-jadmaa-textMuted leading-relaxed">
+              <p className="text-sm md:text-lg md:text-xl text-jadmaa-textMuted leading-relaxed">
                 {course.instructor.bio}
               </p>
             </div>
@@ -287,11 +360,11 @@ export const CourseDetails: React.FC = () => {
       {/* Related Courses */}
       <section className="py-12 bg-jadmaa-cream border-b border-jadmaa-border text-left">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-          <h3 className="font-heading font-extrabold text-2xl text-jadmaa-charcoal">
+          <h3 className="font-heading font-extrabold text-2xl md:text-3xl text-jadmaa-charcoal">
             Related Varmakalai Programs
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {mockCourses.filter(c => c.id !== course.id).slice(0, 3).map(related => (
+            {relatedCourses.filter(c => c.id !== course.id).slice(0, 3).map(related => (
               <CourseCard key={related.id} course={related} hidePrice />
             ))}
           </div>

@@ -10,6 +10,18 @@ export const Navbar: React.FC = () => {
   const location = useLocation();
   const { user, isLoggedIn, logout } = useAuth();
 
+  const isStudent = isLoggedIn && user?.role === 'STUDENT';
+
+  const studentNavItems = [
+    { id: 'dashboard', label: 'Dashboard', href: '/dashboard' },
+    { id: 'my-courses', label: 'My Courses', href: '/my-courses' },
+    { id: 'courses', label: 'Browse Courses', href: '/courses' },
+    { id: 'certificates', label: 'Certificates', href: '/certificates' },
+  ];
+
+  const currentNavItems = isStudent ? studentNavItems : mainNavItems;
+
+
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 10);
@@ -43,7 +55,7 @@ export const Navbar: React.FC = () => {
 
           {/* Desktop Navigation Links */}
           <nav className="hidden md:flex items-center space-x-6 lg:space-x-8">
-            {mainNavItems.map((item) => {
+            {currentNavItems.map((item) => {
               const isActive = location.pathname === item.href;
               return (
                 <Link
@@ -62,35 +74,30 @@ export const Navbar: React.FC = () => {
 
             {/* Auth / Profile Links */}
             {isLoggedIn ? (
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-6">
                 <Link
-                  to="/dashboard"
-                  className="flex items-center space-x-1.5 text-sm font-semibold text-[#B12B2B] hover:underline"
+                  to={user?.role === "ADMIN" || user?.role === "SUPER_ADMIN" ? "/admin" : user?.role === "INSTRUCTOR" ? "/instructor" : "/profile"}
+                  className="flex items-center space-x-1.5 text-sm font-semibold text-gray-700 hover:text-jadmaa-red transition"
                 >
                   <User className="w-4 h-4" />
-                  <span>Profile ({user?.name.split(' ')[0]})</span>
+                  <span>Profile</span>
                 </Link>
                 <button
                   onClick={logout}
-                  className="p-1 text-[#5C5148] hover:text-[#B12B2B] transition-colors"
+                  className="flex items-center space-x-1.5 text-sm font-semibold text-gray-700 hover:text-jadmaa-red transition"
                   title="Logout"
                 >
                   <LogOut className="w-4 h-4" />
+                  <span>Logout</span>
                 </button>
               </div>
             ) : (
               <div className="flex items-center space-x-4">
                 <Link
                   to="/login"
-                  className="text-sm font-semibold text-[#5C5148] hover:text-[#B12B2B] transition-colors"
+                  className="px-3.5 py-1.5 text-sm font-bold text-white bg-[#B12B2B] hover:bg-[#8C1E1E] rounded transition-all"
                 >
-                  Login
-                </Link>
-                <Link
-                  to="/register"
-                  className="px-3.5 py-1.5 text-xs font-bold text-white bg-[#B12B2B] hover:bg-[#8C1E1E] rounded transition-all"
-                >
-                  Register
+                  Login / Register
                 </Link>
               </div>
             )}
@@ -100,17 +107,17 @@ export const Navbar: React.FC = () => {
           <div className="flex items-center space-x-2 md:hidden">
             {isLoggedIn ? (
               <Link
-                to="/dashboard"
-                className="px-3 py-1 text-xs font-bold text-white bg-[#B12B2B] rounded"
+                to={user?.role === "ADMIN" || user?.role === "SUPER_ADMIN" ? "/admin" : user?.role === "INSTRUCTOR" ? "/instructor" : "/dashboard"}
+                className="px-3 py-1 text-sm font-bold text-white bg-[#B12B2B] rounded"
               >
                 Profile
               </Link>
             ) : (
               <Link
-                to="/register"
-                className="px-3 py-1 text-xs font-bold text-white bg-[#B12B2B] rounded"
+                to="/login"
+                className="px-3 py-1 text-sm font-bold text-white bg-[#B12B2B] rounded"
               >
-                Register
+                Login / Register
               </Link>
             )}
             <button
@@ -128,7 +135,7 @@ export const Navbar: React.FC = () => {
       {/* Mobile Drawer */}
       {isOpen && (
         <div className="md:hidden bg-[#FAF6F0] border-t border-[#E8DDD0] shadow-xl px-4 py-4 space-y-2 text-left">
-          {mainNavItems.map((item) => (
+          {currentNavItems.map((item) => (
             <Link
               key={item.id}
               to={item.href}
@@ -142,14 +149,14 @@ export const Navbar: React.FC = () => {
             {isLoggedIn ? (
               <>
                 <Link
-                  to="/dashboard"
-                  className="block w-full text-center py-2 bg-[#B12B2B] text-white text-xs font-bold rounded"
+                  to={user?.role === "ADMIN" || user?.role === "SUPER_ADMIN" ? "/admin" : user?.role === "INSTRUCTOR" ? "/instructor" : "/profile"}
+                  className="block w-full text-center py-2 bg-[#B12B2B] text-white text-sm font-bold rounded"
                 >
-                  My Profile & Dashboard
+                  My Profile
                 </Link>
                 <button
                   onClick={logout}
-                  className="block w-full text-center py-2 text-xs font-bold text-[#5C5148] hover:text-[#B12B2B]"
+                  className="block w-full text-center py-2 text-sm font-bold text-[#5C5148] hover:text-[#B12B2B]"
                 >
                   Logout
                 </button>
@@ -158,15 +165,9 @@ export const Navbar: React.FC = () => {
               <div className="flex space-x-2">
                 <Link
                   to="/login"
-                  className="w-1/2 text-center py-2 border border-[#E8DDD0] bg-white text-xs font-bold text-[#2B2521] rounded"
+                  className="w-full text-center py-2 bg-[#B12B2B] text-white text-sm font-bold rounded"
                 >
-                  Login
-                </Link>
-                <Link
-                  to="/register"
-                  className="w-1/2 text-center py-2 bg-[#B12B2B] text-white text-xs font-bold rounded"
-                >
-                  Register
+                  Login / Register
                 </Link>
               </div>
             )}

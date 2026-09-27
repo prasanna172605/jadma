@@ -30,11 +30,16 @@ export default {
       },
       animation: {
         float: "jdHeroFloat 4s ease-in-out infinite",
+        marquee: "marquee 40s linear infinite",
       },
       keyframes: {
         jdHeroFloat: {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-10px)" },
+        },
+        marquee: {
+          "0%": { transform: "translateX(0%)" },
+          "100%": { transform: "translateX(-50%)" },
         }
       }
     },

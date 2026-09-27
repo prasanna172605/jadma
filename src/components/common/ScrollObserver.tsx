@@ -3,15 +3,10 @@ import { useLocation } from 'react-router-dom';
 import AOS from 'aos';
 
 /**
- * ScrollObserver powers scroll-reveal animations across all pages using industry-standard AOS.
- * Supports:
- * - data-aos="fade-up"
- * - data-aos="fade-left"
- * - data-aos="fade-right"
- * - data-aos="zoom-in"
- * - data-aos-delay="100", "200", etc.
- *
- * Automatically refreshes upon route transitions so every page reveals as the user scrolls.
+ * ScrollObserver powers scroll-reveal animations across all pages using both 
+ * industry-standard AOS (for Home page) and IntersectionObserver (for other pages
+ * using custom classes like 'reveal-on-scroll').
+ * It also uses MutationObserver to handle dynamically loaded content (e.g. Courses API).
  */
 export const ScrollObserver: React.FC = () => {
   const location = useLocation();
@@ -31,16 +26,57 @@ export const ScrollObserver: React.FC = () => {
   useEffect(() => {
     // Scroll window to top on route change
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+    
+    let observer: IntersectionObserver;
+    let mutationObserver: MutationObserver;
 
-    // Refresh AOS positions after route render
+    // We need a slight delay to ensure the DOM is painted before observing
     const timer = setTimeout(() => {
+      // Refresh AOS positions
       AOS.refresh();
+
+      // Initialize custom IntersectionObserver for custom reveal classes
+      observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-revealed');
+          }
+        });
+      }, {
+        root: null,
+        rootMargin: '0px 0px -50px 0px',
+        threshold: 0.1,
+      });
+
+      const observeElements = () => {
+        const revealElements = document.querySelectorAll(
+          '.reveal-on-scroll, .reveal-left, .reveal-right, .reveal-scale, .reveal-stagger'
+        );
+        revealElements.forEach((el) => {
+          if (!el.classList.contains('is-revealed')) {
+            observer.observe(el);
+          }
+        });
+      };
+
+      observeElements();
+
+      // Set up a MutationObserver to watch for dynamically added elements (like loaded courses)
+      mutationObserver = new MutationObserver(() => {
+        observeElements();
+        AOS.refresh();
+      });
+
+      mutationObserver.observe(document.body, { childList: true, subtree: true });
+
     }, 100);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      if (observer) observer.disconnect();
+      if (mutationObserver) mutationObserver.disconnect();
+    };
   }, [location.pathname]);
 
   return null;
 };
-
-

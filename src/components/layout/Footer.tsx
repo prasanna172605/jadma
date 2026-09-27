@@ -2,8 +2,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, ShieldCheck } from 'lucide-react';
 import { mockBranches } from '../../data/branches';
+import { useAuth } from '../../context/AuthContext';
 
 export const Footer: React.FC = () => {
+  const { user } = useAuth();
   return (
     <footer className="bg-jadmaa-charcoal text-white pt-14 pb-8 border-t-4 border-jadmaa-red text-left">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -23,11 +25,11 @@ export const Footer: React.FC = () => {
                 <span className="font-heading font-extrabold text-2xl text-white tracking-tight">
                   JADMAA <span className="text-jadmaa-red">VARMAKALAI</span>
                 </span>
-                <p className="text-xs text-gray-400">Academy of Ancient Tamil Martial Science</p>
+                <p className="text-sm text-gray-400">Academy of Ancient Tamil Martial Science</p>
               </div>
             </Link>
 
-            <p className="text-gray-300 text-sm leading-relaxed max-w-sm">
+            <p className="text-gray-300 text-base leading-relaxed max-w-sm">
               Learn traditional Varmakalai and self-defence training at JADMAA. Join structured programs for kids, students, women and adults in Thanjavur, Kumbakonam and Ariyalur.
             </p>
 
@@ -64,25 +66,23 @@ export const Footer: React.FC = () => {
 
           {/* Quick Links */}
           <div className="space-y-3">
-            <h4 className="font-heading font-bold text-base text-white border-b border-gray-700 pb-2 inline-block">
+            <h4 className="font-heading font-bold text-lg text-white border-b border-gray-700 pb-2 inline-block">
               Quick Links
             </h4>
-            <ul className="space-y-2 text-sm text-gray-300">
-              <li><Link to="/" className="hover:text-jadmaa-red transition-colors">Home</Link></li>
+            <ul className="space-y-2 text-base text-gray-300">
               <li><Link to="/about" className="hover:text-jadmaa-red transition-colors">About Us</Link></li>
-              <li><Link to="/courses" className="hover:text-jadmaa-red transition-colors">All Courses</Link></li>
               <li><Link to="/careers" className="hover:text-jadmaa-red transition-colors">Careers & Pathways</Link></li>
+              <li><Link to="/blog" className="hover:text-jadmaa-red transition-colors">Blog</Link></li>
               <li><Link to="/contact" className="hover:text-jadmaa-red transition-colors">Contact</Link></li>
-              <li><Link to="/faq" className="hover:text-jadmaa-red transition-colors">FAQs</Link></li>
             </ul>
           </div>
 
           {/* Featured Courses */}
           <div className="space-y-3">
-            <h4 className="font-heading font-bold text-base text-white border-b border-gray-700 pb-2 inline-block">
+            <h4 className="font-heading font-bold text-lg text-white border-b border-gray-700 pb-2 inline-block">
               Programs
             </h4>
-            <ul className="space-y-2 text-sm text-gray-300">
+            <ul className="space-y-2 text-base text-gray-300">
               <li><Link to="/courses/varma-foundation" className="hover:text-jadmaa-red transition-colors">Varma Foundation</Link></li>
               <li><Link to="/courses/intermediate-varma" className="hover:text-jadmaa-red transition-colors">Intermediate Varma</Link></li>
               <li><Link to="/courses/kids-varmakalai" className="hover:text-jadmaa-red transition-colors">Kids Varmakalai</Link></li>
@@ -93,10 +93,10 @@ export const Footer: React.FC = () => {
 
           {/* Academy Locations */}
           <div className="space-y-3">
-            <h4 className="font-heading font-bold text-base text-white border-b border-gray-700 pb-2 inline-block">
+            <h4 className="font-heading font-bold text-lg text-white border-b border-gray-700 pb-2 inline-block">
               Academy Locations
             </h4>
-            <div className="space-y-3 text-xs text-gray-300">
+            <div className="space-y-3 text-sm text-gray-300">
               {mockBranches.map((branch) => (
                 <div key={branch.id} className="space-y-1">
                   <p className="font-bold text-white flex items-center space-x-1">
@@ -112,15 +112,14 @@ export const Footer: React.FC = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-6 flex flex-col md:flex-row items-center justify-between text-xs text-gray-400 space-y-4 md:space-y-0">
+        <div className="pt-6 flex flex-col md:flex-row items-center justify-between text-sm text-gray-400 space-y-4 md:space-y-0">
           <div className="flex items-center space-x-2">
             <ShieldCheck className="w-4 h-4 text-jadmaa-red" />
             <span>&copy; {new Date().getFullYear()} JADMAA Varmakalai Academy. All rights reserved.</span>
           </div>
           <div className="flex items-center space-x-6">
-            <Link to="/login" className="hover:text-white font-semibold">Login</Link>
-            <Link to="/register" className="hover:text-white font-semibold">Register</Link>
-            <Link to="/dashboard" className="hover:text-jadmaa-red font-semibold text-gray-300">Student LMS</Link>
+            <Link to="/login" className="hover:text-white font-semibold">Login / Register</Link>
+            <Link to={user?.role === "ADMIN" || user?.role === "SUPER_ADMIN" ? "/admin" : user?.role === "INSTRUCTOR" ? "/instructor" : "/dashboard"} className="hover:text-jadmaa-red font-semibold text-gray-300">Student LMS</Link>
           </div>
         </div>
 

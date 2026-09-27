@@ -1,18 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SEO } from '../components/common/SEO';
 import { CourseCard } from '../components/courses/CourseCard';
-import { mockCourses } from '../data/courses';
 import { Search, Filter, BookOpen } from 'lucide-react';
+import { courseApi } from '../lib/api/courseApi';
+import type { Course } from '../types';
 
 export const Courses: React.FC = () => {
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [selectedLevel, setSelectedLevel] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const data = await courseApi.getCourses();
+        setCourses(data);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCourses();
+  }, []);
+
   const categories = ['All', 'Varmakalai', 'Self Defence', 'Kids', 'Wellness'];
   const levels = ['All', 'Beginner', 'Intermediate', 'Advanced', 'All Levels'];
 
-  const filteredCourses = mockCourses.filter(course => {
+  const filteredCourses = courses.filter(course => {
     const matchesCategory = selectedCategory === 'All' || course.category === selectedCategory;
     const matchesLevel = selectedLevel === 'All' || course.level === selectedLevel;
     const matchesSearch = course.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -30,13 +49,13 @@ export const Courses: React.FC = () => {
       {/* Page Header */}
       <section className="bg-jadmaa-cream py-12 border-b border-jadmaa-border text-left">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3">
-          <span className="text-xs font-bold text-jadmaa-red uppercase tracking-wider">
+          <span className="text-base md:text-lg font-bold text-jadmaa-red uppercase tracking-wider">
             Academy Curriculum
           </span>
-          <h1 className="font-heading font-extrabold text-4xl text-jadmaa-charcoal">
+          <h1 className="font-heading font-extrabold text-4xl md:text-5xl text-jadmaa-charcoal">
             Explore All Courses
           </h1>
-          <p className="text-sm text-jadmaa-textMuted max-w-2xl">
+          <p className="text-base md:text-lg text-jadmaa-textMuted max-w-2xl">
             Choose from authentic Varmakalai pressure point training, self-defence programs, children's fitness, and Siddha energy healing therapies.
           </p>
         </div>
@@ -86,7 +105,7 @@ export const Courses: React.FC = () => {
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                  className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
                     selectedCategory === cat
                       ? 'bg-jadmaa-red text-white shadow'
                       : 'bg-white text-jadmaa-charcoal hover:bg-jadmaa-cream hover:text-jadmaa-red border border-jadmaa-border'
@@ -99,8 +118,11 @@ export const Courses: React.FC = () => {
 
           </div>
 
-          {/* Results Grid */}
-          {filteredCourses.length > 0 ? (
+          {loading ? (
+            <div className="py-16 text-center text-jadmaa-textMuted">Loading courses...</div>
+          ) : error ? (
+            <div className="py-16 text-center text-red-500">Error: {error}</div>
+          ) : filteredCourses.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 reveal-stagger">
               {filteredCourses.map(course => (
                 <div key={course.id} className="reveal-child">
@@ -112,10 +134,10 @@ export const Courses: React.FC = () => {
             <div className="py-16 text-center bg-jadmaa-cream/40 rounded-2xl border border-dashed border-jadmaa-border space-y-3">
               <BookOpen className="w-10 h-10 text-gray-400 mx-auto" />
               <h3 className="font-heading font-extrabold text-lg text-jadmaa-charcoal">No courses match your criteria</h3>
-              <p className="text-xs text-jadmaa-textMuted">Try adjusting your category tabs or search query.</p>
+              <p className="text-sm md:text-lg md:text-xl text-jadmaa-textMuted">Try adjusting your category tabs or search query.</p>
               <button
                 onClick={() => { setSelectedCategory('All'); setSelectedLevel('All'); setSearchQuery(''); }}
-                className="px-4 py-2 text-xs font-bold text-jadmaa-red hover:underline"
+                className="px-4 py-2 text-base md:text-lg font-bold text-jadmaa-red hover:underline"
               >
                 Reset All Filters
               </button>

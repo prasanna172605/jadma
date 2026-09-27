@@ -12,14 +12,25 @@ export const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
 
-  const handleLoginSubmit = (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
       alert("Please enter both email and password.");
       return;
     }
-    login(email);
-    navigate('/dashboard');
+    
+    try {
+      const user = await login(email, password);
+      if (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN') {
+        navigate('/admin');
+      } else if (user.role === 'INSTRUCTOR') {
+        navigate('/instructor');
+      } else {
+        navigate('/dashboard');
+      }
+    } catch (error) {
+      alert("Login failed. Please check your credentials.");
+    }
   };
 
   return (
@@ -28,7 +39,6 @@ export const Login: React.FC = () => {
         title="Login | JADMAA Varmakalai"
         description="Login to your JADMAA student portal."
       />
-
       <section className="min-h-[75vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-[#FAF6F0]">
         <div className="max-w-md w-full bg-white p-8 rounded-2xl border border-[#E8DDD0] shadow-md space-y-6 text-left">
           
@@ -110,7 +120,6 @@ export const Login: React.FC = () => {
               <LogIn className="w-4 h-4" />
               <span>Login</span>
             </button>
-
           </form>
 
           <div className="text-center pt-2 text-xs text-[#5C5148] border-t border-[#E8DDD0]">

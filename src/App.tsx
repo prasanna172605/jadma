@@ -1,11 +1,13 @@
 import React from 'react';
 import { BrowserRouter, useLocation } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { AppRoutes } from './routes/AppRoutes';
 import { AuthProvider } from './context/AuthContext';
 import { WhatsAppButton } from './components/common/WhatsAppButton';
 import { ScrollObserver } from './components/common/ScrollObserver';
+import { SEOManager } from './components/common/SEOManager';
 
 const AppContent: React.FC = () => {
   const location = useLocation();
@@ -13,6 +15,7 @@ const AppContent: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FAF6F0] text-[#2B2521]">
+      <SEOManager />
       <ScrollObserver />
       {!isLearnPlayer && <Navbar />}
       <main key={location.pathname} className="flex-grow page-enter">
@@ -26,11 +29,13 @@ const AppContent: React.FC = () => {
 
 export function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <AppContent />
-      </AuthProvider>
-    </BrowserRouter>
+    <HelmetProvider>
+      <BrowserRouter>
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
+      </BrowserRouter>
+    </HelmetProvider>
   );
 }
 

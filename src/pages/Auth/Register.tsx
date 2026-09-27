@@ -15,7 +15,7 @@ export const Register: React.FC = () => {
     confirmPassword: ''
   });
 
-  const handleRegisterSubmit = (e: React.FormEvent) => {
+  const handleRegisterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.phone || !formData.password) {
       alert("Please fill in all required fields.");
@@ -25,8 +25,12 @@ export const Register: React.FC = () => {
       alert("Passwords do not match. Please re-enter.");
       return;
     }
-    register(formData.name, formData.email, formData.phone);
-    navigate('/dashboard');
+    try {
+      await register(formData.name, formData.email, formData.phone, formData.password);
+      navigate('/dashboard');
+    } catch (error) {
+      alert("Registration failed. Please try again.");
+    }
   };
 
   return (

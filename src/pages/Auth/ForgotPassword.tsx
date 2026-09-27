@@ -1,92 +1,117 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { SEO } from '../../components/common/SEO';
-import { Mail, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { Mail, ArrowLeft, CheckCircle } from 'lucide-react';
+import { authApi } from '../../lib/api/authApi';
 
 export const ForgotPassword: React.FC = () => {
   const [email, setEmail] = useState('');
-  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+  const [message, setMessage] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
-    setSubmitted(true);
+    
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const res = await authApi.forgotPassword(email);
+      setSuccess(true);
+      setMessage(res.message || "If an account exists with this email, password reset instructions have been sent.");
+    } catch (err: any) {
+      setError(err.message || 'Something went wrong');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <>
-      <SEO 
-        title="Reset Password | JADMAA Varmakalai LMS"
-        description="Reset your JADMAA Varmakalai account password."
-      />
-
-      <section className="min-h-[75vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-jadmaa-cream/50">
-        <div className="max-w-md w-full bg-white p-8 rounded-3xl border border-jadmaa-border shadow-xl space-y-6 text-left">
-          
-          <div className="text-center space-y-2">
-            <img 
-              src="/images/logo-1.png" 
-              alt="JADMAA Logo" 
-              className="h-14 w-auto mx-auto object-contain"
-            />
-            <h1 className="font-heading font-extrabold text-2xl text-jadmaa-charcoal">
-              Reset Your Password
-            </h1>
-            <p className="text-xs text-jadmaa-textMuted">
-              Enter your registered email address and we'll send you password recovery instructions.
-            </p>
-          </div>
-
-          {submitted ? (
-            <div className="py-6 text-center space-y-4">
-              <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
-                <CheckCircle2 className="w-7 h-7" />
-              </div>
-              <p className="text-xs text-jadmaa-textMuted leading-relaxed">
-                Reset instructions have been sent to <strong>{email}</strong>. Please check your inbox.
-              </p>
-              <Link 
-                to="/login"
-                className="inline-block py-2.5 px-6 bg-jadmaa-red text-white font-bold text-xs rounded-xl shadow"
-              >
-                Return to Login
-              </Link>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-jadmaa-charcoal">Email Address</label>
-                <div className="relative">
-                  <Mail className="w-4 h-4 text-gray-400 absolute left-3.5 top-3" />
-                  <input
-                    type="email"
-                    required
-                    placeholder="student@jadmaa.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-jadmaa-border text-xs text-jadmaa-charcoal focus:border-jadmaa-red outline-none"
-                  />
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                className="w-full py-3.5 px-4 bg-jadmaa-red hover:bg-jadmaa-redDark text-white font-bold text-sm rounded-xl shadow-lg transition-all"
-              >
-                Send Password Reset Link
-              </button>
-            </form>
-          )}
-
-          <div className="text-center pt-2 text-xs border-t border-gray-100">
-            <Link to="/login" className="font-bold text-jadmaa-charcoal hover:text-jadmaa-red inline-flex items-center space-x-1">
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Back to Login</span>
-            </Link>
-          </div>
-
+      <SEO title="Forgot Password | JADMAA LMS" />
+      <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+        <div className="sm:mx-auto sm:w-full sm:max-w-md">
+          <Link to="/" className="flex justify-center mb-6">
+            <img src="/images/logo-1.png" alt="JADMAA" className="h-16 w-auto" />
+          </Link>
+          <h2 className="mt-2 text-center text-3xl font-extrabold text-gray-900 font-heading">
+            Forgot your password?
+          </h2>
+          <p className="mt-2 text-center text-sm text-gray-600">
+            Enter your registered email address to receive reset instructions.
+          </p>
         </div>
-      </section>
+
+        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+          <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 border border-gray-200">
+            
+            {success ? (
+               <div className="text-center space-y-4">
+                 <CheckCircle className="w-12 h-12 text-green-500 mx-auto" />
+                 <h3 className="text-lg font-bold text-gray-900">Check your email</h3>
+                 <p className="text-sm text-gray-500">{message}</p>
+                 <div className="pt-4">
+                   <Link to="/login" className="text-jadmaa-red font-bold hover:underline">
+                     Return to login
+                   </Link>
+                 </div>
+               </div>
+            ) : (
+              <form className="space-y-6" onSubmit={handleSubmit}>
+                {error && (
+                  <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded text-sm text-center">
+                    {error}
+                  </div>
+                )}
+                
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                    Email address
+                  </label>
+                  <div className="mt-1 relative rounded-md shadow-sm">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Mail className="h-5 w-5 text-gray-400" />
+                    </div>
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      autoComplete="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="focus:ring-jadmaa-red focus:border-jadmaa-red block w-full pl-10 sm:text-sm border-gray-300 rounded-md py-2.5 border"
+                      placeholder="you@example.com"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-jadmaa-red hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-jadmaa-red transition-colors disabled:opacity-50"
+                  >
+                    {loading ? 'Sending...' : 'Send Reset Link'}
+                  </button>
+                </div>
+              </form>
+            )}
+            
+            {!success && (
+              <div className="mt-6 text-center">
+                <Link to="/login" className="inline-flex items-center gap-1 text-sm font-semibold text-jadmaa-red hover:text-red-800">
+                  <ArrowLeft className="w-4 h-4" /> Back to login
+                </Link>
+              </div>
+            )}
+            
+          </div>
+        </div>
+      </div>
     </>
   );
 };

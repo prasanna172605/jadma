@@ -21,22 +21,22 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, hidePrice = fals
         />
         
         <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
-          <span className="px-2.5 py-1 text-[11px] font-bold bg-[#2B2521] text-white rounded">
+          <span className="px-2.5 py-1 text-sm font-bold bg-[#2B2521] text-white rounded">
             {course.category}
           </span>
           {course.isPopular && (
-            <span className="px-2.5 py-1 text-[11px] font-bold bg-[#B12B2B] text-white rounded">
+            <span className="px-2.5 py-1 text-sm font-bold bg-[#B12B2B] text-white rounded">
               Popular
             </span>
           )}
           {course.isFree && (
-            <span className="px-2.5 py-1 text-[11px] font-bold bg-emerald-600 text-white rounded">
+            <span className="px-2.5 py-1 text-sm font-bold bg-emerald-600 text-white rounded">
               FREE
             </span>
           )}
         </div>
 
-        <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-md px-2.5 py-1 rounded text-[11px] font-bold text-[#2B2521] border border-[#E8DDD0]">
+        <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-md px-2.5 py-1 rounded text-sm font-bold text-[#2B2521] border border-[#E8DDD0]">
           {course.level}
         </div>
       </div>
@@ -46,7 +46,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, hidePrice = fals
         <div className="space-y-2">
           
           {/* Metadata Bar */}
-          <div className="flex items-center justify-between text-xs text-[#5C5148] font-medium">
+          <div className="flex items-center justify-between text-sm md:text-base text-[#5C5148] font-medium">
             <div className="flex items-center space-x-1.5">
               <Clock className="w-3.5 h-3.5 text-[#B12B2B]" />
               <span>{course.duration}</span>
@@ -66,7 +66,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, hidePrice = fals
           </h3>
 
           {/* Short Description */}
-          <p className="text-xs text-[#5C5148] line-clamp-2 leading-relaxed">
+          <p className="text-sm md:text-base text-[#5C5148] line-clamp-2 leading-relaxed">
             {course.description}
           </p>
         </div>

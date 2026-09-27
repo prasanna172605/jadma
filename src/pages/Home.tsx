@@ -1,13 +1,47 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { SEO } from '../components/common/SEO';
 import { CourseCard } from '../components/courses/CourseCard';
-import { mockCourses } from '../data/courses';
 import { mockTestimonials } from '../data/testimonials';
 import { mockBranches } from '../data/branches';
 import { CheckCircle2, ArrowRight, Star, MapPin, HeartPulse, Shield, Award, Users } from 'lucide-react';
+import { courseApi } from '../lib/api/courseApi';
+import type { Course } from '../types';
+import { reviewsApi, type Testimonial } from '../lib/api/reviewsApi';
+import { CountUp } from '../components/common/CountUp';
 
 export const Home: React.FC = () => {
+  const [featuredCourses, setFeaturedCourses] = useState<Course[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const data = await courseApi.getCourses();
+        setFeaturedCourses(data.slice(0, 3));
+      } catch (err) {
+        console.error('Failed to fetch courses', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCourses();
+    const fetchTestimonials = async () => {
+      try {
+        const data = await reviewsApi.getReviews();
+        if (data && data.length > 0) {
+          setTestimonials(data);
+        } else {
+          setTestimonials(mockTestimonials as any);
+        }
+      } catch (err) {
+        console.error('Failed to fetch testimonials', err);
+        setTestimonials(mockTestimonials as any);
+      }
+    };
+    fetchTestimonials();
+  }, []);
   const wellnessServices = [
     {
       icon: HeartPulse,
@@ -46,15 +80,15 @@ export const Home: React.FC = () => {
             {/* Left Column */}
             <div className="lg:col-span-7 space-y-5 text-left" data-aos="fade-right">
               
-              <h6 className="text-[#B12B2B] text-xs sm:text-sm font-bold tracking-wider uppercase font-body">
+              <h6 className="text-[#B12B2B] text-base font-bold tracking-wider uppercase font-body">
                 1000+ YEAR OLD MOTHER OF MARTIAL ART
               </h6>
 
-              <h1 className="font-heading font-extrabold text-3xl sm:text-5xl lg:text-[54px] text-[#2B2521] leading-[1.12] tracking-tight">
+              <h1 className="font-heading font-extrabold text-4xl sm:text-6xl lg:text-[64px] text-[#2B2521] leading-[1.12] tracking-tight">
                 Learn the Ancient Science of <br className="hidden sm:inline" /> Varmakalai
               </h1>
 
-              <p className="font-body text-[#5C5148] text-base sm:text-lg leading-[1.65] max-w-xl">
+              <p className="font-body text-[#5C5148] text-lg md:text-xl leading-[1.65] max-w-xl">
                 Empower your body, sharpen your mind, and preserve a timeless martial tradition through professional Ancient Martial Art training.
               </p>
 
@@ -70,23 +104,23 @@ export const Home: React.FC = () => {
               {/* Hero Stats Row */}
               <div className="pt-8 border-t border-[#E8DDD0] grid grid-cols-2 sm:grid-cols-4 gap-4 text-center sm:text-left" data-aos="fade-up" data-aos-delay="100">
                 <div>
-                  <div className="font-heading font-bold text-2xl sm:text-3xl text-[#2B2521]">1,000+</div>
-                  <div className="font-body text-xs text-[#5C5148] mt-1 font-medium">Years of Tradition</div>
+                  <div className="font-heading font-bold text-3xl sm:text-4xl md:text-4xl text-[#2B2521]"><CountUp end={1000} suffix="+" /></div>
+                  <div className="font-body text-base md:text-lg text-[#5C5148] mt-1 font-medium">Years of Tradition</div>
                 </div>
 
                 <div>
-                  <div className="font-heading font-bold text-2xl sm:text-3xl text-[#2B2521]">3</div>
-                  <div className="font-body text-xs text-[#5C5148] mt-1 font-medium">Branches</div>
+                  <div className="font-heading font-bold text-3xl sm:text-4xl md:text-4xl text-[#2B2521]"><CountUp end={3} /></div>
+                  <div className="font-body text-base md:text-lg text-[#5C5148] mt-1 font-medium">Branches</div>
                 </div>
 
                 <div>
-                  <div className="font-heading font-bold text-2xl sm:text-3xl text-[#2B2521]">7</div>
-                  <div className="font-body text-xs text-[#5C5148] mt-1 font-medium">Structured Courses</div>
+                  <div className="font-heading font-bold text-3xl sm:text-4xl md:text-4xl text-[#2B2521]"><CountUp end={7} /></div>
+                  <div className="font-body text-base md:text-lg text-[#5C5148] mt-1 font-medium">Structured Courses</div>
                 </div>
 
                 <div>
-                  <div className="font-heading font-bold text-2xl sm:text-3xl text-[#2B2521]">15+</div>
-                  <div className="font-body text-xs text-[#5C5148] mt-1 font-medium">Years Guru Experience</div>
+                  <div className="font-heading font-bold text-3xl sm:text-4xl md:text-4xl text-[#2B2521]"><CountUp end={15} suffix="+" /></div>
+                  <div className="font-body text-base md:text-lg text-[#5C5148] mt-1 font-medium">Years Guru Experience</div>
                 </div>
               </div>
 
@@ -98,7 +132,7 @@ export const Home: React.FC = () => {
                 <img 
                   src="/images/hero-kick-action-386x1024.jpg" 
                   alt="Varmakalai Practitioner Stance" 
-                  className="max-h-[500px] lg:max-h-[540px] w-auto object-contain object-bottom drop-shadow-md animate-jadmaa-float"
+                  className="max-h-[500px] lg:max-h-[600px] xl:max-h-[650px] w-auto object-contain object-bottom drop-shadow-[0_20px_40px_rgba(177,43,43,0.25)] hover:scale-105 transition-transform duration-700 ease-out"
                 />
               </div>
             </div>
@@ -113,17 +147,17 @@ export const Home: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-stretch">
             
             <div className="lg:col-span-7 space-y-4" data-aos="fade-up">
-              <span className="text-xs font-bold text-[#B12B2B] uppercase tracking-wider">
+              <span className="text-sm md:text-base font-bold text-[#B12B2B] uppercase tracking-wider">
                 ABOUT JADMAA
               </span>
-              <h2 className="font-heading font-extrabold text-3xl sm:text-4xl text-[#2B2521]">
+              <h2 className="font-heading font-extrabold text-4xl sm:text-5xl text-[#2B2521]">
                 Ancient Power. Modern Training.
               </h2>
-              <p className="font-body text-sm sm:text-base text-[#5C5148] leading-relaxed">
+              <p className="font-body text-base md:text-lg text-[#5C5148] leading-relaxed">
                 JADMAA (Jeyaraj Academy of Defence & Martial Arts Association) is dedicated to reviving and systematically teaching the 1000+ year old traditional science of Varmakalai. Formulated originally by Tamil Siddha masters, Varmakalai combines combat tactics (*Adimurai*) with therapeutic pressure point rejuvenation (*Varma Vaidhiyam*).
               </p>
               <div className="pt-2">
-                <Link to="/about" className="inline-flex items-center space-x-1.5 font-bold text-sm text-[#B12B2B] hover:text-[#8C1E1E] group">
+                <Link to="/about" className="inline-flex items-center space-x-1.5 font-bold text-base text-[#B12B2B] hover:text-[#8C1E1E] group">
                   <span>Learn More</span>
                   <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </Link>
@@ -150,17 +184,17 @@ export const Home: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             
             <div className="lg:col-span-6 space-y-4" data-aos="fade-right">
-              <span className="text-xs font-bold text-[#B12B2B] uppercase tracking-wider">
+              <span className="text-sm md:text-base font-bold text-[#B12B2B] uppercase tracking-wider">
                 EXCELLENCE & INTEGRITY
               </span>
-              <h2 className="font-heading font-extrabold text-3xl sm:text-4xl text-[#2B2521]">
+              <h2 className="font-heading font-extrabold text-4xl sm:text-5xl text-[#2B2521]">
                 Why Choose JADMAA?
               </h2>
-              <p className="font-body text-sm text-[#5C5148] leading-relaxed">
+              <p className="font-body text-lg md:text-xl text-[#5C5148] leading-relaxed">
                 We bridge ancient Tamil martial traditions with modern structured pedagogy, ensuring safe, effective, and transformative training for all age groups.
               </p>
               <div className="pt-2">
-                <Link to="/about" className="inline-flex items-center space-x-1.5 font-bold text-sm text-[#B12B2B] hover:text-[#8C1E1E] group">
+                <Link to="/about" className="inline-flex items-center space-x-1.5 font-bold text-base text-[#B12B2B] hover:text-[#8C1E1E] group">
                   <span>Learn More</span>
                   <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </Link>
@@ -172,7 +206,7 @@ export const Home: React.FC = () => {
                 <h3 className="font-heading font-extrabold text-xl text-[#2B2521]">
                   Why Students Choose JADMAA
                 </h3>
-                <ul className="space-y-3 text-sm text-[#5C5148]">
+                <ul className="space-y-3 text-lg md:text-xl text-[#5C5148]">
                   <li className="flex items-start space-x-2.5">
                     <CheckCircle2 className="w-5 h-5 text-[#B12B2B] flex-shrink-0 mt-0.5" />
                     <span>Authentic Gurukulam Varma Training preserved free from commercial dilution.</span>
@@ -197,64 +231,31 @@ export const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* 4. FEATURED COURSES SECTION */}
-      <section className="py-16 bg-white border-b border-[#E8DDD0] text-left">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-          
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4" data-aos="fade-up">
-            <div>
-              <span className="text-xs font-bold text-[#B12B2B] uppercase tracking-wider">
-                STRUCTURED CURRICULUM
-              </span>
-              <h2 className="font-heading font-extrabold text-3xl sm:text-4xl text-[#2B2521] mt-1">
-                Featured Courses
-              </h2>
-              <p className="text-xs text-[#5C5148] mt-1">
-                Online Classes • Offline Classes • Live Sessions — explore our programs.
-              </p>
-            </div>
-            <Link to="/courses" className="inline-flex items-center space-x-1 font-bold text-xs text-[#B12B2B] hover:text-[#8C1E1E] group">
-              <span>View all courses</span>
-              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {mockCourses.slice(0, 3).map((course, idx) => (
-              <div key={course.id} data-aos="fade-up" data-aos-delay={idx * 100}>
-                <CourseCard course={course} hidePrice />
-              </div>
-            ))}
-          </div>
-
-        </div>
-      </section>
-
-      {/* 5. VARMA WELLNESS & TRADITIONAL THERAPY SECTION */}
+      {/* 4. VARMA WELLNESS & TRADITIONAL THERAPY SECTION */}
       <section className="py-16 bg-[#FAF6F0] border-b border-[#E8DDD0] text-left overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-stretch">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             
             <div className="lg:col-span-5 flex justify-center" data-aos="fade-right">
-              <div className="img-interactive-frame w-full border border-[#E8DDD0] shadow-md">
+              <div className="img-interactive-frame border border-[#E8DDD0] shadow-md bg-white overflow-hidden">
                 <img 
                   src="/images/wellness-682x1024.jpg" 
                   alt="Varma Wellness Consultation" 
-                  className="w-full h-72 sm:h-96 lg:h-full object-cover"
+                  className="max-h-[420px] w-auto object-contain"
                 />
               </div>
             </div>
 
             <div className="lg:col-span-7 space-y-6 flex flex-col" data-aos="fade-left" data-aos-delay="100">
               <div>
-                <span className="text-xs font-bold text-[#B12B2B] uppercase tracking-wider">
+                <span className="text-sm md:text-base font-bold text-[#B12B2B] uppercase tracking-wider">
                   SIDDHA VARMA HEALING
                 </span>
-                <h2 className="font-heading font-extrabold text-3xl sm:text-4xl text-[#2B2521] mt-1">
+                <h2 className="font-heading font-extrabold text-4xl sm:text-5xl text-[#2B2521] mt-1">
                   Varma Wellness & Traditional Therapy
                 </h2>
-                <p className="text-sm text-[#5C5148] mt-2 leading-relaxed">
+                <p className="text-lg md:text-xl text-[#5C5148] mt-2 leading-relaxed">
                   Holistic pressure point therapy to stimulate natural bio-energy flow, relieve musculoskeletal discomfort, and enhance vital organ health.
                 </p>
               </div>
@@ -268,20 +269,20 @@ export const Home: React.FC = () => {
                         <Icon className="w-4 h-4 text-[#B12B2B]" />
                         <span>{service.title}</span>
                       </h4>
-                      <ul className="space-y-1 text-xs text-[#5C5148]">
+                      <ul className="space-y-1 text-base md:text-lg text-[#5C5148]">
                         {service.items.map((item) => (
                           <li key={item} className="flex items-start space-x-2">
                             <span className="text-[#B12B2B] font-bold">•</span>
                             <span>{item}</span>
                           </li>
-                        ))}
+            ))}
                       </ul>
                     </div>
                   );
                 })}
               </div>
 
-              <p className="text-[11px] text-[#5C5148] italic border-t border-[#E8DDD0] pt-3">
+              <p className="text-base md:text-lg text-[#5C5148] italic border-t border-[#E8DDD0] pt-3">
                 Disclaimer: Varma wellness sessions are intended to support general well-being and are not a substitute for professional medical diagnosis or emergency medical care.
               </p>
             </div>
@@ -291,18 +292,18 @@ export const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* 6. TRAINING AT JADMAA SECTION */}
+      {/* 5. TRAINING AT JADMAA SECTION */}
       <section className="py-16 bg-white border-b border-[#E8DDD0] text-left">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
           
           <div className="text-center max-w-2xl mx-auto space-y-2" data-aos="fade-up">
-            <span className="text-xs font-bold text-[#B12B2B] uppercase tracking-wider">
+            <span className="text-sm md:text-base font-bold text-[#B12B2B] uppercase tracking-wider">
               ACADEMY SYLLABUS
             </span>
-            <h2 className="font-heading font-extrabold text-3xl sm:text-4xl text-[#2B2521]">
+            <h2 className="font-heading font-extrabold text-4xl sm:text-5xl text-[#2B2521]">
               Training at JADMAA
             </h2>
-            <p className="text-xs text-[#5C5148]">
+            <p className="text-base md:text-lg text-[#5C5148]">
               What we teach, who it is for, and what you gain from consistent practice.
             </p>
           </div>
@@ -313,7 +314,7 @@ export const Home: React.FC = () => {
               <h3 className="font-heading font-extrabold text-xl text-[#2B2521] border-b border-[#E8DDD0] pb-2">
                 What We Offer
               </h3>
-              <ul className="space-y-2.5 text-xs text-[#5C5148]">
+              <ul className="space-y-2.5 text-base md:text-lg text-[#5C5148]">
                 <li className="flex items-center space-x-2">
                   <CheckCircle2 className="w-4 h-4 text-[#B12B2B] flex-shrink-0" />
                   <span>108 Vital Varma Point Science</span>
@@ -337,7 +338,7 @@ export const Home: React.FC = () => {
               <h3 className="font-heading font-extrabold text-xl text-[#2B2521] border-b border-[#E8DDD0] pb-2">
                 Who Can Join?
               </h3>
-              <ul className="space-y-2.5 text-xs text-[#5C5148]">
+              <ul className="space-y-2.5 text-base md:text-lg text-[#5C5148]">
                 <li className="flex items-center space-x-2">
                   <CheckCircle2 className="w-4 h-4 text-[#B12B2B] flex-shrink-0" />
                   <span>Children (Ages 6+)</span>
@@ -361,7 +362,7 @@ export const Home: React.FC = () => {
               <h3 className="font-heading font-extrabold text-xl text-[#2B2521] border-b border-[#E8DDD0] pb-2">
                 Benefits of Training
               </h3>
-              <ul className="space-y-2.5 text-xs text-[#5C5148]">
+              <ul className="space-y-2.5 text-base md:text-lg text-[#5C5148]">
                 <li className="flex items-center space-x-2">
                   <CheckCircle2 className="w-4 h-4 text-[#B12B2B] flex-shrink-0" />
                   <span>Self-Defence Confidence</span>
@@ -386,23 +387,23 @@ export const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* 7. GROWTH & LEADERSHIP SECTION */}
+      {/* 6. GROWTH & LEADERSHIP SECTION */}
       <section className="py-16 bg-[#FAF6F0] border-b border-[#E8DDD0] text-left overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             
             <div className="lg:col-span-7 space-y-4" data-aos="fade-right">
-              <span className="text-xs font-bold text-[#B12B2B] uppercase tracking-wider">
+              <span className="text-sm md:text-base font-bold text-[#B12B2B] uppercase tracking-wider">
                 GROWTH & LEADERSHIP
               </span>
-              <h2 className="font-heading font-extrabold text-3xl sm:text-4xl text-[#2B2521]">
+              <h2 className="font-heading font-extrabold text-4xl sm:text-5xl text-[#2B2521]">
                 Build Your Future Through Traditional Martial Art
               </h2>
-              <p className="font-body text-sm text-[#5C5148] leading-relaxed">
+              <p className="font-body text-lg md:text-xl text-[#5C5148] leading-relaxed">
                 Unlock career pathways as a certified Varmakalai instructor, self-defence coach, or wellness practitioner under official JADMAA academy certification.
               </p>
               <div className="pt-2">
-                <Link to="/careers" className="inline-flex items-center space-x-1.5 font-bold text-sm text-[#B12B2B] hover:text-[#8C1E1E] group">
+                <Link to="/careers" className="inline-flex items-center space-x-1.5 font-bold text-base text-[#B12B2B] hover:text-[#8C1E1E] group">
                   <span>Enquire Instructor Path</span>
                   <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </Link>
@@ -423,18 +424,52 @@ export const Home: React.FC = () => {
         </div>
       </section>
 
+      {/* 7. FEATURED COURSES SECTION */}
+      <section className="py-16 bg-white border-b border-[#E8DDD0] text-left">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+          
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4" data-aos="fade-up">
+            <div>
+              <span className="text-sm md:text-base font-bold text-[#B12B2B] uppercase tracking-wider">
+                STRUCTURED CURRICULUM
+              </span>
+              <h2 className="font-heading font-extrabold text-4xl sm:text-5xl text-[#2B2521] mt-1">
+                Featured Courses
+              </h2>
+              <p className="text-base md:text-lg text-[#5C5148] mt-1">
+                Online Recorded Courses • Offline Branch Training — explore our self-paced & guided programs.
+              </p>
+            </div>
+            <Link to="/courses" className="inline-flex items-center space-x-1 font-bold text-base text-[#B12B2B] hover:text-[#8C1E1E] group">
+              <span>View all courses</span>
+              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {loading ? (
+              <div className="col-span-3 text-center py-8 text-jadmaa-textMuted">Loading courses...</div>
+            ) : featuredCourses.map((course, idx) => (
+              <div key={course.id} data-aos="fade-up" data-aos-delay={idx * 100}>
+                <CourseCard course={course} hidePrice />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* 8. BRANCH LOCATIONS SECTION */}
       <section className="py-16 bg-white border-b border-[#E8DDD0] text-left">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           
           <div className="text-center max-w-2xl mx-auto space-y-2" data-aos="fade-up">
-            <span className="text-xs font-bold text-[#B12B2B] uppercase tracking-wider">
+            <span className="text-sm md:text-base font-bold text-[#B12B2B] uppercase tracking-wider">
               BRANCH LOCATIONS
             </span>
-            <h2 className="font-heading font-extrabold text-3xl text-[#2B2521]">
+            <h2 className="font-heading font-extrabold text-3xl md:text-4xl text-[#2B2521]">
               Our Training Centers
             </h2>
-            <p className="text-xs text-[#5C5148]">
+            <p className="text-base md:text-lg text-[#5C5148]">
               Visit our academies across Tamil Nadu for in-person training.
             </p>
           </div>
@@ -444,15 +479,15 @@ export const Home: React.FC = () => {
               <div key={branch.id} className="bg-[#FAF6F0] rounded-lg border border-[#E8DDD0] p-5 space-y-3 hover-lift" data-aos="fade-up" data-aos-delay={idx * 100}>
                 <div className="flex items-center space-x-2 text-[#B12B2B]">
                   <MapPin className="w-4 h-4" />
-                  <span className="font-bold text-xs uppercase tracking-wider">{branch.city}</span>
+                  <span className="font-bold text-sm uppercase tracking-wider">{branch.city}</span>
                 </div>
                 <h3 className="font-heading font-bold text-base text-[#2B2521]">
                   {branch.name}
                 </h3>
-                <p className="text-xs text-[#5C5148] leading-relaxed">
+                <p className="text-base md:text-lg text-[#5C5148] leading-relaxed">
                   {branch.address}
                 </p>
-                <p className="text-xs font-bold text-[#2B2521] pt-1">
+                <p className="text-sm font-bold text-[#2B2521] pt-1">
                   {branch.phone}
                 </p>
               </div>
@@ -466,35 +501,49 @@ export const Home: React.FC = () => {
       <section className="py-16 bg-[#FAF6F0] border-b border-[#E8DDD0] text-left">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <div className="text-center max-w-2xl mx-auto space-y-2" data-aos="fade-up">
-            <span className="text-xs font-bold text-[#B12B2B] uppercase tracking-wider">
+            <span className="text-sm md:text-base font-bold text-[#B12B2B] uppercase tracking-wider">
               STUDENT REVIEWS
             </span>
-            <h2 className="font-heading font-extrabold text-3xl text-[#2B2521]">
+            <h2 className="font-heading font-extrabold text-3xl md:text-4xl text-[#2B2521]">
               What Our Students Say
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {mockTestimonials.map((t, idx) => (
-              <div key={t.id} className="bg-white rounded-lg border border-[#E8DDD0] p-5 space-y-3 flex flex-col justify-between shadow-sm hover-lift" data-aos="fade-up" data-aos-delay={idx * 80}>
-                <div className="space-y-2">
-                  <div className="flex text-amber-500">
-                    {[...Array(t.rating)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-current" />
-                    ))}
+          <div className="relative overflow-hidden group">
+            {/* Fade effect at the edges */}
+            <div className="pointer-events-none absolute inset-y-0 left-0 w-8 sm:w-16 bg-gradient-to-r from-[#FAF6F0] to-transparent z-10"></div>
+            <div className="pointer-events-none absolute inset-y-0 right-0 w-8 sm:w-16 bg-gradient-to-l from-[#FAF6F0] to-transparent z-10"></div>
+            
+            <div className="flex animate-marquee min-w-max gap-6 pb-4 hover:[animation-play-state:paused]">
+              {[...(testimonials.length > 0 ? testimonials : mockTestimonials as any), ...(testimonials.length > 0 ? testimonials : mockTestimonials as any)].map((t: any, idx: number) => (
+                <div key={`${t.id}-${idx}`} className="w-[85vw] sm:w-[350px] shrink-0 bg-white rounded-lg border border-[#E8DDD0] p-5 space-y-3 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
+                  <div className="space-y-2">
+                    <div className="flex text-amber-500">
+                      {[...Array(t.rating)].map((_, i) => (
+                        <Star key={i} className="w-4 h-4 fill-current" />
+                      ))}
+                    </div>
+                    <p className="text-base md:text-lg text-[#5C5148] italic leading-relaxed">"{t.content}"</p>
                   </div>
-                  <p className="text-xs text-[#5C5148] italic leading-relaxed">"{t.content}"</p>
+                  <div className="pt-2 border-t border-[#E8DDD0] flex items-center space-x-3">
+                    {t.avatar ? (
+                      <img src={t.avatar} alt={t.name} className="w-8 h-8 rounded-full" referrerPolicy="no-referrer" />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-[#E8DDD0] flex items-center justify-center text-[#2B2521] font-bold text-sm">
+                        {t.name.charAt(0)}
+                      </div>
+                    )}
+                    <div>
+                      <p className="font-heading font-bold text-base text-[#2B2521]">{t.name}</p>
+                      <p className="text-sm md:text-base text-[#5C5148]">{t.role}{t.location ? ` • ${t.location}` : ''}</p>
+                    </div>
+                  </div>
                 </div>
-                <div className="pt-2 border-t border-[#E8DDD0]">
-                  <p className="font-heading font-bold text-sm text-[#2B2521]">{t.name}</p>
-                  <p className="text-[11px] text-[#5C5148]">{t.role} • {t.location}</p>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </section>
-
     </>
   );
 };

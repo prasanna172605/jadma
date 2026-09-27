@@ -1,232 +1,242 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { SEO } from '../../components/common/SEO';
-import { LiveClassCard } from '../../components/common/LiveClassCard';
-import { CertificateCard } from '../../components/common/CertificateCard';
-import { mockCourses } from '../../data/courses';
-import { PlayCircle, CheckCircle2, BookOpen, Award, ArrowRight } from 'lucide-react';
+import { PlayCircle, Award, BookOpen, Clock, CheckCircle } from 'lucide-react';
+import { progressApi } from '../../lib/api/progressApi';
 import { useAuth } from '../../context/AuthContext';
-import type { LiveClass } from '../../types';
 
 export const StudentDashboard: React.FC = () => {
-  const { user } = useAuth();
-  const studentDisplayName = user?.name || "Practitioner Senthil";
+  const { user, isLoggedIn } = useAuth();
+  const navigate = useNavigate();
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const mockEnrolledCourses = [
-    {
-      course: mockCourses[0],
-      progress: 72,
-      lastLesson: "Lesson 03: Upper Body Varma Points",
-      completedLessons: 13,
-      totalLessons: 18
-    },
-    {
-      course: mockCourses[3],
-      progress: 45,
-      lastLesson: "Lesson 02: High Impact Striking Targets",
-      completedLessons: 5,
-      totalLessons: 12
+  useEffect(() => {
+    if (!isLoggedIn) {
+      navigate('/login');
+      return;
     }
-  ];
 
-  const mockLiveClass: LiveClass = {
-    id: "live-101",
-    title: "Live Q&A & Practical Varma Stance Corrections",
-    courseTitle: "Varma Foundation & Vital Points Science",
-    instructorName: "Grandmaster A. Jeyaraj",
-    scheduledTime: "Thursday, 7:00 PM IST",
-    meetUrl: "https://meet.google.com/abc-defg-hij",
-    status: "upcoming"
-  };
+    const fetchDashboard = async () => {
+      try {
+        const res = await progressApi.getDashboard();
+        if (res.success) {
+          setData(res.data);
+        } else {
+          setError(res.error?.message || "Failed to load dashboard");
+        }
+      } catch (err) {
+        setError("Something went wrong loading your dashboard.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDashboard();
+  }, [isLoggedIn, navigate]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-pulse flex flex-col items-center">
+          <div className="h-12 w-12 bg-gray-200 rounded-full mb-4"></div>
+          <div className="h-4 w-32 bg-gray-200 rounded mb-2"></div>
+          <div className="h-3 w-48 bg-gray-200 rounded"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center flex-col">
+        <p className="text-red-500 mb-4">{error || "Something went wrong."}</p>
+        <button onClick={() => window.location.reload()} className="px-4 py-2 bg-jadmaa-red text-white rounded">
+          Try Again
+        </button>
+      </div>
+    );
+  }
+
+  const { student, stats, continueLearning, recentCourses } = data;
 
   return (
     <>
-      <SEO 
-        title="Student LMS Dashboard | JADMAA Varmakalai"
-        description="Access your enrolled Varmakalai courses, track lesson progress, join Google Meet live classes, and download certificates."
-      />
-
-      {/* Header Banner */}
-      <section className="bg-jadmaa-cream py-8 border-b border-jadmaa-border text-left">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-center justify-between gap-4 reveal-on-scroll">
-          <div>
-            <span className="text-[10px] font-extrabold uppercase tracking-widest px-2.5 py-1 rounded bg-jadmaa-red text-white">
-              STUDENT LMS PORTAL
-            </span>
-            <h1 className="font-heading font-extrabold text-3xl text-jadmaa-charcoal mt-1">
-              Welcome back, {studentDisplayName}!
-            </h1>
-            <p className="text-xs text-jadmaa-textMuted">You have 2 active enrolled courses in your JADMAA academy account.</p>
+      <SEO title="Student Dashboard | JADMAA LMS" />
+      
+      {/* Header */}
+      <section className="bg-white border-b border-gray-200 pt-8 pb-10">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+          <div className="flex items-center gap-5">
+            <div className="w-16 h-16 rounded-full bg-gray-100 overflow-hidden border border-gray-200 flex-shrink-0">
+               {student.avatarUrl ? (
+                 <img src={student.avatarUrl} alt={student.name} className="w-full h-full object-cover" />
+               ) : (
+                 <div className="w-full h-full flex items-center justify-center bg-jadmaa-cream text-jadmaa-red font-bold text-xl">
+                   {student.name.charAt(0).toUpperCase()}
+                 </div>
+               )}
+            </div>
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-heading font-extrabold text-gray-900">
+                Welcome back, {student.name.split(' ')[0]}
+              </h1>
+              <p className="text-gray-500 text-sm mt-1">Continue your Varmakalai learning journey.</p>
+            </div>
           </div>
-
-          <div className="flex items-center space-x-3">
-            <Link
-              to="/my-courses"
-              className="px-4 py-2 bg-white border border-jadmaa-border hover:border-jadmaa-red text-jadmaa-charcoal hover:text-jadmaa-red text-xs font-bold rounded-lg shadow-sm transition-all"
-            >
-              My Courses
-            </Link>
-            <Link
-              to="/certificates"
-              className="px-4 py-2 bg-jadmaa-red hover:bg-jadmaa-redDark text-white text-xs font-bold rounded-lg shadow transition-all"
-            >
-              My Certificates
-            </Link>
-          </div>
+          <Link to="/courses" className="px-5 py-2.5 bg-jadmaa-red hover:bg-red-800 text-white text-sm font-semibold rounded shadow-sm transition self-start sm:self-auto">
+            Browse New Courses
+          </Link>
         </div>
       </section>
 
-      {/* Main Grid */}
-      <section className="py-12 bg-white border-b border-jadmaa-border text-left min-h-screen">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+      <section className="py-8 bg-gray-50 min-h-[600px]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
           
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* Stats Row */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="bg-white p-4 border border-gray-200 rounded-xl shadow-sm">
+              <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide">Enrolled</p>
+              <p className="text-2xl font-bold text-gray-900 mt-1">{stats.enrolledCourses}</p>
+            </div>
+            <div className="bg-white p-4 border border-gray-200 rounded-xl shadow-sm">
+              <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide">Completed</p>
+              <p className="text-2xl font-bold text-gray-900 mt-1">{stats.completedCourses}</p>
+            </div>
+            <div className="bg-white p-4 border border-gray-200 rounded-xl shadow-sm">
+              <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide">Certificates</p>
+              <p className="text-2xl font-bold text-gray-900 mt-1">{stats.certificates}</p>
+            </div>
+            <div className="bg-white p-4 border border-gray-200 rounded-xl shadow-sm">
+              <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide">Avg Progress</p>
+              <p className="text-2xl font-bold text-gray-900 mt-1">{stats.averageProgress}%</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             
-            {/* Left 8 Cols: Courses & Recent Activity */}
-            <div className="lg:col-span-8 space-y-8 reveal-left">
+            {/* Left Column: Continue Learning & My Courses */}
+            <div className="lg:col-span-2 space-y-8">
               
-              {/* Enrolled Courses Progress */}
+              {/* Continue Learning */}
               <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-heading font-extrabold text-xl text-jadmaa-charcoal">
-                    Continue Learning (My Courses)
-                  </h3>
-                  <Link to="/my-courses" className="text-xs font-bold text-jadmaa-red hover:underline">
-                    View All &rarr;
-                  </Link>
-                </div>
-
-                <div className="space-y-4 reveal-stagger">
-                  {mockEnrolledCourses.map((item) => (
-                    <div 
-                      key={item.course.id}
-                      className="reveal-child bg-white border border-jadmaa-border rounded-2xl p-5 shadow-sm hover:shadow-md transition-all space-y-4 group"
-                    >
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        <div className="flex items-center space-x-4">
-                          <div className="w-16 h-16 rounded-xl overflow-hidden img-interactive-frame border border-jadmaa-border flex-shrink-0">
-                            <img 
-                              src={item.course.thumbnail} 
-                              alt={item.course.title}
-                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
-                            />
-                          </div>
-                          <div>
-                            <span className="text-[10px] font-bold text-jadmaa-red uppercase tracking-wider">
-                              {item.course.category}
-                            </span>
-                            <h4 className="font-heading font-bold text-base text-jadmaa-charcoal">
-                              {item.course.title}
-                            </h4>
-                            <p className="text-xs text-jadmaa-textMuted mt-0.5">
-                              Next: <span className="font-semibold text-jadmaa-charcoal">{item.lastLesson}</span>
-                            </p>
-                          </div>
+                <h2 className="text-lg font-bold text-gray-900">Continue Learning</h2>
+                
+                {continueLearning ? (
+                  <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm flex flex-col sm:flex-row">
+                    <div className="w-full sm:w-1/3 h-40 sm:h-auto bg-gray-100 flex-shrink-0">
+                      <img 
+                        src={continueLearning.course.thumbnail} 
+                        alt={continueLearning.course.title} 
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="p-5 flex-grow flex flex-col justify-center space-y-3">
+                      <h3 className="font-heading font-bold text-xl text-gray-900">{continueLearning.course.title}</h3>
+                      {continueLearning.moduleTitle && (
+                        <p className="text-sm text-gray-500">
+                          {continueLearning.moduleTitle} &bull; {continueLearning.lessonTitle}
+                        </p>
+                      )}
+                      
+                      <div className="space-y-1.5 pt-2">
+                        <div className="flex justify-between text-xs font-semibold">
+                          <span className="text-gray-500">Progress</span>
+                          <span className="text-gray-900">{continueLearning.course.progress}%</span>
                         </div>
+                        <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+                          <div className="bg-green-500 h-2 rounded-full" style={{ width: `${continueLearning.course.progress}%` }}></div>
+                        </div>
+                      </div>
 
-                        <Link
-                          to={`/learn/${item.course.id}`}
-                          className="inline-flex items-center space-x-1 px-4 py-2.5 bg-jadmaa-red hover:bg-jadmaa-redDark text-white text-xs font-bold rounded-xl shadow self-start sm:self-center transition-all"
+                      <div className="pt-2">
+                        <Link 
+                          to={`/learn/${continueLearning.course.id}`}
+                          className="inline-flex items-center gap-2 px-5 py-2.5 bg-gray-900 hover:bg-gray-800 text-white text-sm font-semibold rounded transition"
                         >
                           <PlayCircle className="w-4 h-4" />
-                          <span>Resume Lesson</span>
+                          <span>{continueLearning.course.progress === 0 ? "Start Course" : "Continue"}</span>
                         </Link>
                       </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="bg-white border border-gray-200 rounded-xl p-8 text-center shadow-sm">
+                    <BookOpen className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+                    <h3 className="font-bold text-gray-900 mb-1">Start your first course</h3>
+                    <p className="text-sm text-gray-500 mb-5">Enroll in a course to begin your Varmakalai journey.</p>
+                    <Link to="/courses" className="px-5 py-2.5 bg-jadmaa-red text-white text-sm font-semibold rounded shadow-sm">
+                      Browse Courses
+                    </Link>
+                  </div>
+                )}
+              </div>
 
-                      {/* Progress Bar */}
-                      <div className="space-y-1.5 pt-2 border-t border-gray-100">
-                        <div className="flex justify-between text-xs font-bold">
-                          <span className="text-jadmaa-charcoal">Course Progress</span>
-                          <span className="text-jadmaa-red">{item.progress}% Completed</span>
+              {/* My Courses Summary */}
+              {recentCourses.length > 0 && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-lg font-bold text-gray-900">My Courses</h2>
+                    <Link to="/my-courses" className="text-sm font-semibold text-jadmaa-red hover:underline">
+                      View all &rarr;
+                    </Link>
+                  </div>
+                  <div className="space-y-3">
+                    {recentCourses.map((c: any) => (
+                      <div key={c.id} className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm flex items-center gap-4 hover:border-gray-300 transition group">
+                        <div className="w-20 h-16 rounded overflow-hidden flex-shrink-0 bg-gray-100 hidden sm:block">
+                          <img src={c.thumbnail} alt={c.title} className="w-full h-full object-cover" />
                         </div>
-                        <div className="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
-                          <div 
-                            className="bg-jadmaa-red h-2.5 rounded-full transition-all duration-500" 
-                            style={{ width: `${item.progress}%` }}
-                          ></div>
+                        <div className="flex-grow min-w-0">
+                          <h4 className="font-bold text-gray-900 text-sm truncate">{c.title}</h4>
+                          <div className="flex items-center gap-3 mt-1.5">
+                            <div className="flex-grow bg-gray-100 rounded-full h-1.5 max-w-[120px]">
+                              <div className={`h-1.5 rounded-full ${c.status === 'COMPLETED' ? 'bg-green-500' : 'bg-jadmaa-red'}`} style={{ width: `${c.progress}%` }}></div>
+                            </div>
+                            <span className="text-xs text-gray-500 font-medium">{c.progress}%</span>
+                          </div>
                         </div>
-                        <p className="text-[10px] text-gray-400">
-                          {item.completedLessons} of {item.totalLessons} lessons finished
-                        </p>
+                        <Link 
+                          to={c.status === 'COMPLETED' ? `/certificates` : `/learn/${c.id}`}
+                          className="px-4 py-2 border border-gray-200 group-hover:border-gray-300 text-gray-700 text-xs font-semibold rounded transition whitespace-nowrap"
+                        >
+                          {c.status === 'COMPLETED' ? 'Certificate' : c.progress === 0 ? 'Start' : 'Continue'}
+                        </Link>
                       </div>
-
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Recent Student Activity Log */}
-              <div className="bg-jadmaa-cream/60 rounded-2xl p-6 border border-jadmaa-border space-y-4">
-                <h3 className="font-heading font-extrabold text-lg text-jadmaa-charcoal">
-                  Recent Learning Activity
-                </h3>
-                <div className="space-y-3 text-xs text-jadmaa-charcoal">
-                  <div className="p-3 bg-white rounded-xl border border-jadmaa-border flex items-center justify-between">
-                    <div className="flex items-center space-x-2.5">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                      <span>Completed Lesson: <strong>Head & Neck Varma Geography</strong></span>
-                    </div>
-                    <span className="text-gray-400">Yesterday</span>
-                  </div>
-                  <div className="p-3 bg-white rounded-xl border border-jadmaa-border flex items-center justify-between">
-                    <div className="flex items-center space-x-2.5">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                      <span>Completed Quiz: <strong>Major Striking Angles & Counter Moves</strong></span>
-                    </div>
-                    <span className="text-gray-400">3 days ago</span>
+                    ))}
                   </div>
                 </div>
-              </div>
-
+              )}
             </div>
 
-            {/* Right 4 Cols: Live Sessions & Certificates */}
-            <div className="lg:col-span-4 space-y-8 reveal-right">
+            {/* Right Column: Certificates & Activity */}
+            <div className="space-y-8">
               
-              {/* Upcoming Live Google Meet */}
-              <div className="space-y-4">
-                <h3 className="font-heading font-extrabold text-lg text-jadmaa-charcoal">
-                  Live Academy Session
-                </h3>
-                <LiveClassCard liveClass={mockLiveClass} />
-              </div>
-
-              {/* Certificate Widget */}
-              <div className="space-y-3">
-                <h3 className="font-heading font-extrabold text-lg text-jadmaa-charcoal">
-                  Verified Credential
-                </h3>
-                <CertificateCard 
-                  courseTitle="Varma Foundation & Vital Points Science"
-                  certificateId="JADMAA-2026-0001"
-                  issueDate="August 15, 2026"
-                  studentName={studentDisplayName}
-                />
-              </div>
-
-              {/* Quick Links */}
-              <div className="p-5 bg-jadmaa-cream rounded-2xl border border-jadmaa-border space-y-3">
-                <h4 className="font-heading font-bold text-sm text-jadmaa-charcoal">Academy Shortcuts</h4>
-                <div className="space-y-2 text-xs">
-                  <Link to="/courses" className="flex items-center justify-between p-2 bg-white rounded-lg border border-jadmaa-border hover:border-jadmaa-red transition-all">
-                    <span className="flex items-center space-x-2">
-                      <BookOpen className="w-3.5 h-3.5 text-jadmaa-red" />
-                      <span>Browse More Courses</span>
-                    </span>
-                    <ArrowRight className="w-3.5 h-3.5 text-gray-400" />
-                  </Link>
-                  <Link to="/certificates" className="flex items-center justify-between p-2 bg-white rounded-lg border border-jadmaa-border hover:border-jadmaa-red transition-all">
-                    <span className="flex items-center space-x-2">
-                      <Award className="w-3.5 h-3.5 text-jadmaa-red" />
-                      <span>View All Certificates</span>
-                    </span>
-                    <ArrowRight className="w-3.5 h-3.5 text-gray-400" />
-                  </Link>
+              <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm space-y-4">
+                <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+                  <h3 className="font-bold text-gray-900">Earned Certificates</h3>
+                  <Award className="w-5 h-5 text-gray-400" />
                 </div>
+                {data.certificates.length > 0 ? (
+                  <div className="space-y-3">
+                    {data.certificates.map((cert: any) => (
+                      <div key={cert.id} className="flex flex-col gap-1 pb-3 border-b border-gray-50 last:border-0 last:pb-0">
+                        <span className="text-sm font-semibold text-gray-900 leading-tight">{cert.course.title}</span>
+                        <span className="text-xs text-gray-500">Issued {new Date(cert.issuedAt).toLocaleDateString()}</span>
+                      </div>
+                    ))}
+                    <Link to="/certificates" className="block text-center text-sm text-jadmaa-red font-semibold pt-2 hover:underline">
+                      View all certificates
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="text-center py-4">
+                    <p className="text-sm text-gray-500">You haven't earned any certificates yet.</p>
+                  </div>
+                )}
               </div>
 
             </div>
-
           </div>
 
         </div>

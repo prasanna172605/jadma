@@ -41,11 +41,11 @@ export const CurriculumAccordion: React.FC<CurriculumAccordionProps> = ({
                   {index + 1}
                 </span>
                 <div>
-                  <h4 className="font-heading font-bold text-base text-jadmaa-charcoal">
+                  <h4 className="font-heading font-bold text-lg text-jadmaa-charcoal">
                     {module.title}
                   </h4>
                   {module.description && (
-                    <p className="text-xs text-jadmaa-textMuted mt-0.5">{module.description}</p>
+                    <p className="text-sm md:text-lg md:text-xl text-jadmaa-textMuted mt-0.5">{module.description}</p>
                   )}
                 </div>
               </div>
@@ -80,7 +80,7 @@ export const CurriculumAccordion: React.FC<CurriculumAccordionProps> = ({
 
                       <div className="flex items-center space-x-3">
                         {lesson.isFreePreview && (
-                          <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-100 text-emerald-700">
+                          <span className="px-2 py-0.5 rounded text-xs font-extrabold bg-emerald-100 text-emerald-700">
                             FREE PREVIEW
                           </span>
                         )}

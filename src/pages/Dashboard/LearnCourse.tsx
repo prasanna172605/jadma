@@ -1,164 +1,298 @@
-import React, { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import React, { useEffect, useState, useRef } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { SEO } from '../../components/common/SEO';
-import { mockCourses } from '../../data/courses';
-import { CurriculumAccordion } from '../../components/courses/CurriculumAccordion';
-import { PlayCircle, CheckCircle2, ChevronLeft, Award, FileText } from 'lucide-react';
+import { ChevronLeft, PlayCircle, CheckCircle, Award, FileText, ArrowLeft, ArrowRight, Lock } from 'lucide-react';
+import { courseApi } from '../../lib/api/courseApi';
+import { progressApi } from '../../lib/api/progressApi';
+import { useAuth } from '../../context/AuthContext';
 
 export const LearnCourse: React.FC = () => {
-  const { courseId } = useParams<{ courseId: string }>();
-  const course = mockCourses.find(c => c.id === courseId || c.slug === courseId) || mockCourses[0];
+  const { courseId } = useParams();
+  const { isLoggedIn } = useAuth();
+  const navigate = useNavigate();
+  
+  const [course, setCourse] = useState<any>(null);
+  const [activeLessonId, setActiveLessonId] = useState<string>('');
+  const [completedLessons, setCompletedLessons] = useState<Record<string, boolean>>({});
+  const [progressPercent, setProgressPercent] = useState<number>(0);
+  const [loading, setLoading] = useState(true);
 
-  const firstLessonId = course.modules[0]?.lessons[0]?.id || 'l1';
-  const [activeLessonId, setActiveLessonId] = useState<string>(firstLessonId);
-  const [completedLessons, setCompletedLessons] = useState<Record<string, boolean>>({
-    'l1': true,
-    'l2': true
-  });
+  useEffect(() => {
+    if (!isLoggedIn) {
+      navigate('/login');
+      return;
+    }
+    const fetchData = async () => {
+      try {
+        if (!courseId) return;
+        
+        // Fetch course
+        const courseData = await courseApi.getCourseBySlug(courseId);
+        setCourse(courseData);
+        
+        const progRes = await progressApi.getCourseProgress(courseData.id);
+        if (progRes.success && progRes.data) {
+          const completedMap: Record<string, boolean> = {};
+          progRes.data.completedLessonIds.forEach((id: string) => {
+            completedMap[id] = true;
+          });
+          setCompletedLessons(completedMap);
+          setProgressPercent(progRes.data.percentage);
+        }
 
-  // Find active lesson details
-  let activeLessonTitle = "Lesson Video";
-  let activeLessonDuration = "15 min";
-  course.modules.forEach(m => {
-    const found = m.lessons.find(l => l.id === activeLessonId);
+        // Set initial active lesson
+        let firstUnfinished = courseData.modules?.[0]?.lessons?.[0]?.id;
+        for (const m of courseData.modules) {
+          for (const l of m.lessons) {
+             if (!progRes.data?.completedLessonIds?.includes(l.id)) {
+                firstUnfinished = l.id;
+                break;
+             }
+          }
+          if (firstUnfinished !== courseData.modules?.[0]?.lessons?.[0]?.id) break;
+        }
+        setActiveLessonId(firstUnfinished || courseData.modules?.[0]?.lessons?.[0]?.id);
+
+      } catch (err) {
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchData();
+  }, [courseId, isLoggedIn, navigate]);
+
+  const toggleComplete = async (id: string, forceStatus?: boolean) => {
+    const isCompleted = forceStatus !== undefined ? forceStatus : !completedLessons[id];
+    setCompletedLessons(prev => ({ ...prev, [id]: isCompleted }));
+    
+    try {
+      await progressApi.updateLessonProgress(id, 0, isCompleted);
+      if (course) {
+        const progRes = await progressApi.getCourseProgress(course.id);
+        if (progRes.success && progRes.data) {
+          setProgressPercent(progRes.data.percentage);
+        }
+      }
+    } catch (err) {
+      setCompletedLessons(prev => ({ ...prev, [id]: !isCompleted }));
+    }
+  };
+
+  const getNextLessonId = (currentId: string) => {
+    if (!course) return null;
+    let foundCurrent = false;
+    for (const m of course.modules) {
+      for (const l of m.lessons) {
+        if (foundCurrent) return l.id;
+        if (l.id === currentId) foundCurrent = true;
+      }
+    }
+    return null;
+  };
+
+  const getPrevLessonId = (currentId: string) => {
+    if (!course) return null;
+    let prevId = null;
+    for (const m of course.modules) {
+      for (const l of m.lessons) {
+        if (l.id === currentId) return prevId;
+        prevId = l.id;
+      }
+    }
+    return null;
+  };
+
+  const goToNextLesson = () => {
+    const nextId = getNextLessonId(activeLessonId);
+    if (nextId) setActiveLessonId(nextId);
+  };
+
+  const goToPrevLesson = () => {
+    const prevId = getPrevLessonId(activeLessonId);
+    if (prevId) setActiveLessonId(prevId);
+  };
+
+  if (loading) return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="animate-pulse h-10 w-10 bg-gray-300 rounded-full"></div>
+    </div>
+  );
+  if (!course) return <div className="min-h-screen bg-gray-50 flex items-center justify-center">Course not found.</div>;
+
+  let activeLessonTitle = "";
+  let activeLessonDuration = "";
+  let activeVideoId = "";
+  let activeModuleTitle = "";
+  
+  course.modules.forEach((m: any) => {
+    const found = m.lessons.find((l: any) => l.id === activeLessonId);
     if (found) {
       activeLessonTitle = found.title;
       activeLessonDuration = found.duration;
+      activeVideoId = found.videoUrl || '';
+      activeModuleTitle = m.title;
     }
   });
 
-  const toggleComplete = (id: string) => {
-    setCompletedLessons(prev => ({ ...prev, [id]: !prev[id] }));
-  };
-
-  const completedCount = Object.values(completedLessons).filter(Boolean).length;
-  const progressPercent = Math.min(100, Math.round((completedCount / (course.totalLessons || 18)) * 100));
+  const nextLessonId = getNextLessonId(activeLessonId);
+  const prevLessonId = getPrevLessonId(activeLessonId);
+  const isCurrentCompleted = completedLessons[activeLessonId];
 
   return (
     <>
-      <SEO 
-        title={`Learning: ${course.title} | JADMAA LMS`}
-        description={`Study ${activeLessonTitle} in JADMAA Varmakalai online classroom.`}
-      />
-
-      <div className="bg-jadmaa-charcoal text-white py-4 px-4 sm:px-6 lg:px-8 border-b border-gray-800 flex items-center justify-between">
-        <div className="flex items-center space-x-3 text-xs">
-          <Link to="/dashboard" className="text-gray-400 hover:text-white flex items-center space-x-1 font-semibold transition-colors">
+      <SEO title={`${activeLessonTitle} | ${course.title} | JADMAA LMS`} />
+      
+      {/* Top Header */}
+      <div className="bg-white border-b border-gray-200 text-gray-900 py-3 px-4 sm:px-6 flex items-center justify-between sticky top-0 z-40 shadow-sm">
+        <div className="flex items-center gap-4">
+          <Link to="/my-courses" className="text-gray-500 hover:text-gray-900 transition flex items-center gap-1 text-sm font-semibold">
             <ChevronLeft className="w-4 h-4" />
-            <span>Dashboard</span>
+            <span className="hidden sm:inline">My Courses</span>
           </Link>
-          <span className="text-gray-600">/</span>
-          <span className="font-bold text-white truncate max-w-xs">{course.title}</span>
+          <div className="h-4 w-px bg-gray-300 hidden sm:block"></div>
+          <h1 className="font-bold text-gray-900 text-sm sm:text-base truncate max-w-[200px] sm:max-w-md">{course.title}</h1>
         </div>
-
-        <div className="flex items-center space-x-4 text-xs">
-          <span className="text-gray-400 hidden sm:inline">
-            Progress: <strong className="text-jadmaa-red font-mono">{progressPercent}%</strong>
+        <div className="flex items-center gap-4 text-sm font-semibold">
+          <span className="hidden sm:inline text-gray-500">
+            Progress:
           </span>
-          <Link
-            to={`/courses/${course.slug}`}
-            className="font-bold text-jadmaa-red hover:underline"
-          >
-            Course Details
-          </Link>
+          <div className="flex items-center gap-2">
+            <div className="w-16 sm:w-24 bg-gray-200 rounded-full h-2">
+              <div className="bg-green-500 h-2 rounded-full transition-all" style={{ width: `${progressPercent}%` }}></div>
+            </div>
+            <span className="text-gray-900">{progressPercent}%</span>
+          </div>
         </div>
       </div>
 
-      <section className="bg-gray-900 min-h-[calc(100vh-120px)] text-left">
-        <div className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-0">
+      <div className="flex flex-col lg:flex-row min-h-[calc(100vh-60px)] bg-gray-50">
+        
+        {/* Main Content Area */}
+        <div className="flex-1 flex flex-col">
           
-          {/* Main Video & Content Area (8 Cols on lg) */}
-          <div className="lg:col-span-8 p-4 sm:p-6 space-y-6">
-            
-            {/* Video Player Area */}
-            <div className="relative aspect-video bg-black rounded-2xl overflow-hidden border border-gray-800 shadow-2xl flex items-center justify-center group">
-              <img 
-                src={course.thumbnail} 
-                alt={course.title} 
-                className="w-full h-full object-cover opacity-60"
-              />
-              <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center p-6 text-center space-y-3">
-                <div className="w-16 h-16 rounded-full bg-jadmaa-red text-white flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform cursor-pointer">
-                  <PlayCircle className="w-8 h-8 fill-current ml-0.5" />
-                </div>
-                <div>
-                  <h3 className="font-heading font-extrabold text-xl text-white">
-                    {activeLessonTitle}
-                  </h3>
-                  <p className="text-xs text-gray-300">Phase 1 LMS Video Player Preview ({activeLessonDuration})</p>
-                </div>
+          {/* Video Player */}
+          <div className="w-full bg-black aspect-video relative flex-shrink-0">
+            {activeVideoId ? (
+              <iframe 
+                src={`https://www.youtube.com/embed/${activeVideoId}?rel=0&modestbranding=1`}
+                title={activeLessonTitle}
+                className="absolute top-0 left-0 w-full h-full border-0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            ) : (
+              <div className="absolute inset-0 flex items-center justify-center text-white flex-col gap-3">
+                <PlayCircle className="w-12 h-12 text-gray-500" />
+                <p>Video not available</p>
               </div>
-            </div>
+            )}
+          </div>
 
-            {/* Lesson Control Bar */}
-            <div className="bg-gray-800 p-4 rounded-xl border border-gray-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs">
+          {/* Lesson Details & Controls */}
+          <div className="p-6 bg-white border-b border-gray-200 flex-shrink-0">
+            <div className="max-w-4xl mx-auto flex flex-col sm:flex-row sm:items-start justify-between gap-6">
               <div>
-                <h4 className="font-heading font-bold text-base text-white">{activeLessonTitle}</h4>
-                <p className="text-gray-400">Instructor: {course.instructor.name}</p>
+                <p className="text-sm font-semibold text-gray-500 mb-1">{activeModuleTitle}</p>
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900">{activeLessonTitle}</h2>
+                <p className="text-sm text-gray-500 mt-1">Instructor: {course.instructor.name}</p>
               </div>
-
-              <div className="flex items-center space-x-3">
+              
+              <div className="flex items-center gap-3 self-start sm:self-center shrink-0">
                 <button
                   onClick={() => toggleComplete(activeLessonId)}
-                  className={`px-4 py-2 rounded-lg font-bold flex items-center space-x-1.5 transition-colors ${
-                    completedLessons[activeLessonId] 
-                      ? 'bg-emerald-600 text-white' 
-                      : 'bg-gray-700 hover:bg-gray-600 text-gray-200'
+                  className={`px-5 py-2.5 rounded text-sm font-bold flex items-center gap-2 transition ${
+                    isCurrentCompleted 
+                      ? 'bg-green-100 text-green-700 hover:bg-green-200' 
+                      : 'bg-jadmaa-red text-white hover:bg-red-800'
                   }`}
                 >
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>{completedLessons[activeLessonId] ? 'Completed' : 'Mark Complete'}</span>
+                  <CheckCircle className={`w-4 h-4 ${isCurrentCompleted ? 'text-green-600' : ''}`} />
+                  {isCurrentCompleted ? 'Completed' : 'Mark as Complete'}
                 </button>
               </div>
             </div>
-
-            {/* Lesson Overview & Notes */}
-            <div className="bg-gray-800/80 p-6 rounded-2xl border border-gray-700 space-y-4 text-xs text-gray-300 leading-relaxed">
-              <h4 className="font-heading font-bold text-sm text-white flex items-center space-x-2">
-                <FileText className="w-4 h-4 text-jadmaa-red" />
-                <span>Lesson Curriculum Notes</span>
-              </h4>
-              <p>
-                In this lecture, Master Jeyaraj demonstrates the precise location, angle of approach, and safe stimulation techniques for critical Varma pressure points.
-              </p>
-              <div className="p-3 bg-gray-900/60 rounded-xl border border-gray-700 text-amber-300">
-                <strong>Safety Caution:</strong> Varmakalai strikes and releases must only be practiced under qualified instructor supervision. Never apply full force on unconditioned training partners.
-              </div>
-            </div>
-
           </div>
-
-          {/* Sidebar Curriculum Accordion (4 Cols on lg) */}
-          <div className="lg:col-span-4 p-4 sm:p-6 bg-gray-800/50 border-t lg:border-t-0 lg:border-l border-gray-800 min-h-full space-y-4">
-            <div className="flex items-center justify-between text-xs text-white border-b border-gray-700 pb-3">
-              <h3 className="font-heading font-bold text-sm">Course Syllabus & Lessons</h3>
-              <span className="text-jadmaa-red font-mono font-bold">{course.totalLessons} Lessons</span>
-            </div>
-
-            <CurriculumAccordion 
-              modules={course.modules}
-              onSelectLesson={(lessonId) => setActiveLessonId(lessonId)}
-              activeLessonId={activeLessonId}
-            />
-
-            {/* Certificate Unlock Banner */}
-            <div className="p-4 bg-gradient-to-br from-amber-500/10 to-jadmaa-red/10 border border-amber-500/30 rounded-xl space-y-2 text-xs text-gray-200">
-              <div className="flex items-center space-x-2 text-amber-400 font-bold">
-                <Award className="w-4 h-4" />
-                <span>Completion Certificate</span>
-              </div>
-              <p className="text-[11px] text-gray-400">Complete all lessons in this syllabus to unlock your verified academy credential.</p>
-              <Link 
-                to="/certificates" 
-                className="inline-block text-[11px] font-bold text-amber-400 hover:underline pt-1"
-              >
-                Preview Certificate Template &rarr;
-              </Link>
-            </div>
+          
+          {/* Bottom Navigation */}
+          <div className="bg-gray-50 p-6 flex-grow flex flex-col justify-end pb-10">
+             <div className="max-w-4xl w-full mx-auto flex items-center justify-between pt-6 border-t border-gray-200">
+               <button 
+                 onClick={goToPrevLesson}
+                 disabled={!prevLessonId}
+                 className={`flex items-center gap-2 text-sm font-bold ${prevLessonId ? 'text-gray-900 hover:text-jadmaa-red' : 'text-gray-300 cursor-not-allowed'}`}
+               >
+                 <ArrowLeft className="w-4 h-4" /> Previous Lesson
+               </button>
+               
+               {progressPercent === 100 ? (
+                  <Link to="/certificates" className="px-6 py-2 bg-green-600 text-white font-bold text-sm rounded shadow hover:bg-green-700 transition flex items-center gap-2">
+                    <Award className="w-4 h-4" /> View Certificate
+                  </Link>
+               ) : (
+                  <button 
+                    onClick={() => {
+                      if (!isCurrentCompleted) toggleComplete(activeLessonId, true);
+                      goToNextLesson();
+                    }}
+                    disabled={!nextLessonId}
+                    className={`flex items-center gap-2 text-sm font-bold ${nextLessonId ? 'text-gray-900 hover:text-jadmaa-red' : 'text-gray-300 cursor-not-allowed'}`}
+                  >
+                    Next Lesson <ArrowRight className="w-4 h-4" />
+                  </button>
+               )}
+             </div>
           </div>
 
         </div>
-      </section>
+
+        {/* Sidebar / Course Content */}
+        <div className="w-full lg:w-[350px] xl:w-[400px] bg-white border-l border-gray-200 flex flex-col h-[calc(100vh-60px)] lg:sticky top-[60px] overflow-hidden">
+          <div className="p-4 border-b border-gray-200 bg-gray-50">
+            <h3 className="font-bold text-gray-900">Course Content</h3>
+          </div>
+          <div className="flex-1 overflow-y-auto">
+            {course.modules.map((m: any, mIndex: number) => (
+              <div key={m.id} className="border-b border-gray-100 last:border-0">
+                <div className="px-4 py-3 bg-gray-50/50">
+                  <h4 className="text-sm font-bold text-gray-900">Module {mIndex + 1}: {m.title}</h4>
+                </div>
+                <div className="flex flex-col">
+                  {m.lessons.map((l: any) => {
+                    const isCompleted = completedLessons[l.id];
+                    const isActive = l.id === activeLessonId;
+                    return (
+                      <button
+                        key={l.id}
+                        onClick={() => setActiveLessonId(l.id)}
+                        className={`text-left px-4 py-3 flex gap-3 text-sm transition ${
+                          isActive ? 'bg-red-50 border-l-4 border-jadmaa-red' : 'hover:bg-gray-50 border-l-4 border-transparent'
+                        }`}
+                      >
+                        <div className="mt-0.5 shrink-0">
+                          {isCompleted ? (
+                             <CheckCircle className="w-4 h-4 text-green-500" />
+                          ) : isActive ? (
+                             <PlayCircle className="w-4 h-4 text-jadmaa-red" />
+                          ) : (
+                             <div className="w-4 h-4 rounded-full border border-gray-300"></div>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <span className={`block truncate ${isActive ? 'font-bold text-jadmaa-red' : 'font-medium text-gray-700'}`}>
+                            {l.title}
+                          </span>
+                          <span className="text-xs text-gray-400 mt-0.5 block">{l.duration}</span>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     </>
   );
 };

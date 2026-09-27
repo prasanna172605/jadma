@@ -1,292 +1,232 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { SEO } from '../components/common/SEO';
-import { 
-  Briefcase, 
-  CheckCircle2, 
-  Sparkles,
-  Send
-} from 'lucide-react';
+import { ArrowRight, CheckCircle2, ChevronDown, User, Star, Award, BookOpen, Send } from 'lucide-react';
+
+const careerSteps = [
+  {
+    title: "Step 1 – Basic Level",
+    description: "Start your journey by mastering the foundational stances, blocks, and basic strikes of Varmakalai.",
+    icon: <User className="w-5 h-5" />
+  },
+  {
+    title: "Step 2 – Intermediate Level",
+    description: "Progress into advanced combinations, weapon defense, and understanding fundamental Varma points.",
+    icon: <BookOpen className="w-5 h-5" />
+  },
+  {
+    title: "Step 3 – Advanced Level",
+    description: "Deepen your expertise with complex pressure point applications, therapeutic healing, and advanced Adimurai.",
+    icon: <Star className="w-5 h-5" />
+  },
+  {
+    title: "Step 4 – Assistant Instructor",
+    description: "Begin assisting senior masters in training sessions to develop your teaching, leadership, and communication skills.",
+    icon: <Award className="w-5 h-5" />
+  },
+  {
+    title: "Step 5 – Certified Instructor",
+    description: "Pass the official JADMAA certification exams to become a recognized instructor capable of leading full batches.",
+    icon: <CheckCircle2 className="w-5 h-5" />
+  },
+  {
+    title: "Step 6 – Branch Trainer",
+    description: "Take on the responsibility of managing and leading training at one of our dedicated branch locations.",
+    icon: <Award className="w-5 h-5" />
+  }
+];
 
 export const Careers: React.FC = () => {
   const [formData, setFormData] = useState({
     name: '',
-    phone: '',
     email: '',
-    roleInterest: 'Varmakalai Instructor',
-    experience: 'Beginner',
-    branch: 'Thanjavur',
+    phone: '',
+    experience: '',
     message: ''
   });
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.phone) {
-      alert("Please enter your name and contact phone number.");
+    if (!formData.name.trim() || !formData.phone.trim()) {
+      alert("Please fill in your name and phone number.");
       return;
     }
     setSubmitted(true);
   };
 
-  const careerTracks = [
-    {
-      title: 'Varmakalai Certified Instructor',
-      badge: 'Full-Time / Part-Time',
-      description: 'Lead traditional martial training batches, teach authentic 108 vital points strikes and releases at official JADMAA branches.',
-      perks: ['Academy grading license', 'Direct mentorship under Grandmaster', 'Branch revenue share']
-    },
-    {
-      title: "Women's Tactical Defence Coach",
-      badge: 'High Demand',
-      description: 'Conduct dedicated self-defence workshops for colleges, corporate offices, IT companies, and women batches across Tamil Nadu.',
-      perks: ['Corporate training modules', 'Official coach certificate', 'Flexible batch schedule']
-    },
-    {
-      title: "Children's Martial Arts Educator",
-      badge: 'Weekend / Evening',
-      description: 'Instill mental focus, ancient discipline, physical flexibility, and moral character in young students aged 6 to 16.',
-      perks: ['Structured pedagogy training', 'School workshop tie-ups', 'Rewarding career path']
-    },
-    {
-      title: 'Siddha Varma Wellness Practitioner',
-      badge: 'Therapeutic Practice',
-      description: 'Specialize in traditional pressure point energy balance, pain management, and joint relief therapies under expert lineage.',
-      perks: ['Therapeutic practice guidance', 'Consultation center support', 'Community health impact']
-    }
-  ];
-
-  const steps = [
-    { step: '01', title: 'Foundation Training', desc: 'Master the fundamental stances, Adimurai steps, and core 108 Varma point geography.' },
-    { step: '02', title: 'Pedagogy & Ethics', desc: 'Learn instructional methodology, practitioner safety, injury prevention, and student psychology.' },
-    { step: '03', title: 'Academy Examination', desc: 'Complete practical evaluation and viva under Grandmaster A. Jeyaraj.' },
-    { step: '04', title: 'Branch Placement', desc: 'Receive your verified instructor credentials and lead official academy training centers.' }
-  ];
-
   return (
     <>
       <SEO 
-        title="Careers & Instructor Pathways | JADMAA Varmakalai Academy"
-        description="Build a purposeful career in authentic Tamil Varmakalai. Become a certified martial arts instructor, women's self-defence coach, or wellness practitioner."
+        title="Careers & Instructor Path | JADMAA Varmakalai"
+        description="Build your future through Varmakalai. Learn how to progress from a student to a certified Branch Trainer at JADMAA Academy."
       />
-
-      {/* Hero Banner */}
+      
+      {/* Banner */}
       <section className="bg-jadmaa-cream py-12 md:py-16 border-b border-jadmaa-border text-left">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4 reveal-on-scroll">
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#B12B2B]/10 text-[#B12B2B] text-xs font-bold uppercase tracking-wider">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Growth & Leadership Pathway</span>
-          </div>
-          <h1 className="font-heading font-extrabold text-3xl sm:text-5xl text-[#2B2521] leading-tight max-w-3xl">
-            Build a Purposeful Career in Ancient Tamil Varmakalai
+          <span className="text-base md:text-lg font-bold text-jadmaa-red uppercase tracking-wider">
+            Career Opportunities
+          </span>
+          <h1 className="font-heading font-extrabold text-3xl sm:text-5xl text-jadmaa-charcoal">
+            Build Your Future Through <span className="text-jadmaa-red">Varmakalai</span>
           </h1>
-          <p className="font-body text-base text-[#5C5148] max-w-2xl leading-relaxed">
-            Train under recognized Gurukulam lineage, earn official certifications, and inspire future generations as a certified instructor or branch leader.
+          <p className="text-base md:text-lg text-jadmaa-textMuted max-w-2xl leading-relaxed">
+            Train. Lead. Inspire. Preserve the Legacy. Join the JADMAA family and turn your passion for traditional martial arts into a fulfilling career path.
           </p>
-          <div className="pt-2 flex flex-wrap gap-4">
-            <a href="#apply" className="btn-jadmaa-primary">
-              Apply as Instructor
-            </a>
-            <Link to="/courses" className="btn-jadmaa-outline">
-              Explore Prerequisites
-            </Link>
-          </div>
         </div>
       </section>
 
-      {/* Career Tracks */}
+      {/* From Student to Branch Trainer */}
       <section className="py-16 bg-white border-b border-jadmaa-border text-left">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          <div className="reveal-on-scroll">
-            <span className="text-xs font-bold text-[#B12B2B] uppercase tracking-wider">Where It Can Lead</span>
-            <h2 className="font-heading font-extrabold text-3xl text-[#2B2521] mt-1">Instructor Opportunities</h2>
-            <p className="text-sm text-[#5C5148] mt-1">Choose the pathway that aligns with your passion and community focus.</p>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-3xl mx-auto space-y-4 mb-12 reveal-on-scroll">
+            <h2 className="font-heading font-extrabold text-4xl md:text-5xl text-jadmaa-charcoal">
+              From Student to Branch Trainer
+            </h2>
+            <p className="text-base md:text-lg text-jadmaa-textMuted">
+              Our structured progression ensures you receive the highest quality of martial and pedagogical training before you step onto the mat as a leader.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 reveal-stagger">
-            {careerTracks.map((track) => (
-              <div key={track.title} className="reveal-child jd-card p-6 flex flex-col justify-between space-y-4">
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-extrabold uppercase px-2.5 py-1 rounded bg-[#FAF6F0] text-[#B12B2B] border border-[#E8DDD0]">
-                      {track.badge}
-                    </span>
-                    <Briefcase className="w-4 h-4 text-gray-400" />
-                  </div>
-                  <h3 className="font-heading font-extrabold text-xl text-[#2B2521]">{track.title}</h3>
-                  <p className="text-xs text-[#5C5148] leading-relaxed">{track.description}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 reveal-stagger">
+            {careerSteps.map((step, idx) => (
+              <div key={idx} className="bg-jadmaa-cream/50 rounded-2xl border border-jadmaa-border p-6 hover-lift reveal-child flex flex-col h-full">
+                <div className="w-12 h-12 rounded-full bg-jadmaa-red/10 text-jadmaa-red flex items-center justify-center mb-4">
+                  {step.icon}
                 </div>
-
-                <div className="pt-4 border-t border-[#E8DDD0] space-y-2">
-                  <p className="text-[11px] font-bold text-[#2B2521]">Key Highlights:</p>
-                  <ul className="space-y-1 text-xs text-[#5C5148]">
-                    {track.perks.map((perk) => (
-                      <li key={perk} className="flex items-center space-x-2">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
-                        <span>{perk}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                <h3 className="font-heading font-extrabold text-lg text-jadmaa-charcoal mb-2">
+                  {step.title}
+                </h3>
+                <p className="text-base md:text-lg text-jadmaa-textMuted leading-relaxed flex-grow">
+                  {step.description}
+                </p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Roadmap Steps */}
-      <section className="py-16 bg-[#FAF6F0] border-b border-[#E8DDD0] text-left">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          <div className="text-center max-w-2xl mx-auto space-y-2 reveal-on-scroll">
-            <span className="text-xs font-bold text-[#B12B2B] uppercase tracking-wider">The Roadmap</span>
-            <h2 className="font-heading font-extrabold text-3xl text-[#2B2521]">How to Become a JADMAA Instructor</h2>
-            <p className="text-xs text-[#5C5148]">Structured progression combining physical mastery and pedagogical excellence.</p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 reveal-stagger">
-            {steps.map((item) => (
-              <div key={item.step} className="reveal-child bg-white p-6 rounded-2xl border border-[#E8DDD0] shadow-sm space-y-3">
-                <span className="text-2xl font-black text-[#B12B2B] font-heading">{item.step}</span>
-                <h4 className="font-heading font-bold text-base text-[#2B2521]">{item.title}</h4>
-                <p className="text-xs text-[#5C5148] leading-relaxed">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Application Form */}
-      <section id="apply" className="py-16 bg-white border-b border-jadmaa-border text-left">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 reveal-on-scroll">
-          <div className="bg-[#FAF6F0] p-8 sm:p-10 rounded-3xl border border-[#E8DDD0] shadow-sm space-y-6">
-            <div className="text-center space-y-2 max-w-xl mx-auto">
-              <span className="text-xs font-bold text-[#B12B2B] uppercase tracking-wider">Instructor Admissions</span>
-              <h3 className="font-heading font-extrabold text-2xl sm:text-3xl text-[#2B2521]">
-                Enquire About the Instructor Pathway
-              </h3>
-              <p className="text-xs text-[#5C5148]">
-                Fill in your details and our senior faculty will contact you to schedule an initial consultation and assessment.
+      {/* Who Can Apply & Form */}
+      <section className="py-16 bg-jadmaa-cream border-b border-jadmaa-border text-left">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+            
+            <div className="lg:col-span-5 space-y-6 reveal-on-scroll">
+              <span className="text-base md:text-lg font-bold text-jadmaa-red uppercase tracking-wider">
+                Who Can Apply?
+              </span>
+              <h2 className="font-heading font-extrabold text-4xl md:text-5xl text-jadmaa-charcoal">
+                Join the Instructor Program
+              </h2>
+              <p className="text-base md:text-lg text-jadmaa-textMuted leading-relaxed">
+                Whether you are already an advanced martial artist or a dedicated beginner aiming for the long term, we have a pathway for you. Candidates must demonstrate high moral character, physical discipline, and a deep respect for the art of Varmakalai.
               </p>
+              <ul className="space-y-3 pt-2">
+                <li className="flex items-start space-x-3 text-base md:text-lg text-jadmaa-textMuted">
+                  <CheckCircle2 className="w-5 h-5 text-jadmaa-red flex-shrink-0" />
+                  <span>Passionate about teaching and mentoring others.</span>
+                </li>
+                <li className="flex items-start space-x-3 text-base md:text-lg text-jadmaa-textMuted">
+                  <CheckCircle2 className="w-5 h-5 text-jadmaa-red flex-shrink-0" />
+                  <span>Willing to undergo rigorous technical and pedagogical training.</span>
+                </li>
+                <li className="flex items-start space-x-3 text-base md:text-lg text-jadmaa-textMuted">
+                  <CheckCircle2 className="w-5 h-5 text-jadmaa-red flex-shrink-0" />
+                  <span>Committed to preserving the authenticity of JADMAA Varmakalai.</span>
+                </li>
+              </ul>
             </div>
 
-            {submitted ? (
-              <div className="py-10 text-center space-y-3 bg-white rounded-2xl border border-[#E8DDD0] p-6">
-                <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
-                  <CheckCircle2 className="w-8 h-8" />
-                </div>
-                <h4 className="font-heading font-extrabold text-xl text-[#2B2521]">Application Received</h4>
-                <p className="text-xs text-[#5C5148] max-w-md mx-auto">
-                  Thank you, <strong>{formData.name}</strong>. Our faculty team will review your enquiry for <strong>{formData.roleInterest}</strong> and get back to you via <strong>{formData.phone}</strong>.
-                </p>
-                <button
-                  onClick={() => setSubmitted(false)}
-                  className="mt-4 px-5 py-2 bg-[#B12B2B] text-white text-xs font-bold rounded-lg shadow"
-                >
-                  Submit Another Enquiry
-                </button>
+            <div className="lg:col-span-7 reveal-on-scroll" style={{ transitionDelay: '100ms' }}>
+              <div className="bg-white rounded-2xl shadow-sm border border-jadmaa-border p-6 md:p-8">
+                <h3 className="font-heading font-extrabold text-2xl md:text-3xl text-jadmaa-charcoal mb-6">
+                  Apply for the Instructor Program
+                </h3>
+                
+                {submitted ? (
+                  <div className="bg-green-50 border border-green-200 rounded-xl p-8 text-center space-y-4">
+                    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto text-green-600">
+                      <CheckCircle2 className="w-8 h-8" />
+                    </div>
+                    <h4 className="font-heading font-bold text-xl text-green-900">Application Received</h4>
+                    <p className="text-sm text-green-700">Thank you for your interest in becoming a JADMAA Instructor. Our team will review your details and contact you shortly.</p>
+                  </div>
+                ) : (
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <label className="text-sm font-bold text-jadmaa-charcoal">Full Name <span className="text-jadmaa-red">*</span></label>
+                        <input 
+                          type="text"
+                          required
+                          value={formData.name}
+                          onChange={(e) => setFormData({...formData, name: e.target.value})}
+                          className="w-full bg-jadmaa-cream/50 border border-jadmaa-border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-jadmaa-red focus:ring-1 focus:ring-jadmaa-red transition-colors"
+                          placeholder="John Doe"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-sm font-bold text-jadmaa-charcoal">Phone Number <span className="text-jadmaa-red">*</span></label>
+                        <input 
+                          type="tel"
+                          required
+                          value={formData.phone}
+                          onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                          className="w-full bg-jadmaa-cream/50 border border-jadmaa-border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-jadmaa-red focus:ring-1 focus:ring-jadmaa-red transition-colors"
+                          placeholder="+91 98765 43210"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-1.5">
+                      <label className="text-sm font-bold text-jadmaa-charcoal">Email Address</label>
+                      <input 
+                        type="email"
+                        value={formData.email}
+                        onChange={(e) => setFormData({...formData, email: e.target.value})}
+                        className="w-full bg-jadmaa-cream/50 border border-jadmaa-border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-jadmaa-red focus:ring-1 focus:ring-jadmaa-red transition-colors"
+                        placeholder="john@example.com"
+                      />
+                    </div>
+                    
+                    <div className="space-y-1.5">
+                      <label className="text-sm font-bold text-jadmaa-charcoal">Prior Martial Arts Experience</label>
+                      <select
+                        value={formData.experience}
+                        onChange={(e) => setFormData({...formData, experience: e.target.value})}
+                        className="w-full bg-jadmaa-cream/50 border border-jadmaa-border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-jadmaa-red focus:ring-1 focus:ring-jadmaa-red transition-colors"
+                      >
+                        <option value="">Select your experience level...</option>
+                        <option value="none">No prior experience</option>
+                        <option value="beginner">Beginner (Less than 1 year)</option>
+                        <option value="intermediate">Intermediate (1-3 years)</option>
+                        <option value="advanced">Advanced (3+ years)</option>
+                        <option value="instructor">Existing Instructor in another art</option>
+                      </select>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="text-sm font-bold text-jadmaa-charcoal">Why do you want to become a JADMAA Instructor?</label>
+                      <textarea 
+                        rows={4}
+                        value={formData.message}
+                        onChange={(e) => setFormData({...formData, message: e.target.value})}
+                        className="w-full bg-jadmaa-cream/50 border border-jadmaa-border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-jadmaa-red focus:ring-1 focus:ring-jadmaa-red transition-colors resize-none"
+                        placeholder="Tell us a bit about your goals..."
+                      ></textarea>
+                    </div>
+
+                    <button 
+                      type="submit"
+                      className="w-full btn-jadmaa-primary flex items-center justify-center space-x-2"
+                    >
+                      <span>Submit Application</span>
+                      <Send className="w-4 h-4" />
+                    </button>
+                  </form>
+                )}
               </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-xs font-bold text-[#2B2521]">Full Name *</label>
-                    <input 
-                      type="text"
-                      required
-                      placeholder="e.g. Senthil Kumar"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#E8DDD0] bg-white text-xs text-[#2B2521] focus:border-[#B12B2B] outline-none"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs font-bold text-[#2B2521]">Phone Number (WhatsApp) *</label>
-                    <input 
-                      type="tel"
-                      required
-                      placeholder="+91 98765 43210"
-                      value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#E8DDD0] bg-white text-xs text-[#2B2521] focus:border-[#B12B2B] outline-none"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-xs font-bold text-[#2B2521]">Email Address</label>
-                    <input 
-                      type="email"
-                      placeholder="senthil@example.com"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#E8DDD0] bg-white text-xs text-[#2B2521] focus:border-[#B12B2B] outline-none"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs font-bold text-[#2B2521]">Interested Pathway</label>
-                    <select
-                      value={formData.roleInterest}
-                      onChange={(e) => setFormData({ ...formData, roleInterest: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#E8DDD0] bg-white text-xs text-[#2B2521] focus:border-[#B12B2B] outline-none"
-                    >
-                      <option value="Varmakalai Instructor">Varmakalai Certified Instructor</option>
-                      <option value="Womens Self Defence Coach">Women's Tactical Defence Coach</option>
-                      <option value="Childrens Coach">Children's Martial Arts Educator</option>
-                      <option value="Siddha Wellness Practitioner">Siddha Varma Wellness Practitioner</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-xs font-bold text-[#2B2521]">Prior Martial Arts / Fitness Experience</label>
-                    <select
-                      value={formData.experience}
-                      onChange={(e) => setFormData({ ...formData, experience: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#E8DDD0] bg-white text-xs text-[#2B2521] focus:border-[#B12B2B] outline-none"
-                    >
-                      <option value="Beginner">No prior experience (Beginner)</option>
-                      <option value="1-3 Years">1 - 3 Years (Martial Arts / Yoga / Fitness)</option>
-                      <option value="3-5 Years">3 - 5 Years Martial Arts Experience</option>
-                      <option value="5+ Years">5+ Years / Existing Black Belt / Instructor</option>
-                    </select>
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs font-bold text-[#2B2521]">Preferred Branch Location</label>
-                    <select
-                      value={formData.branch}
-                      onChange={(e) => setFormData({ ...formData, branch: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#E8DDD0] bg-white text-xs text-[#2B2521] focus:border-[#B12B2B] outline-none"
-                    >
-                      <option value="Thanjavur">Thanjavur (HQ)</option>
-                      <option value="Kumbakonam">Kumbakonam</option>
-                      <option value="Ariyalur">Ariyalur</option>
-                      <option value="Online / Distance">Online / Distance Mentorship</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-[#2B2521]">Brief Note / Goals</label>
-                  <textarea
-                    rows={3}
-                    placeholder="Tell us about your background and why you want to teach Varmakalai..."
-                    value={formData.message}
-                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-[#E8DDD0] bg-white text-xs text-[#2B2521] focus:border-[#B12B2B] outline-none"
-                  ></textarea>
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full py-3.5 px-6 bg-[#B12B2B] hover:bg-[#8C1E1E] text-white font-bold text-sm rounded-xl shadow-lg transition-all flex items-center justify-center space-x-2"
-                >
-                  <Send className="w-4 h-4" />
-                  <span>Submit Instructor Application</span>
-                </button>
-              </form>
-            )}
+            </div>
           </div>
         </div>
       </section>

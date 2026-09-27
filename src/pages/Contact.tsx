@@ -45,13 +45,13 @@ export const Contact: React.FC = () => {
 
       <section className="bg-jadmaa-cream py-12 border-b border-jadmaa-border text-left">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3 reveal-on-scroll">
-          <span className="text-xs font-bold text-jadmaa-red uppercase tracking-wider">
+          <span className="text-base md:text-lg font-bold text-jadmaa-red uppercase tracking-wider">
             Admissions & Enquiries
           </span>
-          <h1 className="font-heading font-extrabold text-4xl text-jadmaa-charcoal">
+          <h1 className="font-heading font-extrabold text-4xl md:text-5xl text-jadmaa-charcoal">
             Get in Touch With JADMAA
           </h1>
-          <p className="text-sm text-jadmaa-textMuted max-w-2xl">
+          <p className="text-base md:text-lg text-jadmaa-textMuted max-w-2xl">
             Book a free demo class, inquire about course admissions, or consult with our Varmakalai masters.
           </p>
         </div>
@@ -70,10 +70,10 @@ export const Contact: React.FC = () => {
                   <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
                     <CheckCircle2 className="w-10 h-10" />
                   </div>
-                  <h3 className="font-heading font-extrabold text-2xl text-jadmaa-charcoal">
+                  <h3 className="font-heading font-extrabold text-2xl md:text-3xl text-jadmaa-charcoal">
                     Enquiry Submitted Successfully!
                   </h3>
-                  <p className="text-xs text-jadmaa-textMuted max-w-md mx-auto leading-relaxed">
+                  <p className="text-sm md:text-lg md:text-xl text-jadmaa-textMuted max-w-md mx-auto leading-relaxed">
                     Thank you, <strong>{formData.name}</strong>. Our admissions team at the <strong>{formData.branch}</strong> branch will call you back on <strong>{formData.phone}</strong> shortly to schedule your session.
                   </p>
                   <button
@@ -86,56 +86,56 @@ export const Contact: React.FC = () => {
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div>
-                    <h3 className="font-heading font-extrabold text-2xl text-jadmaa-charcoal">
+                    <h3 className="font-heading font-extrabold text-2xl md:text-3xl text-jadmaa-charcoal">
                       Send Us a Message
                     </h3>
-                    <p className="text-xs text-jadmaa-textMuted">Fill out the form below to request a free trial class or course brochure.</p>
+                    <p className="text-sm md:text-lg md:text-xl text-jadmaa-textMuted">Fill out the form below to request a free trial class or course brochure.</p>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <label className="text-xs font-bold text-jadmaa-charcoal">Full Name *</label>
+                      <label className="text-sm font-bold text-jadmaa-charcoal">Full Name *</label>
                       <input 
                         type="text" 
                         required
                         placeholder="e.g. Senthil Kumar"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-jadmaa-border bg-white text-xs text-jadmaa-charcoal focus:border-jadmaa-red outline-none"
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-jadmaa-border bg-white text-sm md:text-lg text-jadmaa-charcoal focus:border-jadmaa-red outline-none"
                       />
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-xs font-bold text-jadmaa-charcoal">Phone Number *</label>
+                      <label className="text-sm font-bold text-jadmaa-charcoal">Phone Number *</label>
                       <input 
                         type="tel" 
                         required
                         placeholder="+91 98765 43210"
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-jadmaa-border bg-white text-xs text-jadmaa-charcoal focus:border-jadmaa-red outline-none"
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-jadmaa-border bg-white text-sm md:text-lg text-jadmaa-charcoal focus:border-jadmaa-red outline-none"
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <label className="text-xs font-bold text-jadmaa-charcoal">Email Address</label>
+                      <label className="text-sm font-bold text-jadmaa-charcoal">Email Address</label>
                       <input 
                         type="email" 
                         placeholder="senthil@example.com"
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-jadmaa-border bg-white text-xs text-jadmaa-charcoal focus:border-jadmaa-red outline-none"
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-jadmaa-border bg-white text-sm md:text-lg text-jadmaa-charcoal focus:border-jadmaa-red outline-none"
                       />
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-xs font-bold text-jadmaa-charcoal">Preferred Branch</label>
+                      <label className="text-sm font-bold text-jadmaa-charcoal">Preferred Branch</label>
                       <select 
                         value={formData.branch}
                         onChange={(e) => setFormData({ ...formData, branch: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-jadmaa-border bg-white text-xs text-jadmaa-charcoal focus:border-jadmaa-red outline-none"
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-jadmaa-border bg-white text-sm md:text-lg text-jadmaa-charcoal focus:border-jadmaa-red outline-none"
                       >
                         <option value="Thanjavur">Thanjavur (HQ)</option>
                         <option value="Kumbakonam">Kumbakonam</option>
@@ -145,11 +145,11 @@ export const Contact: React.FC = () => {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-jadmaa-charcoal">Course / Program Interest</label>
+                    <label className="text-sm font-bold text-jadmaa-charcoal">Course / Program Interest</label>
                     <select 
                       value={formData.courseInterest}
                       onChange={(e) => setFormData({ ...formData, courseInterest: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-jadmaa-border bg-white text-xs text-jadmaa-charcoal focus:border-jadmaa-red outline-none"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-jadmaa-border bg-white text-sm md:text-lg text-jadmaa-charcoal focus:border-jadmaa-red outline-none"
                     >
                       <option value="Varma Foundation">Varma Foundation & Vital Points</option>
                       <option value="Intermediate Varma">Intermediate Varma Combat</option>
@@ -162,13 +162,13 @@ export const Contact: React.FC = () => {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-jadmaa-charcoal">Your Message or Preferred Timings</label>
+                    <label className="text-sm font-bold text-jadmaa-charcoal">Your Message or Preferred Timings</label>
                     <textarea 
                       rows={4}
                       placeholder="Please let us know your preferred training time or any questions..."
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-jadmaa-border bg-white text-xs text-jadmaa-charcoal focus:border-jadmaa-red outline-none"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-jadmaa-border bg-white text-sm md:text-lg text-jadmaa-charcoal focus:border-jadmaa-red outline-none"
                     ></textarea>
                   </div>
 
@@ -189,10 +189,10 @@ export const Contact: React.FC = () => {
             <div className="lg:col-span-5 space-y-8 reveal-right">
               
               <div className="space-y-4">
-                <h3 className="font-heading font-extrabold text-2xl text-jadmaa-charcoal">
+                <h3 className="font-heading font-extrabold text-2xl md:text-3xl text-jadmaa-charcoal">
                   Direct Contact Information
                 </h3>
-                <p className="text-xs text-jadmaa-textMuted leading-relaxed">
+                <p className="text-sm md:text-lg md:text-xl text-jadmaa-textMuted leading-relaxed">
                   Have urgent questions about class timings or therapeutic appointments? Call our central helpline directly.
                 </p>
 
@@ -203,8 +203,8 @@ export const Contact: React.FC = () => {
                   >
                     <Phone className="w-5 h-5 text-jadmaa-red flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
                     <div>
-                      <p className="text-[10px] text-gray-500 uppercase font-bold">Central Admissions Line</p>
-                      <p className="font-bold text-sm text-jadmaa-charcoal">+91 93452 20020</p>
+                      <p className="text-sm text-gray-500 uppercase font-bold">Central Admissions Line</p>
+                      <p className="font-bold text-base md:text-lg text-jadmaa-charcoal">+91 93452 20020</p>
                     </div>
                   </a>
 
@@ -214,15 +214,15 @@ export const Contact: React.FC = () => {
                   >
                     <Mail className="w-5 h-5 text-jadmaa-red flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
                     <div>
-                      <p className="text-[10px] text-gray-500 uppercase font-bold">Official Email</p>
-                      <p className="font-bold text-sm text-jadmaa-charcoal">info@jadmaa.com</p>
+                      <p className="text-sm text-gray-500 uppercase font-bold">Official Email</p>
+                      <p className="font-bold text-base md:text-lg text-jadmaa-charcoal">info@jadmaa.com</p>
                     </div>
                   </a>
                 </div>
               </div>
 
               <div className="space-y-3">
-                <h4 className="font-heading font-bold text-base text-jadmaa-charcoal">
+                <h4 className="font-heading font-bold text-lg text-jadmaa-charcoal">
                   Academy Branches Overview
                 </h4>
                 <div className="space-y-3 reveal-stagger">
@@ -230,12 +230,12 @@ export const Contact: React.FC = () => {
                     <div key={b.id} className="reveal-child p-4 bg-white rounded-xl border border-jadmaa-border text-xs space-y-2 shadow-sm hover:border-jadmaa-red transition-all">
                       <div className="flex items-center justify-between">
                         <p className="font-bold text-jadmaa-charcoal text-sm">{b.name}</p>
-                        <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-jadmaa-red/10 text-jadmaa-red">
+                        <span className="text-xs font-extrabold uppercase px-2 py-0.5 rounded bg-jadmaa-red/10 text-jadmaa-red">
                           {b.city}
                         </span>
                       </div>
                       <p className="text-jadmaa-textMuted">{b.address}</p>
-                      <div className="flex items-center justify-between pt-1 border-t border-gray-100 text-[11px]">
+                      <div className="flex items-center justify-between pt-1 border-t border-gray-100 text-sm">
                         <span className="font-semibold text-jadmaa-charcoal">{b.phone}</span>
                         <span className="text-gray-400 flex items-center space-x-1">
                           <Clock className="w-3 h-3" />
