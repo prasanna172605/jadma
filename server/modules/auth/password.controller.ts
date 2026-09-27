@@ -18,34 +18,50 @@ export const forgotPassword = async (req: Request, res: Response) => {
       where: { email: normalizedEmail }
     });
 
-    if (user && user.isActive) {
-      // Invalidate existing unused tokens for this user
-      await prisma.passwordResetToken.updateMany({
-        where: { userId: user.id, usedAt: null },
-        data: { usedAt: new Date() }
-      });
-
-      const rawToken = crypto.randomBytes(32).toString('hex');
-      const tokenHash = await bcrypt.hash(rawToken, 10);
-      const expiresAt = new Date(Date.now() + 30 * 60 * 1000); // 30 mins
-
-      await prisma.passwordResetToken.create({
-        data: {
-          userId: user.id,
-          tokenHash,
-          expiresAt
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: {
+          message: "This email address is not registered with us. Please register first to create an account."
         }
       });
-
-      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
-      const resetUrl = `${frontendUrl}/reset-password?token=${rawToken}&id=${user.id}`;
-
-      await sendPasswordResetEmail(user.email, resetUrl, user.name);
     }
+
+    if (!user.isActive) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          message: "This account has been deactivated. Please contact support."
+        }
+      });
+    }
+
+    // Invalidate existing unused tokens for this user
+    await prisma.passwordResetToken.updateMany({
+      where: { userId: user.id, usedAt: null },
+      data: { usedAt: new Date() }
+    });
+
+    const rawToken = crypto.randomBytes(32).toString('hex');
+    const tokenHash = await bcrypt.hash(rawToken, 10);
+    const expiresAt = new Date(Date.now() + 30 * 60 * 1000); // 30 mins
+
+    await prisma.passwordResetToken.create({
+      data: {
+        userId: user.id,
+        tokenHash,
+        expiresAt
+      }
+    });
+
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const resetUrl = `${frontendUrl}/reset-password?token=${rawToken}&id=${user.id}`;
+
+    await sendPasswordResetEmail(user.email, resetUrl, user.name);
 
     res.json({
       success: true,
-      message: "If an account exists with this email, password reset instructions have been sent."
+      message: "Password reset instructions have been sent to your email address."
     });
   } catch (err: any) {
     if (err instanceof z.ZodError) {

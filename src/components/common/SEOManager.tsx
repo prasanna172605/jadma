@@ -17,7 +17,7 @@ export const SEOManager: React.FC = () => {
     "name": "JADMAA Varmakalai",
     "description": description,
     "url": `https://jadmaa.com${path}`,
-    "telephone": "+918072044813",
+    "telephone": "+919655457500",
     "address": [
       {
         "@type": "PostalAddress",

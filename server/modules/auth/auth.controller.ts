@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import { z } from 'zod';
 import { prisma } from '../../db.js';
 import { registerSchema, loginSchema } from './auth.validation.js';
+import { BrevoService } from '../../services/email/brevo.service.js';
 
 const generateTokens = (user: any) => {
   const accessToken = jwt.sign(
@@ -38,6 +39,11 @@ export const register = async (req: Request, res: Response) => {
         phone: validated.phone,
         passwordHash,
       }
+    });
+
+    // Add registered student to Brevo marketing list in the background
+    BrevoService.addContactToMarketingList(user.email, user.name).catch(err => {
+      console.error('[AuthController] Failed to add contact to Brevo marketing list:', err);
     });
 
     res.json({ success: true, data: { id: user.id, name: user.name, email: user.email } });

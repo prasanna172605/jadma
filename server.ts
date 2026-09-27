@@ -15,6 +15,7 @@ import blogRoutes from './server/modules/blog/blog.routes.js';
 import adminRoutes from './server/modules/admin/admin.routes.js';
 import dbRoutes from './server/modules/admin/db.routes.js';
 import reviewsRoutes from './server/modules/reviews/reviews.routes.js';
+import { BrevoService } from './server/services/email/brevo.service.js';
 
 async function startServer() {
   const app = express();
@@ -63,6 +64,10 @@ async function startServer() {
 
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on http://localhost:${PORT}`);
+    // Run the Brevo API and sender configuration self-test
+    BrevoService.selfTest().catch(err => {
+      console.error('[Server] Brevo self-test failed with error:', err);
+    });
   });
 }
 

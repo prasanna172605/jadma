@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { SEO } from '../components/common/SEO';
 import { mockBranches } from '../data/branches';
-import { Phone, Mail, Send, CheckCircle2, Clock } from 'lucide-react';
+import { Phone, Mail, Send, CheckCircle2, Clock, ExternalLink, MapPin } from 'lucide-react';
 
 export const Contact: React.FC = () => {
   const location = useLocation();
@@ -193,7 +193,7 @@ export const Contact: React.FC = () => {
                   Direct Contact Information
                 </h3>
                 <p className="text-sm md:text-lg md:text-xl text-jadmaa-textMuted leading-relaxed">
-                  Have urgent questions about class timings or therapeutic appointments? Call our central helpline directly.
+                  Have urgent questions about class timings, registrations or therapeutic appointments? Reach out to our central team.
                 </p>
 
                 <div className="space-y-3 pt-2">
@@ -203,8 +203,19 @@ export const Contact: React.FC = () => {
                   >
                     <Phone className="w-5 h-5 text-jadmaa-red flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
                     <div>
-                      <p className="text-sm text-gray-500 uppercase font-bold">Central Admissions Line</p>
-                      <p className="font-bold text-base md:text-lg text-jadmaa-charcoal">+91 93452 20020</p>
+                      <p className="text-sm text-gray-500 uppercase font-bold text-left">Central Admissions Line</p>
+                      <p className="font-bold text-base md:text-lg text-jadmaa-charcoal text-left">+91 93452 20020</p>
+                    </div>
+                  </a>
+
+                  <a 
+                    href="tel:+919655457500"
+                    className="p-4 bg-jadmaa-cream rounded-2xl border border-jadmaa-border flex items-start space-x-3 hover:border-jadmaa-red transition-all group"
+                  >
+                    <Phone className="w-5 h-5 text-jadmaa-red flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
+                    <div>
+                      <p className="text-sm text-gray-500 uppercase font-bold text-left">Secondary Support Line</p>
+                      <p className="font-bold text-base md:text-lg text-jadmaa-charcoal text-left">+91 96554 57500</p>
                     </div>
                   </a>
 
@@ -214,33 +225,29 @@ export const Contact: React.FC = () => {
                   >
                     <Mail className="w-5 h-5 text-jadmaa-red flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
                     <div>
-                      <p className="text-sm text-gray-500 uppercase font-bold">Official Email</p>
-                      <p className="font-bold text-base md:text-lg text-jadmaa-charcoal">info@jadmaa.com</p>
+                      <p className="text-sm text-gray-500 uppercase font-bold text-left">Official Email</p>
+                      <p className="font-bold text-base md:text-lg text-jadmaa-charcoal text-left">info@jadmaa.com</p>
                     </div>
                   </a>
                 </div>
               </div>
 
               <div className="space-y-3">
-                <h4 className="font-heading font-bold text-lg text-jadmaa-charcoal">
-                  Academy Branches Overview
+                <h4 className="font-heading font-bold text-lg text-jadmaa-charcoal text-left">
+                  Branch Operating Hours
                 </h4>
                 <div className="space-y-3 reveal-stagger">
                   {mockBranches.map(b => (
-                    <div key={b.id} className="reveal-child p-4 bg-white rounded-xl border border-jadmaa-border text-xs space-y-2 shadow-sm hover:border-jadmaa-red transition-all">
+                    <div key={b.id} className="reveal-child p-4 bg-white rounded-xl border border-jadmaa-border text-xs space-y-1.5 shadow-sm hover:border-jadmaa-red transition-all text-left">
                       <div className="flex items-center justify-between">
-                        <p className="font-bold text-jadmaa-charcoal text-sm">{b.name}</p>
-                        <span className="text-xs font-extrabold uppercase px-2 py-0.5 rounded bg-jadmaa-red/10 text-jadmaa-red">
-                          {b.city}
+                        <p className="font-bold text-jadmaa-charcoal text-sm">{b.city} Branch</p>
+                        <span className="text-xs font-semibold uppercase px-2 py-0.5 rounded bg-jadmaa-red/10 text-jadmaa-red">
+                          Active
                         </span>
                       </div>
-                      <p className="text-jadmaa-textMuted">{b.address}</p>
-                      <div className="flex items-center justify-between pt-1 border-t border-gray-100 text-sm">
-                        <span className="font-semibold text-jadmaa-charcoal">{b.phone}</span>
-                        <span className="text-gray-400 flex items-center space-x-1">
-                          <Clock className="w-3 h-3" />
-                          <span>{b.hours}</span>
-                        </span>
+                      <div className="flex items-center space-x-1.5 text-jadmaa-textMuted pt-0.5">
+                        <Clock className="w-3.5 h-3.5 text-jadmaa-red flex-shrink-0" />
+                        <span className="text-xs leading-relaxed">{b.hours}</span>
                       </div>
                     </div>
                   ))}
@@ -251,6 +258,66 @@ export const Contact: React.FC = () => {
 
           </div>
 
+        </div>
+      </section>
+
+      {/* Majestic "Our Branches" section with live location maps */}
+      <section className="bg-jadmaa-cream/40 py-16 border-b border-jadmaa-border text-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+          <div className="text-center max-w-2xl mx-auto space-y-2">
+            <span className="text-sm md:text-base font-bold text-jadmaa-red uppercase tracking-wider">
+              VISIT OUR ACADEMIES
+            </span>
+            <h2 className="font-heading font-extrabold text-4xl text-[#2B2521]">
+              Our Branches
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {mockBranches.map((branch) => {
+              // Custom map link query for direct opening in google maps
+              const mapQueryUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                branch.id === 'ariyalur' 
+                  ? "Mr. Perfect Gym, Ariyalur, Tamil Nadu" 
+                  : branch.name + " " + branch.city
+              )}`;
+              
+              return (
+                <div key={branch.id} className="bg-white rounded-3xl border border-jadmaa-border shadow-md p-6 text-left space-y-5 flex flex-col justify-between hover-lift">
+                  <div className="space-y-3">
+                    <h3 className="font-heading font-extrabold text-xl text-jadmaa-charcoal flex items-center space-x-2">
+                      <span role="img" aria-label="pin" className="text-jadmaa-red">📍</span>
+                      <span>{branch.id === 'thanjavur' ? 'Thanjavur Branch' : branch.id === 'kumbakonam' ? 'Kumbakonam Branch' : 'Ariyalur Branch'}</span>
+                    </h3>
+                    <p className="text-[#5C5148] text-sm md:text-base leading-relaxed h-[4.5rem] overflow-hidden">
+                      {branch.address}
+                    </p>
+                  </div>
+                  
+                  {/* Interactive Map Block */}
+                  <div className="relative rounded-2xl overflow-hidden border border-gray-100 shadow-inner h-[220px] w-full group/map">
+                    <iframe
+                      src={branch.mapEmbedUrl}
+                      className="w-full h-full border-0"
+                      allowFullScreen={false}
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      title={branch.name}
+                    />
+                    {/* Open in Maps Overlay Button */}
+                    <a
+                      href={mapQueryUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="absolute top-4 left-4 bg-white border border-gray-200 rounded-xl px-3.5 py-1.5 shadow-sm text-xs font-bold text-[#1a73e8] hover:bg-gray-50 flex items-center space-x-1.5 transition-all"
+                    >
+                      <span>Open in Maps</span>
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </section>
     </>

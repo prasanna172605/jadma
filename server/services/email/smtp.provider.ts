@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer';
 
 export const createSmtpTransporter = () => {
-  const host = process.env.EMAIL_HOST || '';
+  const host = (process.env.EMAIL_HOST || '').trim();
   const port = parseInt(process.env.EMAIL_PORT || '465', 10);
   const secure = port === 465;
   
@@ -10,12 +10,12 @@ export const createSmtpTransporter = () => {
     port,
     secure,
     auth: {
-      user: process.env.EMAIL_USER || '',
-      pass: process.env.EMAIL_PASSWORD || ''
+      user: (process.env.EMAIL_USER || '').trim(),
+      pass: (process.env.EMAIL_PASSWORD || '').trim()
     }
   });
 };
 
 export const getFromAddress = () => {
-  return process.env.EMAIL_FROM || 'info@jadmaa.com';
+  return (process.env.EMAIL_FROM || 'info@jadmaa.com').trim();
 };

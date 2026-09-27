@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { SEO } from '../../components/common/SEO';
-import { PlayCircle, Award, BookOpen, Search } from 'lucide-react';
+import { PlayCircle, Award, BookOpen, Search, CheckCircle } from 'lucide-react';
 import { progressApi } from '../../lib/api/progressApi';
 import { useAuth } from '../../context/AuthContext';
 

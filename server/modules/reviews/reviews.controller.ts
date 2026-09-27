@@ -41,7 +41,7 @@ export const getReviews = async (req: Request, res: Response) => {
 
     res.json({ success: true, data: testimonials });
   } catch (err: any) {
-    console.error('getReviews error:', err);
-    res.status(500).json({ success: false, error: { message: 'Server error fetching reviews' } });
+    console.warn('getReviews error, falling back to empty reviews list:', err);
+    res.json({ success: true, data: [] });
   }
 };

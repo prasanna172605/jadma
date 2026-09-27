@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { prisma } from '../../db.js';
 import { logAdminAction } from '../../utils/audit.js';
 import bcrypt from 'bcryptjs';
+import { sendNewCourseSuggestionEmail } from '../../services/email/email.service.js';
 
 const getPagination = (req: Request) => {
   const page = parseInt(req.query.page as string) || 1;
@@ -322,6 +323,9 @@ export const createCourse = async (req: Request, res: Response) => {
     
     const course = await prisma.course.create({ data });
     await logAdminAction((req as any).user.id, 'CREATE_COURSE', 'Course', course.id, { title: course.title }, req);
+    if (course.status === 'PUBLISHED') {
+      sendNewCourseSuggestionEmail(course.id).catch(err => console.error('Failed to trigger course recommendation emails:', err));
+    }
     res.json({ success: true, data: course });
   } catch (err: any) {
     res.status(500).json({ success: false, error: { message: err.message || 'Server error' } });
@@ -364,6 +368,7 @@ export const publishCourse = async (req: Request, res: Response) => {
       data: { status: 'PUBLISHED', publishedAt: new Date() }
     });
     await logAdminAction((req as any).user.id, 'PUBLISH_COURSE', 'Course', course.id, null, req);
+    sendNewCourseSuggestionEmail(course.id).catch(err => console.error('Failed to trigger course recommendation emails:', err));
     res.json({ success: true, data: course });
   } catch (err: any) {
     res.status(500).json({ success: false, error: { message: err.message || 'Server error' } });

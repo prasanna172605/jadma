@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, ShieldCheck } from 'lucide-react';
-import { mockBranches } from '../../data/branches';
+import { MapPin, ShieldCheck, Phone, Mail } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 export const Footer: React.FC = () => {
@@ -13,8 +12,8 @@ export const Footer: React.FC = () => {
         {/* Main Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-gray-700">
           
-          {/* Brand Info (2 cols on lg) */}
-          <div className="lg:col-span-2 space-y-4">
+          {/* Brand Info & Short Note */}
+          <div className="space-y-4">
             <Link to="/" className="flex items-center space-x-3">
               <img 
                 src="/images/logo-1.png" 
@@ -22,15 +21,15 @@ export const Footer: React.FC = () => {
                 className="h-12 w-auto bg-white p-1 rounded-lg"
               />
               <div>
-                <span className="font-heading font-extrabold text-2xl text-white tracking-tight">
+                <span className="font-heading font-extrabold text-xl text-white tracking-tight">
                   JADMAA <span className="text-jadmaa-red">VARMAKALAI</span>
                 </span>
-                <p className="text-sm text-gray-400">Academy of Ancient Tamil Martial Science</p>
+                <p className="text-xs text-gray-400">Academy of Ancient Tamil Martial Science</p>
               </div>
             </Link>
 
-            <p className="text-gray-300 text-base leading-relaxed max-w-sm">
-              Learn traditional Varmakalai and self-defence training at JADMAA. Join structured programs for kids, students, women and adults in Thanjavur, Kumbakonam and Ariyalur.
+            <p className="text-gray-300 text-sm leading-relaxed">
+              JADMAA is the premier academy for authentic Varmakalai and traditional Tamil martial arts. We preserve, research, and teach this ancient Siddha science of vital pressure points for defense and holistic healing.
             </p>
 
             <div className="flex items-center space-x-3 pt-2">
@@ -64,12 +63,63 @@ export const Footer: React.FC = () => {
             </div>
           </div>
 
+          {/* Our Branches */}
+          <div className="space-y-3">
+            <h4 className="font-heading font-bold text-lg text-white border-b border-gray-700 pb-2 inline-block">
+              Our Branches
+            </h4>
+            <div className="space-y-3 text-sm text-gray-300">
+              <div>
+                <p className="font-bold text-white flex items-center space-x-1.5">
+                  <MapPin className="w-4 h-4 text-jadmaa-red flex-shrink-0" />
+                  <span>Thanjavur (HQ)</span>
+                </p>
+                <p className="text-gray-400 pl-5.5 text-xs">48, Carmel Nagar, Kaattuthottam</p>
+              </div>
+              <div>
+                <p className="font-bold text-white flex items-center space-x-1.5">
+                  <MapPin className="w-4 h-4 text-jadmaa-red flex-shrink-0" />
+                  <span>Kumbakonam</span>
+                </p>
+                <p className="text-gray-400 pl-5.5 text-xs">Swamimalai Main Road, Melakkaveri</p>
+              </div>
+              <div>
+                <p className="font-bold text-white flex items-center space-x-1.5">
+                  <MapPin className="w-4 h-4 text-jadmaa-red flex-shrink-0" />
+                  <span>Ariyalur</span>
+                </p>
+                <p className="text-gray-400 pl-5.5 text-xs">Mr. Perfect Gym, Ariyalur</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Contact Information */}
+          <div className="space-y-3">
+            <h4 className="font-heading font-bold text-lg text-white border-b border-gray-700 pb-2 inline-block">
+              Contact Us
+            </h4>
+            <div className="space-y-3 text-sm text-gray-300">
+              <div className="flex items-center space-x-2">
+                <Phone className="w-4 h-4 text-jadmaa-red flex-shrink-0" />
+                <a href="tel:+919345220020" className="hover:text-jadmaa-red transition-colors font-mono font-semibold">+91 93452 20020</a>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Phone className="w-4 h-4 text-jadmaa-red flex-shrink-0" />
+                <a href="tel:+919655457500" className="hover:text-jadmaa-red transition-colors font-mono font-semibold">+91 96554 57500</a>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Mail className="w-4 h-4 text-jadmaa-red flex-shrink-0" />
+                <a href="mailto:info@jadmaa.com" className="hover:text-jadmaa-red transition-colors font-mono">info@jadmaa.com</a>
+              </div>
+            </div>
+          </div>
+
           {/* Quick Links */}
           <div className="space-y-3">
             <h4 className="font-heading font-bold text-lg text-white border-b border-gray-700 pb-2 inline-block">
               Quick Links
             </h4>
-            <ul className="space-y-2 text-base text-gray-300">
+            <ul className="space-y-2 text-sm text-gray-300">
               <li><Link to="/about" className="hover:text-jadmaa-red transition-colors">About Us</Link></li>
               <li><Link to="/careers" className="hover:text-jadmaa-red transition-colors">Careers & Pathways</Link></li>
               <li><Link to="/blog" className="hover:text-jadmaa-red transition-colors">Blog</Link></li>
@@ -77,36 +127,18 @@ export const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* Featured Courses */}
+          {/* Featured Courses / Programs */}
           <div className="space-y-3">
             <h4 className="font-heading font-bold text-lg text-white border-b border-gray-700 pb-2 inline-block">
               Programs
             </h4>
-            <ul className="space-y-2 text-base text-gray-300">
+            <ul className="space-y-2 text-sm text-gray-300">
               <li><Link to="/courses/varma-foundation" className="hover:text-jadmaa-red transition-colors">Varma Foundation</Link></li>
               <li><Link to="/courses/intermediate-varma" className="hover:text-jadmaa-red transition-colors">Intermediate Varma</Link></li>
               <li><Link to="/courses/kids-varmakalai" className="hover:text-jadmaa-red transition-colors">Kids Varmakalai</Link></li>
               <li><Link to="/courses/womens-self-defence" className="hover:text-jadmaa-red transition-colors">Women's Self Defence</Link></li>
               <li><Link to="/courses/all-in-one-selfdefence" className="hover:text-jadmaa-red transition-colors">Complete Self Defence</Link></li>
             </ul>
-          </div>
-
-          {/* Academy Locations */}
-          <div className="space-y-3">
-            <h4 className="font-heading font-bold text-lg text-white border-b border-gray-700 pb-2 inline-block">
-              Academy Locations
-            </h4>
-            <div className="space-y-3 text-sm text-gray-300">
-              {mockBranches.map((branch) => (
-                <div key={branch.id} className="space-y-1">
-                  <p className="font-bold text-white flex items-center space-x-1">
-                    <MapPin className="w-3.5 h-3.5 text-jadmaa-red flex-shrink-0" />
-                    <span>{branch.city} {branch.isHeadquarters ? "(HQ)" : ""}</span>
-                  </p>
-                  <p className="text-gray-400 pl-4">{branch.phone}</p>
-                </div>
-              ))}
-            </div>
           </div>
 
         </div>
