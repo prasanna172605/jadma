@@ -1,7 +1,7 @@
 import { BrevoService } from './brevo.service.js';
 import { prisma } from '../../db.js';
 
-export const sendPasswordResetEmail = async (email: string, resetUrl: string, name: string) => {
+export const sendPasswordResetEmail = async (email: string, resetUrl: string, name: string): Promise<boolean> => {
   try {
     const subject = 'Reset your JADMAA password';
     const htmlContent = `
@@ -24,23 +24,11 @@ export const sendPasswordResetEmail = async (email: string, resetUrl: string, na
       </div>
     `;
 
-    const success = await BrevoService.sendEmail(email, subject, htmlContent);
-    if (!success) {
-      console.warn(`
-┌────────────────────────────────────────────────────────────────────────┐
-│ ⚠️  BREVO EMAIL DELIVERY FAILURE                                       │
-├────────────────────────────────────────────────────────────────────────┤
-│ JADMAA was unable to send the password reset email via Brevo because    │
-│ your Brevo account IP restrictions or SMTP logins are blocking Cloud Run.│
-│                                                                        │
-│ 👉 You can bypass this restriction and test the reset directly with:   │
-│                                                                        │
-│ ${resetUrl}                                                            │
-└────────────────────────────────────────────────────────────────────────┘
-      `);
-    }
+    const success = await BrevoService.sendTransactionalEmail(email, subject, htmlContent);
+    return success;
   } catch (error) {
     console.error('Error sending password reset email:', error);
+    return false;
   }
 };
 

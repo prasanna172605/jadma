@@ -111,7 +111,53 @@ export class BrevoService {
   }
 
   /**
-   * Send transactional email using Brevo's v3 API
+   * Strict Transactional Email for Password Resets (No SMTP Fallback)
+   */
+  public static async sendTransactionalEmail(to: string, subject: string, htmlContent: string, senderName = 'JADMAA Varmakalai'): Promise<boolean> {
+    const apiKey = this.getApiKey();
+    const maskedEmail = to.replace(/(.{2})(.*)(?=@)/, (gp1, gp2, gp3) => gp2 + '*'.repeat(gp3.length));
+    const timestamp = new Date().toISOString();
+
+    if (!apiKey) {
+      console.error(`[${timestamp}] [BrevoService] sendTransactionalEmail failed: BREVO_API_KEY is missing. Recipient: ${maskedEmail}`);
+      return false;
+    }
+
+    let senderEmail = getFromAddress();
+
+    try {
+      let response = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+          'accept': 'application/json',
+          'api-key': apiKey,
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify({
+          sender: { name: senderName, email: senderEmail },
+          to: [{ email: to }],
+          subject: subject,
+          htmlContent: htmlContent
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error(`[${timestamp}] [BrevoService] Transactional email failed for ${maskedEmail}. HTTP: ${response.status}. Error: ${errorData}`);
+        return false;
+      }
+
+      const data = (await response.json()) as BrevoEmailResponse;
+      console.log(`[${timestamp}] [BrevoService] Transactional email sent to ${maskedEmail}. HTTP: ${response.status}. MessageID: ${data.messageId}`);
+      return true;
+    } catch (error: any) {
+      console.error(`[${timestamp}] [BrevoService] Error sending transactional email to ${maskedEmail}: ${error.message}`);
+      return false;
+    }
+  }
+
+  /**
+   * Send general email using Brevo's v3 API with SMTP fallback
    */
   public static async sendEmail(to: string, subject: string, htmlContent: string, senderName = 'JADMAA Varmakalai'): Promise<boolean> {
     const apiKey = this.getApiKey();
@@ -121,15 +167,6 @@ export class BrevoService {
     }
 
     let senderEmail = getFromAddress();
-
-    console.log('[BrevoService] sendEmail triggered:', {
-      to,
-      subject,
-      senderEmail,
-      senderName,
-      apiKeyLength: apiKey ? apiKey.length : 0,
-      apiKeyObfuscated: apiKey ? apiKey.substring(0, 10) + '...' : 'none'
-    });
 
     const attemptSend = async (fromEmail: string) => {
       return fetch('https://api.brevo.com/v3/smtp/email', {
@@ -155,69 +192,11 @@ export class BrevoService {
       let response = await attemptSend(senderEmail);
 
       if (!response.ok) {
-        const errorData = await response.text();
-        console.error('[BrevoService] Failed to send email via Brevo API:', errorData);
-        
-        if (errorData.includes('invalid_parameter') || errorData.includes('sender') || errorData.includes('sender email')) {
-          console.warn('[BrevoService] Configured sender email is not verified in Brevo. Fetching verified senders list...');
-          const verifiedEmails = await this.getVerifiedSenders();
-          
-          if (verifiedEmails.length > 0) {
-            const fallbackSender = verifiedEmails[0];
-            console.log(`[BrevoService] Retrying send using verified sender fallback: ${fallbackSender}`);
-            response = await attemptSend(fallbackSender);
-            
-            if (response.ok) {
-              const data = (await response.json()) as BrevoEmailResponse;
-              console.log(`[BrevoService] Email sent successfully via Brevo API using fallback sender. MessageID: ${data.messageId}`);
-              return true;
-            } else {
-              console.error('[BrevoService] Retry with fallback sender failed:', await response.text());
-            }
-          } else {
-            console.warn(`
-┌────────────────────────────────────────────────────────────────────────┐
-│ 💡 BREVO ERROR: NO VERIFIED SENDERS FOUND                              │
-├────────────────────────────────────────────────────────────────────────┤
-│ Brevo rejected the sender email: "${senderEmail}"                      │
-│                                                                        │
-│ 👉 How to fix this:                                                   │
-│ 1. Log in to Brevo (https://app.brevo.com).                           │
-│ 2. Go to: Senders, domains, IPs.                                      │
-│ 3. Verify "${senderEmail}" or your domain.                            │
-│ 4. Or change EMAIL_FROM in .env to a verified sender email address.    │
-└────────────────────────────────────────────────────────────────────────┘
-            `);
-          }
-        }
-        
-        if (errorData.includes('unrecognised IP address') || errorData.includes('authorised_ips')) {
-          console.warn(`
-┌────────────────────────────────────────────────────────────────────────┐
-│ 💡 BREVO SECURITY ALERT: UNRECOGNIZED IP ADDRESS                       │
-├────────────────────────────────────────────────────────────────────────┤
-│ Brevo is blocking requests because "Authorized IPs" is enabled in      │
-│ your Brevo Account settings, but Cloud Run's dynamic IP range is not   │
-│ authorized.                                                            │
-│                                                                        │
-│ 👉 To fix this, please:                                               │
-│ 1. Log in to your Brevo Dashboard.                                     │
-│ 2. Go to: Security settings / Authorized IPs                           │
-│    (https://app.brevo.com/security/authorised_ips)                    │
-│ 3. Turn OFF IP restrictions OR add your application's current IP.      │
-└────────────────────────────────────────────────────────────────────────┘
-          `);
-        }
-
-        // Fall back to SMTP relay if API fails
         return this.sendViaSmtp(to, subject, htmlContent);
       }
 
-      const data = (await response.json()) as BrevoEmailResponse;
-      console.log(`[BrevoService] Email sent successfully via Brevo API. MessageID: ${data.messageId}`);
       return true;
     } catch (error) {
-      console.error('[BrevoService] Error sending email via Brevo API:', error);
       return this.sendViaSmtp(to, subject, htmlContent);
     }
   }

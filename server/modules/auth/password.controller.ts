@@ -18,59 +18,78 @@ export const forgotPassword = async (req: Request, res: Response) => {
       where: { email: normalizedEmail }
     });
 
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        error: {
-          message: "This email address is not registered with us. Please register first to create an account."
-        }
+    // Check for cooldown even if user doesn't exist (to avoid timing attacks, though harder).
+    // If user exists, we strictly enforce DB-based 60-second cooldown.
+    if (user) {
+      const recentToken = await prisma.passwordResetToken.findFirst({
+        where: { userId: user.id },
+        orderBy: { createdAt: 'desc' }
       });
-    }
 
-    if (!user.isActive) {
-      return res.status(400).json({
-        success: false,
-        error: {
-          message: "This account has been deactivated. Please contact support."
+      if (recentToken) {
+        const secondsSinceLastToken = (Date.now() - recentToken.createdAt.getTime()) / 1000;
+        if (secondsSinceLastToken < 60) {
+          return res.status(429).json({
+            success: false,
+            error: {
+              message: "Please wait 60 seconds before requesting another reset email."
+            }
+          });
         }
-      });
-    }
-
-    // Invalidate existing unused tokens for this user
-    await prisma.passwordResetToken.updateMany({
-      where: { userId: user.id, usedAt: null },
-      data: { usedAt: new Date() }
-    });
-
-    const rawToken = crypto.randomBytes(32).toString('hex');
-    const tokenHash = await bcrypt.hash(rawToken, 10);
-    const expiresAt = new Date(Date.now() + 30 * 60 * 1000); // 30 mins
-
-    await prisma.passwordResetToken.create({
-      data: {
-        userId: user.id,
-        tokenHash,
-        expiresAt
       }
-    });
 
-    let frontendUrl = process.env.FRONTEND_URL;
-    if (frontendUrl && (frontendUrl.includes('frontend_url=') || frontendUrl === '/')) {
-      frontendUrl = '';
+      if (!user.isActive) {
+        // We still return generic success to prevent enumeration, or we could return error.
+        // The prompt says "Existing active user -> create token + send email. Non-existing user -> do not create token/send email. Response remains generic."
+        return res.json({
+          success: true,
+          message: "If an account exists for this email address, password reset instructions have been sent."
+        });
+      }
+
+      // Invalidate existing unused tokens for this user
+      await prisma.passwordResetToken.updateMany({
+        where: { userId: user.id, usedAt: null },
+        data: { usedAt: new Date() }
+      });
+
+      const rawToken = crypto.randomBytes(32).toString('hex');
+      const tokenHash = await bcrypt.hash(rawToken, 10);
+      const expiresAt = new Date(Date.now() + 30 * 60 * 1000); // 30 mins
+
+      await prisma.passwordResetToken.create({
+        data: {
+          userId: user.id,
+          tokenHash,
+          expiresAt
+        }
+      });
+
+      let frontendUrl = process.env.FRONTEND_URL;
+      if (frontendUrl && (frontendUrl.includes('frontend_url=') || frontendUrl === '/')) {
+        frontendUrl = '';
+      }
+      if (!frontendUrl) {
+        frontendUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL 
+          ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` 
+          : (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:5173');
+      }
+
+      const resetUrl = `${frontendUrl}/reset-password?token=${rawToken}&id=${user.id}`;
+
+      const sent = await sendPasswordResetEmail(user.email, resetUrl, user.name);
+      if (!sent) {
+        return res.status(500).json({
+          success: false,
+          error: { message: "Unable to send the reset email. Please try again later." }
+        });
+      }
     }
-    if (!frontendUrl) {
-      frontendUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL 
-        ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` 
-        : (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:5173');
-    }
 
-    const resetUrl = `${frontendUrl}/reset-password?token=${rawToken}&id=${user.id}`;
-
-    await sendPasswordResetEmail(user.email, resetUrl, user.name);
-
+    // Generic response for both existing and non-existing active users
     res.json({
       success: true,
-      message: "Password reset instructions have been sent to your email address."
+      message: "If an account exists for this email address, password reset instructions have been sent."
     });
   } catch (err: any) {
     if (err instanceof z.ZodError) {
