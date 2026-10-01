@@ -77,11 +77,11 @@ export const forgotPassword = async (req: Request, res: Response) => {
 
       const resetUrl = `${frontendUrl}/reset-password?token=${rawToken}&id=${user.id}`;
 
-      const sent = await sendPasswordResetEmail(user.email, resetUrl, user.name);
-      if (!sent) {
+      const result = await sendPasswordResetEmail(user.email, resetUrl, user.name);
+      if (!result.success) {
         return res.status(500).json({
           success: false,
-          error: { message: "Unable to send the reset email. Please try again later." }
+          error: { message: `Unable to send the reset email. Please try again later. (Reason: ${result.reason || 'Unknown error'})` }
         });
       }
     }

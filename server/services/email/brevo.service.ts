@@ -113,14 +113,14 @@ export class BrevoService {
   /**
    * Strict Transactional Email for Password Resets (No SMTP Fallback)
    */
-  public static async sendTransactionalEmail(to: string, subject: string, htmlContent: string, senderName = 'JADMAA Varmakalai'): Promise<boolean> {
+  public static async sendTransactionalEmail(to: string, subject: string, htmlContent: string, senderName = 'JADMAA Varmakalai'): Promise<{success: boolean, reason?: string}> {
     const apiKey = this.getApiKey();
     const maskedEmail = to.replace(/(.{2})(.*)(?=@)/, (gp1, gp2, gp3) => gp2 + '*'.repeat(gp3.length));
     const timestamp = new Date().toISOString();
 
     if (!apiKey) {
       console.error(`[${timestamp}] [BrevoService] sendTransactionalEmail failed: BREVO_API_KEY is missing. Recipient: ${maskedEmail}`);
-      return false;
+      return { success: false, reason: "BREVO_API_KEY is missing" };
     }
 
     let senderEmail = getFromAddress();
@@ -161,16 +161,17 @@ export class BrevoService {
         }
         
         if (!response.ok) {
-           return false;
+           const finalError = await response.text().catch(() => errorData);
+           return { success: false, reason: `Brevo API rejected the request. Status: ${response.status}. Details: ${finalError}` };
         }
       }
 
       const data = (await response.json()) as BrevoEmailResponse;
       console.log(`[${timestamp}] [BrevoService] Transactional email sent to ${maskedEmail}. HTTP: ${response.status}. MessageID: ${data.messageId}`);
-      return true;
+      return { success: true };
     } catch (error: any) {
       console.error(`[${timestamp}] [BrevoService] Error sending transactional email to ${maskedEmail}: ${error.message}`);
-      return false;
+      return { success: false, reason: error.message };
     }
   }
 

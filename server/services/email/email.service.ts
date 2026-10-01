@@ -1,7 +1,7 @@
 import { BrevoService } from './brevo.service.js';
 import { prisma } from '../../db.js';
 
-export const sendPasswordResetEmail = async (email: string, resetUrl: string, name: string): Promise<boolean> => {
+export const sendPasswordResetEmail = async (email: string, resetUrl: string, name: string): Promise<{success: boolean, reason?: string}> => {
   try {
     const subject = 'Reset your JADMAA password';
     const htmlContent = `
@@ -24,11 +24,11 @@ export const sendPasswordResetEmail = async (email: string, resetUrl: string, na
       </div>
     `;
 
-    const success = await BrevoService.sendTransactionalEmail(email, subject, htmlContent);
-    return success;
-  } catch (error) {
+    const result = await BrevoService.sendTransactionalEmail(email, subject, htmlContent);
+    return result;
+  } catch (error: any) {
     console.error('Error sending password reset email:', error);
-    return false;
+    return { success: false, reason: error.message };
   }
 };
 
