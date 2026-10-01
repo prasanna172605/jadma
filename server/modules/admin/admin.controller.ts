@@ -74,7 +74,8 @@ export const getAnalytics = async (req: Request, res: Response) => {
 export const getStudents = async (req: Request, res: Response) => {
   try {
     const { page, limit, skip } = getPagination(req);
-    const { search, status } = req.query;
+    const search = req.query.search as string;
+    const status = req.query.status as string;
     
     const where: any = { role: 'STUDENT' };
     
@@ -152,7 +153,7 @@ export const updateStudentStatus = async (req: Request, res: Response) => {
 export const getInstructors = async (req: Request, res: Response) => {
   try {
     const { page, limit, skip } = getPagination(req);
-    const { search } = req.query;
+    const search = req.query.search as string;
     
     const where: any = {};
     if (search) {
@@ -272,7 +273,8 @@ export const updateInstructorStatus = async (req: Request, res: Response) => {
 export const getCourses = async (req: Request, res: Response) => {
   try {
     const { page, limit, skip } = getPagination(req);
-    const { search, status } = req.query;
+    const search = req.query.search as string;
+    const status = req.query.status as string;
     
     const where: any = {};
     if (search) where.title = { contains: search as string, mode: 'insensitive' };
@@ -452,7 +454,9 @@ export const deleteLesson = async (req: Request, res: Response) => {
 export const getEnrollments = async (req: Request, res: Response) => {
   try {
     const { page, limit, skip } = getPagination(req);
-    const { status, courseId, userId } = req.query;
+    const status = req.query.status as string;
+    const courseId = req.query.courseId as string;
+    const userId = req.query.userId as string;
     
     const where: any = {};
     if (status) where.status = status;
@@ -488,7 +492,8 @@ export const getEnrollmentById = async (req: Request, res: Response) => {
 export const getPayments = async (req: Request, res: Response) => {
   try {
     const { page, limit, skip } = getPagination(req);
-    const { status, merchantOrderId } = req.query;
+    const status = req.query.status as string;
+    const merchantOrderId = req.query.merchantOrderId as string;
     
     const where: any = {};
     if (status) where.status = status;

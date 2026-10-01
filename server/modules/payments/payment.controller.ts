@@ -164,7 +164,7 @@ export const paymentCallback = async (req: Request, res: Response) => {
 
 export const checkPaymentStatus = async (req: Request, res: Response) => {
   try {
-    const { merchantOrderId } = req.params;
+    const merchantOrderId = req.params.merchantOrderId as string;
     const payment = await prisma.payment.findUnique({ where: { merchantOrderId } });
     
     if (!payment) {

@@ -49,7 +49,7 @@ export const register = async (req: Request, res: Response) => {
     res.json({ success: true, data: { id: user.id, name: user.name, email: user.email } });
   } catch (err: any) {
     if (err instanceof z.ZodError) {
-      return res.status(400).json({ success: false, error: { message: 'Validation error', details: err.errors } });
+      return res.status(400).json({ success: false, error: { message: 'Validation error', details: (err as any).errors } });
     }
     console.error('Register error:', err);
     res.status(500).json({ success: false, error: { message: 'Server error' } });
@@ -104,7 +104,7 @@ export const login = async (req: Request, res: Response) => {
     });
   } catch (err: any) {
     if (err instanceof z.ZodError) {
-      return res.status(400).json({ success: false, error: { message: 'Validation error', details: err.errors } });
+      return res.status(400).json({ success: false, error: { message: 'Validation error', details: (err as any).errors } });
     }
     console.error('Login error:', err);
     res.status(500).json({ success: false, error: { message: 'Server error' } });

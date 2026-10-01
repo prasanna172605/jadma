@@ -14,12 +14,12 @@ export const getTables = async (req: Request, res: Response) => {
 
 export const getTableData = async (req: Request, res: Response) => {
   try {
-    const { table } = req.params;
+    const table = req.params.table as string;
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 50;
     const skip = (page - 1) * limit;
 
-    const modelName = table.charAt(0).toLowerCase() + table.slice(1);
+    const modelName = (String(table)).charAt(0).toLowerCase() + table.slice(1);
     const delegate = (prisma as any)[modelName];
     
     if (!delegate) return res.status(404).json({ success: false, error: { message: 'Table not found' }});
@@ -37,8 +37,8 @@ export const getTableData = async (req: Request, res: Response) => {
 
 export const createTableRow = async (req: Request, res: Response) => {
   try {
-    const { table } = req.params;
-    const modelName = table.charAt(0).toLowerCase() + table.slice(1);
+    const table = req.params.table as string;
+    const modelName = (String(table)).charAt(0).toLowerCase() + table.slice(1);
     const delegate = (prisma as any)[modelName];
     
     if (!delegate) return res.status(404).json({ success: false, error: { message: 'Table not found' }});
@@ -52,8 +52,9 @@ export const createTableRow = async (req: Request, res: Response) => {
 
 export const updateTableRow = async (req: Request, res: Response) => {
   try {
-    const { table, id } = req.params;
-    const modelName = table.charAt(0).toLowerCase() + table.slice(1);
+    const table = req.params.table as string;
+    const id = req.params.id as string;
+    const modelName = (String(table)).charAt(0).toLowerCase() + table.slice(1);
     const delegate = (prisma as any)[modelName];
     
     if (!delegate) return res.status(404).json({ success: false, error: { message: 'Table not found' }});
@@ -70,8 +71,9 @@ export const updateTableRow = async (req: Request, res: Response) => {
 
 export const deleteTableRow = async (req: Request, res: Response) => {
   try {
-    const { table, id } = req.params;
-    const modelName = table.charAt(0).toLowerCase() + table.slice(1);
+    const table = req.params.table as string;
+    const id = req.params.id as string;
+    const modelName = (String(table)).charAt(0).toLowerCase() + table.slice(1);
     const delegate = (prisma as any)[modelName];
     
     if (!delegate) return res.status(404).json({ success: false, error: { message: 'Table not found' }});

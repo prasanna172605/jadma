@@ -24,7 +24,7 @@ export const getMyEnrollments = async (req: Request, res: Response) => {
       });
       
       let totalLessons = 0;
-      e.course.modules.forEach(m => {
+      e.(course as any).modules.forEach(m => {
         totalLessons += m.lessons.length;
       });
       
@@ -47,7 +47,7 @@ export const getMyEnrollments = async (req: Request, res: Response) => {
 export const getCourseProgress = async (req: Request, res: Response) => {
   try {
     const user = (req as any).user;
-    const { courseId } = req.params;
+    const courseId = req.params.courseId as string;
 
     const course = await prisma.course.findUnique({
       where: { id: courseId },
@@ -76,7 +76,7 @@ export const getCourseProgress = async (req: Request, res: Response) => {
     const completedLessonIds = progress.map(p => p.lessonId);
     
     let totalLessons = 0;
-    course.modules.forEach(m => {
+    (course as any).modules.forEach(m => {
       totalLessons += m.lessons.length;
     });
 
@@ -103,7 +103,7 @@ export const getCourseProgress = async (req: Request, res: Response) => {
 export const updateLessonProgress = async (req: Request, res: Response) => {
   try {
     const user = (req as any).user;
-    const { lessonId } = req.params;
+    const lessonId = req.params.lessonId as string;
     const { watchedSeconds, completed } = req.body;
 
     const lesson = await prisma.lesson.findUnique({
@@ -117,7 +117,7 @@ export const updateLessonProgress = async (req: Request, res: Response) => {
 
     // Verify enrollment
     const enrollment = await prisma.enrollment.findUnique({
-      where: { userId_courseId: { userId: user.id, courseId: lesson.module.courseId } }
+      where: { userId_courseId: { userId: user.id, courseId: (lesson as any).module.courseId } }
     });
 
     if (!enrollment || enrollment.status !== 'ACTIVE') {
@@ -134,7 +134,7 @@ export const updateLessonProgress = async (req: Request, res: Response) => {
       },
       create: {
         userId: user.id,
-        courseId: lesson.module.courseId,
+        courseId: (lesson as any).module.courseId,
         lessonId,
         watchedSeconds: watchedSeconds || 0,
         completed: completed || false,
@@ -146,17 +146,17 @@ export const updateLessonProgress = async (req: Request, res: Response) => {
     // Check if course is fully completed and unlock certificate
     if (completed) {
       const course = await prisma.course.findUnique({
-        where: { id: lesson.module.courseId },
+        where: { id: (lesson as any).module.courseId },
         include: { modules: { include: { lessons: { where: { isRequired: true } } } } }
       });
       
       let requiredLessonIds: string[] = [];
-      course?.modules.forEach(m => {
+      (course as any)?.modules.forEach(m => {
         requiredLessonIds.push(...m.lessons.map(l => l.id));
       });
 
       const allProgress = await prisma.lessonProgress.findMany({
-        where: { userId: user.id, courseId: lesson.module.courseId, completed: true }
+        where: { userId: user.id, courseId: (lesson as any).module.courseId, completed: true }
       });
       const completedIds = allProgress.map(p => p.lessonId);
       
@@ -239,7 +239,7 @@ export const getDashboard = async (req: Request, res: Response) => {
         where: { userId: user.id, courseId: e.courseId, completed: true }
       });
       let totalLessons = 0;
-      e.course.modules.forEach(m => totalLessons += m.lessons.length);
+      e.(course as any).modules.forEach(m => totalLessons += m.lessons.length);
       const percentage = totalLessons > 0 ? Math.round((progressCount / totalLessons) * 100) : 0;
       
       if (e.status === 'COMPLETED') completedCourses++;
@@ -262,12 +262,12 @@ export const getDashboard = async (req: Request, res: Response) => {
            course: formatted,
            lessonId: lastWatched.lessonId,
            lessonTitle: lastWatched.lesson.title,
-           moduleTitle: lastWatched.lesson.module.title,
+           moduleTitle: lastWatched.(lesson as any).module.title,
          };
       } else if (!continueLearning && e.status !== 'COMPLETED') {
          continueLearning = {
            course: formatted,
-           lessonId: e.course.modules[0]?.lessons[0]?.id || null,
+           lessonId: (e.course as any).modules[0]?.lessons[0]?.id || null,
            lessonTitle: "Start Course",
            moduleTitle: ""
          };
