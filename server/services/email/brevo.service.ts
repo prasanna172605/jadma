@@ -125,8 +125,8 @@ export class BrevoService {
 
     let senderEmail = getFromAddress();
 
-    try {
-      let response = await fetch('https://api.brevo.com/v3/smtp/email', {
+    const attemptSend = async (fromEmail: string) => {
+      return fetch('https://api.brevo.com/v3/smtp/email', {
         method: 'POST',
         headers: {
           'accept': 'application/json',
@@ -134,17 +134,35 @@ export class BrevoService {
           'content-type': 'application/json'
         },
         body: JSON.stringify({
-          sender: { name: senderName, email: senderEmail },
+          sender: { name: senderName, email: fromEmail },
           to: [{ email: to }],
           subject: subject,
           htmlContent: htmlContent
         })
       });
+    };
+
+    try {
+      let response = await attemptSend(senderEmail);
 
       if (!response.ok) {
         const errorData = await response.text();
         console.error(`[${timestamp}] [BrevoService] Transactional email failed for ${maskedEmail}. HTTP: ${response.status}. Error: ${errorData}`);
-        return false;
+        
+        // Retry with verified sender if configured sender is rejected
+        if (errorData.includes('invalid_parameter') || errorData.includes('sender') || errorData.includes('sender email')) {
+          console.warn(`[${timestamp}] [BrevoService] Sender not verified. Fetching verified senders...`);
+          const verifiedEmails = await this.getVerifiedSenders();
+          if (verifiedEmails.length > 0) {
+            const fallbackSender = verifiedEmails[0];
+            console.log(`[${timestamp}] [BrevoService] Retrying with verified sender: ${fallbackSender}`);
+            response = await attemptSend(fallbackSender);
+          }
+        }
+        
+        if (!response.ok) {
+           return false;
+        }
       }
 
       const data = (await response.json()) as BrevoEmailResponse;
