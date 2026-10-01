@@ -133,7 +133,7 @@ export const resetPassword = async (req: Request, res: Response) => {
     });
   } catch (err: any) {
     if (err instanceof z.ZodError) {
-      return res.status(400).json({ success: false, error: { message: err.errors[0].message } });
+      return res.status(400).json({ success: false, error: { message: (err as any).errors[0].message } });
     }
     console.error('resetPassword error:', err);
     res.status(500).json({ success: false, error: { message: 'Internal server error' } });
@@ -189,7 +189,7 @@ export const changePassword = async (req: Request, res: Response) => {
     });
   } catch (err: any) {
     if (err instanceof z.ZodError) {
-      return res.status(400).json({ success: false, error: { message: err.errors[0].message } });
+      return res.status(400).json({ success: false, error: { message: (err as any).errors[0].message } });
     }
     console.error('changePassword error:', err);
     res.status(500).json({ success: false, error: { message: 'Internal server error' } });
