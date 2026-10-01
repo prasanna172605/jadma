@@ -24,7 +24,7 @@ export const getMyEnrollments = async (req: Request, res: Response) => {
       });
       
       let totalLessons = 0;
-      e.(course as any).modules.forEach(m => {
+      (e.course as any).modules.forEach((m: any) => {
         totalLessons += m.lessons.length;
       });
       
@@ -239,7 +239,7 @@ export const getDashboard = async (req: Request, res: Response) => {
         where: { userId: user.id, courseId: e.courseId, completed: true }
       });
       let totalLessons = 0;
-      e.(course as any).modules.forEach(m => totalLessons += m.lessons.length);
+      (e.course as any).modules.forEach(m => totalLessons += m.lessons.length);
       const percentage = totalLessons > 0 ? Math.round((progressCount / totalLessons) * 100) : 0;
       
       if (e.status === 'COMPLETED') completedCourses++;
@@ -262,7 +262,7 @@ export const getDashboard = async (req: Request, res: Response) => {
            course: formatted,
            lessonId: lastWatched.lessonId,
            lessonTitle: lastWatched.lesson.title,
-           moduleTitle: lastWatched.(lesson as any).module.title,
+           moduleTitle: (lastWatched.lesson as any).module.title,
          };
       } else if (!continueLearning && e.status !== 'COMPLETED') {
          continueLearning = {
