@@ -93,7 +93,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  role: 'student' | 'instructor' | 'admin';
+  role: 'student' | 'instructor' | 'admin' | 'super_admin';
   avatar?: string;
   enrolledCourses: string[]; // course IDs
   progress: Record<string, number>; // courseId -> percentage

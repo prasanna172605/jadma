@@ -6,8 +6,8 @@ const router = Router();
 
 router.get('/', getBlogs);
 router.get('/:slug', getBlogBySlug);
-router.post('/', authenticate, authorize(['ADMIN']), createBlog);
-router.put('/:id', authenticate, authorize(['ADMIN']), updateBlog);
-router.delete('/:id', authenticate, authorize(['ADMIN']), deleteBlog);
+router.post('/', authenticate, authorize(['admin', 'super_admin']), createBlog);
+router.put('/:id', authenticate, authorize(['admin', 'super_admin']), updateBlog);
+router.delete('/:id', authenticate, authorize(['admin', 'super_admin']), deleteBlog);
 
 export default router;
