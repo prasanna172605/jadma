@@ -54,7 +54,16 @@ export const forgotPassword = async (req: Request, res: Response) => {
       }
     });
 
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    let frontendUrl = process.env.FRONTEND_URL;
+    if (frontendUrl && (frontendUrl.includes('frontend_url=') || frontendUrl === '/')) {
+      frontendUrl = '';
+    }
+    if (!frontendUrl) {
+      frontendUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL 
+        ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` 
+        : (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:5173');
+    }
+
     const resetUrl = `${frontendUrl}/reset-password?token=${rawToken}&id=${user.id}`;
 
     await sendPasswordResetEmail(user.email, resetUrl, user.name);
