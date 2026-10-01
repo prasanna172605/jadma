@@ -62,13 +62,18 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-    // Run the Brevo API and sender configuration self-test
-    BrevoService.selfTest().catch(err => {
-      console.error('[Server] Brevo self-test failed with error:', err);
+  if (!process.env.VERCEL) {
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+      // Run the Brevo API and sender configuration self-test
+      BrevoService.selfTest().catch(err => {
+        console.error('[Server] Brevo self-test failed with error:', err);
+      });
     });
-  });
+  }
+
+  return app;
 }
 
-startServer();
+const app = await startServer();
+export default app;
