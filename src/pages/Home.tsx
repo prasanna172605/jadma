@@ -132,7 +132,7 @@ export const Home: React.FC = () => {
                 <img 
                   src="/images/hero-kick-action-386x1024.jpg" 
                   alt="Varmakalai Practitioner Stance" 
-                  className="max-h-[500px] lg:max-h-[600px] xl:max-h-[650px] w-auto object-contain object-bottom drop-shadow-[0_20px_40px_rgba(177,43,43,0.25)] hover:scale-105 transition-transform duration-700 ease-out"
+                  className="max-h-[500px] lg:max-h-[600px] xl:max-h-[650px] w-auto object-contain object-bottom mix-blend-multiply drop-shadow-[0_20px_40px_rgba(177,43,43,0.25)] hover:scale-105 transition-transform duration-700 ease-out"
                 />
               </div>
             </div>
