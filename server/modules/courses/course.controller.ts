@@ -1,8 +1,5 @@
 import { Request, Response } from 'express';
 import { prisma } from '../../db.js';
-import { mockCourses } from '../../../src/data/courses.js';
-
-
 let coursesCache: any = null;
 let lastCacheTime = 0;
 const CACHE_TTL = 1000 * 60 * 5; // 5 minutes
@@ -72,8 +69,8 @@ export const getCourses = async (req: Request, res: Response) => {
 
 
   } catch (err: any) {
-    console.warn('getCourses error, falling back to mock data:', err);
-    res.json({ success: true, data: mockCourses });
+    console.warn('getCourses error:', err);
+    res.status(500).json({ success: false, error: { message: 'Server error fetching courses' } });
   }
 };
 
@@ -100,8 +97,6 @@ export const getCourseBySlug = async (req: Request, res: Response) => {
     });
 
     if (!course) {
-       const mockCourse = mockCourses.find(c => c.slug === req.params.slug || c.id === req.params.slug);
-       if (mockCourse) return res.json({ success: true, data: mockCourse });
        return res.status(404).json({ success: false, error: { message: 'Course not found' } });
     }
 
@@ -149,9 +144,7 @@ export const getCourseBySlug = async (req: Request, res: Response) => {
     res.json({ success: true, data: formatted });
 
   } catch (err: any) {
-    console.warn('getCourseBySlug error, falling back to mock data:', err);
-    const mockCourse = mockCourses.find(c => c.slug === req.params.slug || c.id === req.params.slug);
-    if (mockCourse) return res.json({ success: true, data: mockCourse });
+    console.warn('getCourseBySlug error:', err);
     res.status(500).json({ success: false, error: { message: 'Server error' } });
   }
 };
