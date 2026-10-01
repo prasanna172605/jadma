@@ -185,7 +185,7 @@ export const CourseDetails: React.FC = () => {
                   {enrolling ? "Processing..." : (course.isFree ? "Enroll for Free Now" : "Enroll & Start Learning")}
                 </button>
 
-                <div className="space-y-2 text-sm md:text-lg md:text-xl text-jadmaa-textMuted border-t border-gray-100 pt-4">
+                <div className="space-y-2 text-sm md:text-xl text-jadmaa-textMuted border-t border-gray-100 pt-4">
                   <p className="flex items-center space-x-2">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                     <span>LMS Video & Curriculum Access</span>
@@ -275,7 +275,7 @@ export const CourseDetails: React.FC = () => {
                     <h4 className="font-heading font-extrabold text-lg text-jadmaa-charcoal">
                       Requirements & Prerequisites
                     </h4>
-                    <ul className="space-y-2 text-sm md:text-lg md:text-xl text-jadmaa-textMuted list-disc pl-5">
+                    <ul className="space-y-2 text-sm md:text-xl text-jadmaa-textMuted list-disc pl-5">
                       {course.requirements.map((req, idx) => (
                         <li key={idx}>{req}</li>
                       ))}
@@ -289,7 +289,7 @@ export const CourseDetails: React.FC = () => {
                     <h4 className="font-heading font-extrabold text-lg text-jadmaa-charcoal">
                       Who This Course Is For
                     </h4>
-                    <ul className="space-y-2 text-sm md:text-lg md:text-xl text-jadmaa-textMuted list-disc pl-5">
+                    <ul className="space-y-2 text-sm md:text-xl text-jadmaa-textMuted list-disc pl-5">
                       {course.targetAudience.map((aud, idx) => (
                         <li key={idx}>{aud}</li>
                       ))}
@@ -324,7 +324,7 @@ export const CourseDetails: React.FC = () => {
                 <h3 className="font-heading font-extrabold text-2xl md:text-3xl text-jadmaa-charcoal">
                   Course Modules & Lessons
                 </h3>
-                <span className="text-sm md:text-lg md:text-xl text-jadmaa-textMuted">Click module headers to expand</span>
+                <span className="text-sm md:text-xl text-jadmaa-textMuted">Click module headers to expand</span>
               </div>
               <CurriculumAccordion modules={course.modules} />
             </div>
@@ -348,7 +348,7 @@ export const CourseDetails: React.FC = () => {
                   </p>
                 </div>
               </div>
-              <p className="text-sm md:text-lg md:text-xl text-jadmaa-textMuted leading-relaxed">
+              <p className="text-sm md:text-xl text-jadmaa-textMuted leading-relaxed">
                 {course.instructor.bio}
               </p>
             </div>

@@ -45,7 +45,7 @@ export const CurriculumAccordion: React.FC<CurriculumAccordionProps> = ({
                     {module.title}
                   </h4>
                   {module.description && (
-                    <p className="text-sm md:text-lg md:text-xl text-jadmaa-textMuted mt-0.5">{module.description}</p>
+                    <p className="text-sm md:text-xl text-jadmaa-textMuted mt-0.5">{module.description}</p>
                   )}
                 </div>
               </div>

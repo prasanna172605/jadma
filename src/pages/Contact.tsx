@@ -73,7 +73,7 @@ export const Contact: React.FC = () => {
                   <h3 className="font-heading font-extrabold text-2xl md:text-3xl text-jadmaa-charcoal">
                     Enquiry Submitted Successfully!
                   </h3>
-                  <p className="text-sm md:text-lg md:text-xl text-jadmaa-textMuted max-w-md mx-auto leading-relaxed">
+                  <p className="text-sm md:text-xl text-jadmaa-textMuted max-w-md mx-auto leading-relaxed">
                     Thank you, <strong>{formData.name}</strong>. Our admissions team at the <strong>{formData.branch}</strong> branch will call you back on <strong>{formData.phone}</strong> shortly to schedule your session.
                   </p>
                   <button
@@ -89,7 +89,7 @@ export const Contact: React.FC = () => {
                     <h3 className="font-heading font-extrabold text-2xl md:text-3xl text-jadmaa-charcoal">
                       Send Us a Message
                     </h3>
-                    <p className="text-sm md:text-lg md:text-xl text-jadmaa-textMuted">Fill out the form below to request a free trial class or course brochure.</p>
+                    <p className="text-sm md:text-xl text-jadmaa-textMuted">Fill out the form below to request a free trial class or course brochure.</p>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -192,7 +192,7 @@ export const Contact: React.FC = () => {
                 <h3 className="font-heading font-extrabold text-2xl md:text-3xl text-jadmaa-charcoal">
                   Direct Contact Information
                 </h3>
-                <p className="text-sm md:text-lg md:text-xl text-jadmaa-textMuted leading-relaxed">
+                <p className="text-sm md:text-xl text-jadmaa-textMuted leading-relaxed">
                   Have urgent questions about class timings, registrations or therapeutic appointments? Reach out to our central team.
                 </p>
 

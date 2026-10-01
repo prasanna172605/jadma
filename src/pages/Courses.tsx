@@ -134,7 +134,7 @@ export const Courses: React.FC = () => {
             <div className="py-16 text-center bg-jadmaa-cream/40 rounded-2xl border border-dashed border-jadmaa-border space-y-3">
               <BookOpen className="w-10 h-10 text-gray-400 mx-auto" />
               <h3 className="font-heading font-extrabold text-lg text-jadmaa-charcoal">No courses match your criteria</h3>
-              <p className="text-sm md:text-lg md:text-xl text-jadmaa-textMuted">Try adjusting your category tabs or search query.</p>
+              <p className="text-sm md:text-xl text-jadmaa-textMuted">Try adjusting your category tabs or search query.</p>
               <button
                 onClick={() => { setSelectedCategory('All'); setSelectedLevel('All'); setSearchQuery(''); }}
                 className="px-4 py-2 text-base md:text-lg font-bold text-jadmaa-red hover:underline"

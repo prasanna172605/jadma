@@ -21,7 +21,7 @@ export const LiveClassCard: React.FC<LiveClassCardProps> = ({ liveClass }) => {
         <h4 className="font-heading font-extrabold text-lg text-jadmaa-charcoal">
           {liveClass.title}
         </h4>
-        <p className="text-sm md:text-lg md:text-xl text-jadmaa-textMuted mt-1">
+        <p className="text-sm md:text-xl text-jadmaa-textMuted mt-1">
           Course: <span className="font-semibold text-jadmaa-charcoal">{liveClass.courseTitle}</span>
         </p>
       </div>
