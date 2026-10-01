@@ -23,7 +23,7 @@ export const AdminPanel: React.FC = () => {
   }
 
   // Only allow admin or super_admin
-  if (user?.role !== 'ADMIN' && user?.role !== 'SUPER_ADMIN') {
+  if (user?.role !== 'admin' && user?.role !== 'super_admin') {
     return (
       <div className="min-h-screen flex items-center justify-center bg-jadmaa-cream">
         <div className="text-center space-y-4">
@@ -45,7 +45,7 @@ export const AdminPanel: React.FC = () => {
     { id: 'blogs', label: 'Blog Manager' },
   ];
 
-  if (user?.role === 'SUPER_ADMIN') {
+  if (user?.role === 'super_admin') {
     tabs.push({ id: 'database', label: 'Database' });
   }
 
@@ -89,7 +89,7 @@ export const AdminPanel: React.FC = () => {
           {activeTab === 'enrollments' && <Enrollments />}
           {activeTab === 'payments' && <Payments />}
           {activeTab === 'blogs' && <BlogManager />}
-          {activeTab === 'database' && user?.role === 'SUPER_ADMIN' && <DatabaseManager />}
+          {activeTab === 'database' && user?.role === 'super_admin' && <DatabaseManager />}
         </div>
       </section>
     </>

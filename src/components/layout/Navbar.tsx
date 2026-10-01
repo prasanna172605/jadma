@@ -10,7 +10,7 @@ export const Navbar: React.FC = () => {
   const location = useLocation();
   const { user, isLoggedIn, logout } = useAuth();
 
-  const isStudent = isLoggedIn && user?.role === 'STUDENT';
+  const isStudent = isLoggedIn && user?.role === 'student';
 
   const studentNavItems = [
     { id: 'dashboard', label: 'Dashboard', href: '/dashboard' },
@@ -76,7 +76,7 @@ export const Navbar: React.FC = () => {
             {isLoggedIn ? (
               <div className="flex items-center space-x-6">
                 <Link
-                  to={user?.role === "ADMIN" || user?.role === "SUPER_ADMIN" ? "/admin" : user?.role === "INSTRUCTOR" ? "/instructor" : "/profile"}
+                  to={user?.role === "admin" || user?.role === "super_admin" ? "/admin" : user?.role === "instructor" ? "/instructor" : "/profile"}
                   className="flex items-center space-x-1.5 text-sm font-semibold text-gray-700 hover:text-jadmaa-red transition"
                 >
                   <User className="w-4 h-4" />
@@ -107,7 +107,7 @@ export const Navbar: React.FC = () => {
           <div className="flex items-center space-x-2 md:hidden">
             {isLoggedIn ? (
               <Link
-                to={user?.role === "ADMIN" || user?.role === "SUPER_ADMIN" ? "/admin" : user?.role === "INSTRUCTOR" ? "/instructor" : "/dashboard"}
+                to={user?.role === "admin" || user?.role === "super_admin" ? "/admin" : user?.role === "instructor" ? "/instructor" : "/dashboard"}
                 className="px-3 py-1 text-sm font-bold text-white bg-[#B12B2B] rounded"
               >
                 Profile
@@ -149,7 +149,7 @@ export const Navbar: React.FC = () => {
             {isLoggedIn ? (
               <>
                 <Link
-                  to={user?.role === "ADMIN" || user?.role === "SUPER_ADMIN" ? "/admin" : user?.role === "INSTRUCTOR" ? "/instructor" : "/profile"}
+                  to={user?.role === "admin" || user?.role === "super_admin" ? "/admin" : user?.role === "instructor" ? "/instructor" : "/profile"}
                   className="block w-full text-center py-2 bg-[#B12B2B] text-white text-sm font-bold rounded"
                 >
                   My Profile

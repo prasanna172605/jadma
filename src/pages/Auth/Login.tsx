@@ -21,9 +21,9 @@ export const Login: React.FC = () => {
     
     try {
       const user = await login(email, password);
-      if (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN') {
+      if (user.role === 'admin' || user.role === 'super_admin') {
         navigate('/admin');
-      } else if (user.role === 'INSTRUCTOR') {
+      } else if (user.role === 'instructor') {
         navigate('/instructor');
       } else {
         navigate('/dashboard');

@@ -151,7 +151,7 @@ export const Footer: React.FC = () => {
           </div>
           <div className="flex items-center space-x-6">
             <Link to="/login" className="hover:text-white font-semibold">Login / Register</Link>
-            <Link to={user?.role === "ADMIN" || user?.role === "SUPER_ADMIN" ? "/admin" : user?.role === "INSTRUCTOR" ? "/instructor" : "/dashboard"} className="hover:text-jadmaa-red font-semibold text-gray-300">Student LMS</Link>
+            <Link to={user?.role === "admin" || user?.role === "super_admin" ? "/admin" : user?.role === "instructor" ? "/instructor" : "/dashboard"} className="hover:text-jadmaa-red font-semibold text-gray-300">Student LMS</Link>
           </div>
         </div>
 
