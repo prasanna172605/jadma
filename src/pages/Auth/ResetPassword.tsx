@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { SEO } from '../../components/common/SEO';
-import { Lock, CheckCircle } from 'lucide-react';
+import { Lock, CheckCircle, Eye, EyeOff } from 'lucide-react';
 import { authApi } from '../../lib/api/authApi';
 
 export const ResetPassword: React.FC = () => {
@@ -12,6 +12,8 @@ export const ResetPassword: React.FC = () => {
 
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -95,13 +97,20 @@ export const ResetPassword: React.FC = () => {
                       <Lock className="h-5 w-5 text-gray-400" />
                     </div>
                     <input
-                      type="password"
+                      type={showPassword ? 'text' : 'password'}
                       required
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="focus:ring-jadmaa-red focus:border-jadmaa-red block w-full pl-10 sm:text-sm border-gray-300 rounded-md py-2.5 border"
+                      className="focus:ring-jadmaa-red focus:border-jadmaa-red block w-full pl-10 pr-10 sm:text-sm border-gray-300 rounded-md py-2.5 border"
                       placeholder="Min. 8 chars, uppercase, lowercase, number"
                     />
+                    <button
+                      type="button"
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    </button>
                   </div>
                 </div>
 
@@ -114,13 +123,20 @@ export const ResetPassword: React.FC = () => {
                       <Lock className="h-5 w-5 text-gray-400" />
                     </div>
                     <input
-                      type="password"
+                      type={showConfirmPassword ? 'text' : 'password'}
                       required
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="focus:ring-jadmaa-red focus:border-jadmaa-red block w-full pl-10 sm:text-sm border-gray-300 rounded-md py-2.5 border"
+                      className="focus:ring-jadmaa-red focus:border-jadmaa-red block w-full pl-10 pr-10 sm:text-sm border-gray-300 rounded-md py-2.5 border"
                       placeholder="Confirm your new password"
                     />
+                    <button
+                      type="button"
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    >
+                      {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    </button>
                   </div>
                 </div>
 
