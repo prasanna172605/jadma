@@ -79,7 +79,7 @@ const slugCache: Record<string, {data: any, time: number}> = {};
 
 export const getCourseBySlug = async (req: Request, res: Response) => {
   try {
-    const slug = req.params.slug;
+    const slug = req.params.slug as string;
     if (slugCache[slug] && Date.now() - slugCache[slug].time < CACHE_TTL) {
       return res.json({ success: true, data: slugCache[slug].data });
     }
