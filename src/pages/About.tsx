@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { SEO } from '../components/common/SEO';
 import { CheckCircle2, Eye, Target } from 'lucide-react';
+import { EditableText } from '../components/common/EditableText';
 
 const whyChooseItems = [
   'Authentic Traditional Varmakalai Training',
@@ -35,13 +36,13 @@ export const About: React.FC = () => {
       <section className="bg-jadmaa-cream py-12 border-b border-jadmaa-border text-left">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3 reveal-on-scroll">
           <span className="text-base md:text-lg font-bold text-jadmaa-red uppercase tracking-wider">
-            Our Organization
+            <EditableText settingKey="about.banner.subtitle" defaultText="Our Organization" />
           </span>
           <h1 className="font-heading font-extrabold text-4xl md:text-5xl text-jadmaa-charcoal">
-            About JADMAA Varmakalai Academy
+            <EditableText settingKey="about.banner.title" defaultText="About JADMAA Varmakalai Academy" />
           </h1>
           <p className="text-base md:text-lg text-jadmaa-textMuted max-w-2xl">
-            Preserving the ancient 1000+ year old Tamil martial art, vital point energy science, and Siddha therapeutic traditions.
+            <EditableText settingKey="about.banner.desc" defaultText="Preserving the ancient 1000+ year old Tamil martial art, vital point energy science, and Siddha therapeutic traditions." multiline />
           </p>
         </div>
       </section>
@@ -54,16 +55,16 @@ export const About: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-6 space-y-5 text-left reveal-left">
               <span className="text-base md:text-lg font-bold text-jadmaa-red uppercase tracking-wider">
-                1000+ Year Heritage
+                <EditableText settingKey="about.history.subtitle" defaultText="1000+ Year Heritage" />
               </span>
               <h2 className="font-heading font-extrabold text-4xl md:text-5xl text-jadmaa-charcoal">
-                The Science of Varmakalai
+                <EditableText settingKey="about.history.title" defaultText="The Science of Varmakalai" />
               </h2>
               <p className="text-base md:text-lg text-jadmaa-textMuted leading-relaxed">
-                Varmakalai (Vital Points Art) is a legendary Tamil martial and medical science formulated by ancient Siddhar sages such as Agastya Siddhar. It centers on the precise knowledge of 108 vital nerve points across the human body (*Varma Pulligal*).
+                <EditableText settingKey="about.history.p1" defaultText="Varmakalai (Vital Points Art) is a legendary Tamil martial and medical science formulated by ancient Siddhar sages such as Agastya Siddhar. It centers on the precise knowledge of 108 vital nerve points across the human body (*Varma Pulligal*)." multiline />
               </p>
               <p className="text-base md:text-lg text-jadmaa-textMuted leading-relaxed">
-                JADMAA was founded to safeguard this priceless cultural heritage from dilution or distortion. We teach both defensive tactics (*Adimurai*) and therapeutic healing (*Varma Vaidhiyam*) in a structured, ethical, and accessible manner.
+                <EditableText settingKey="about.history.p2" defaultText="JADMAA was founded to safeguard this priceless cultural heritage from dilution or distortion. We teach both defensive tactics (*Adimurai*) and therapeutic healing (*Varma Vaidhiyam*) in a structured, ethical, and accessible manner." multiline />
               </p>
             </div>
 
@@ -85,9 +86,11 @@ export const About: React.FC = () => {
                 <div className="w-10 h-10 rounded-lg bg-jadmaa-red/10 text-jadmaa-red flex items-center justify-center font-bold">
                   <Eye className="w-5 h-5" />
                 </div>
-                <h3 className="font-heading font-extrabold text-xl text-jadmaa-charcoal">Our Vision</h3>
+                <h3 className="font-heading font-extrabold text-xl text-jadmaa-charcoal">
+                  <EditableText settingKey="about.vision.title" defaultText="Our Vision" />
+                </h3>
                 <p className="text-base md:text-lg text-jadmaa-textMuted leading-relaxed">
-                  To become one of India&rsquo;s most trusted Varmakalai schools by preserving this ancient martial tradition and making it accessible to future generations through quality education and disciplined training.
+                  <EditableText settingKey="about.vision.desc" defaultText="To become one of India’s most trusted Varmakalai schools by preserving this ancient martial tradition and making it accessible to future generations through quality education and disciplined training." multiline />
                 </p>
               </div>
 
@@ -95,9 +98,11 @@ export const About: React.FC = () => {
                 <div className="w-10 h-10 rounded-lg bg-jadmaa-red/10 text-jadmaa-red flex items-center justify-center font-bold">
                   <Target className="w-5 h-5" />
                 </div>
-                <h3 className="font-heading font-extrabold text-xl text-jadmaa-charcoal">Our Mission</h3>
+                <h3 className="font-heading font-extrabold text-xl text-jadmaa-charcoal">
+                  <EditableText settingKey="about.mission.title" defaultText="Our Mission" />
+                </h3>
                 <p className="text-base md:text-lg text-jadmaa-textMuted leading-relaxed">
-                  To inspire individuals to live healthier, stronger, and more confident lives by providing authentic Varmakalai education that develops physical fitness, self-defence ability, mental focus, discipline, and respect while protecting the cultural heritage of Tamil martial arts and traditional Varma treatment practices.
+                  <EditableText settingKey="about.mission.desc" defaultText="To inspire individuals to live healthier, stronger, and more confident lives by providing authentic Varmakalai education that develops physical fitness, self-defence ability, mental focus, discipline, and respect while protecting the cultural heritage of Tamil martial arts and traditional Varma treatment practices." multiline />
                 </p>
               </div>
             </div>

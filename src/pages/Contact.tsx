@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { SEO } from '../components/common/SEO';
 import { mockBranches } from '../data/branches';
 import { Phone, Mail, Send, CheckCircle2, Clock, ExternalLink, MapPin } from 'lucide-react';
+import { EditableText } from '../components/common/EditableText';
 
 export const Contact: React.FC = () => {
   const location = useLocation();
@@ -46,13 +47,13 @@ export const Contact: React.FC = () => {
       <section className="bg-jadmaa-cream py-12 border-b border-jadmaa-border text-left">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3 reveal-on-scroll">
           <span className="text-base md:text-lg font-bold text-jadmaa-red uppercase tracking-wider">
-            Admissions & Enquiries
+            <EditableText settingKey="contact.banner.subtitle" defaultText="Admissions & Enquiries" />
           </span>
           <h1 className="font-heading font-extrabold text-4xl md:text-5xl text-jadmaa-charcoal">
-            Get in Touch With JADMAA
+            <EditableText settingKey="contact.banner.title" defaultText="Get in Touch With JADMAA" />
           </h1>
           <p className="text-base md:text-lg text-jadmaa-textMuted max-w-2xl">
-            Book a free demo class, inquire about course admissions, or consult with our Varmakalai masters.
+            <EditableText settingKey="contact.banner.desc" defaultText="Book a free demo class, inquire about course admissions, or consult with our Varmakalai masters." multiline />
           </p>
         </div>
       </section>

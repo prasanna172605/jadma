@@ -29,7 +29,8 @@ export const Navbar: React.FC = () => {
       currentNavItems = [
         { id: 'dashboard', label: 'Dashboard', href: '/admin#dashboard' },
         { id: 'courses', label: 'Courses', href: '/admin#courses' },
-        { id: 'students', label: 'My Students', href: '/admin#students' }
+        { id: 'students', label: 'My Students', href: '/admin#students' },
+        { id: 'blogs', label: 'Blogs', href: '/admin#blogs' }
       ];
     } else if (user?.role === 'INSTRUCTOR') {
       currentNavItems = [
