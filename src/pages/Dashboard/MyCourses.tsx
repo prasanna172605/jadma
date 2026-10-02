@@ -36,7 +36,7 @@ export const MyCourses: React.FC = () => {
   const filteredCourses = useMemo(() => {
     return enrolledList.filter(item => {
       const matchesSearch = item.course.title.toLowerCase().includes(search.toLowerCase()) || 
-                            item.course.instructor.displayName.toLowerCase().includes(search.toLowerCase());
+                            (item.course.instructor?.displayName || 'JADMAA Master').toLowerCase().includes(search.toLowerCase());
       
       let matchesTab = true;
       if (activeTab === 'IN_PROGRESS') matchesTab = item.status === 'ACTIVE' && item.progress > 0;
@@ -145,7 +145,7 @@ export const MyCourses: React.FC = () => {
                     </div>
                     <div className="p-5 flex flex-col flex-grow">
                       <h3 className="font-heading font-bold text-lg text-gray-900 line-clamp-2 mb-1">{course.title}</h3>
-                      <p className="text-xs text-gray-500 mb-4">{course.instructor.displayName}</p>
+                      <p className="text-xs text-gray-500 mb-4">{course.instructor?.displayName || 'JADMAA Master'}</p>
                       
                       <div className="mt-auto space-y-4">
                         <div className="space-y-1.5">
