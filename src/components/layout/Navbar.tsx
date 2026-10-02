@@ -17,12 +17,14 @@ export const Navbar: React.FC = () => {
   if (isLoggedIn) {
     if (user?.role === 'STUDENT') {
       currentNavItems = [
+        { id: 'dashboard', label: 'Dashboard', href: '/student#dashboard' },
         { id: 'home', label: 'Home', href: '/' },
         { id: 'courses', label: 'Courses', href: '/courses' },
         { id: 'my-courses', label: 'My Courses', href: '/student#my-courses' }
       ];
     } else if (user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN') {
       currentNavItems = [
+        { id: 'dashboard', label: 'Dashboard', href: '/admin#dashboard' },
         { id: 'courses', label: 'Courses', href: '/admin#courses' },
         { id: 'students', label: 'My Students', href: '/admin#students' }
       ];

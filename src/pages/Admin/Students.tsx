@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { adminApi } from '../../lib/api/adminApi';
 import { Search, MoreVertical, CheckCircle, XCircle } from 'lucide-react';
+import { StudentDetailsModal } from './StudentDetailsModal';
 
 export const Students: React.FC = () => {
   const [students, setStudents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [pagination, setPagination] = useState({ page: 1, limit: 20, total: 0, totalPages: 0 });
+  const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
 
   const fetchStudents = async () => {
     setLoading(true);
@@ -73,8 +75,10 @@ export const Students: React.FC = () => {
               <tr><td colSpan={6} className="px-6 py-8 text-center text-gray-500">No students found</td></tr>
             ) : (
               students.map(student => (
-                <tr key={student.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 font-medium">{student.name}</td>
+                <tr key={student.id} className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 font-medium text-jadmaa-red cursor-pointer hover:underline" onClick={() => setSelectedStudentId(student.id)}>
+                    {student.name}
+                  </td>
                   <td className="px-6 py-4 text-gray-600">{student.email}</td>
                   <td className="px-6 py-4 text-gray-600">{student.phone || '-'}</td>
                   <td className="px-6 py-4 text-gray-600">{new Date(student.createdAt).toLocaleDateString()}</td>
@@ -111,6 +115,13 @@ export const Students: React.FC = () => {
           >Next</button>
         </div>
       </div>
+      
+      {selectedStudentId && (
+        <StudentDetailsModal 
+          studentId={selectedStudentId} 
+          onClose={() => setSelectedStudentId(null)} 
+        />
+      )}
     </div>
   );
 };
