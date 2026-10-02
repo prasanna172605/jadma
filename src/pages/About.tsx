@@ -139,16 +139,16 @@ export const About: React.FC = () => {
             </div>
             <div className="md:col-span-7 space-y-3">
               <span className="text-base md:text-lg font-bold text-jadmaa-red uppercase tracking-wider">
-                Meet Our Founder
+                <EditableText settingKey="about.founder.eyebrow" defaultText="Meet Our Founder" />
               </span>
               <h3 className="font-heading font-extrabold text-[clamp(24px,4vw,40px)] text-jadmaa-charcoal">
-                Bojagarajan
+                <EditableText settingKey="about.founder.name" defaultText="Bojagarajan" />
               </h3>
               <p className="text-xs font-semibold text-jadmaa-textMuted">
-                Founder & Chief Instructor
+                <EditableText settingKey="about.founder.role" defaultText="Founder & Chief Instructor" />
               </p>
               <p className="text-base md:text-lg text-jadmaa-textMuted leading-relaxed">
-                JADMAA Varmakalai was founded by Bojagarajan, a Varmakalai practitioner with over 15 years of experience in the art. He was trained in traditional Varmakalai under his master, Aasan R. Rajendran of Madurai, and carries that lineage forward today — personally training students and instructors across our Thanjavur, Kumbakonam, and Ariyalur branches.
+                <EditableText settingKey="about.founder.bio" defaultText="JADMAA Varmakalai was founded by Bojagarajan, a Varmakalai practitioner with over 15 years of experience in the art. He was trained in traditional Varmakalai under his master, Aasan R. Rajendran of Madurai, and carries that lineage forward today — personally training students and instructors across our Thanjavur, Kumbakonam, and Ariyalur branches." multiline />
               </p>
               <Link 
                 to="/contact" 
@@ -163,10 +163,10 @@ export const About: React.FC = () => {
           <div className="space-y-10 text-left reveal-on-scroll">
             <div className="space-y-4">
               <span className="text-base md:text-lg font-bold text-jadmaa-red uppercase tracking-wider">
-                Your best choice for martial arts training
+                <EditableText settingKey="about.curriculum.eyebrow" defaultText="Your best choice for martial arts training" />
               </span>
               <p className="text-base md:text-lg text-jadmaa-textMuted leading-relaxed max-w-3xl">
-                Based on this strong traditional foundation, JADMAA Varmakalai Academy was established. Our training system goes beyond self-defense. It is designed as a holistic program that develops:
+                <EditableText settingKey="about.curriculum.intro" defaultText="Based on this strong traditional foundation, JADMAA Varmakalai Academy was established. Our training system goes beyond self-defense. It is designed as a holistic program that develops:" multiline />
               </p>
               <ul className="flex flex-wrap gap-2">
                 {['Body-mind coordination', 'Discipline', 'Confidence', 'Energy control', 'Character development'].map((item) => (
@@ -179,10 +179,10 @@ export const About: React.FC = () => {
 
             <div className="space-y-4">
               <h3 className="font-heading font-extrabold text-[clamp(24px,4vw,40px)] text-jadmaa-charcoal">
-                Learn from the best martial arts instructors around
+                <EditableText settingKey="about.curriculum.title" defaultText="Learn from the best martial arts instructors around" />
               </h3>
               <p className="text-base md:text-lg text-jadmaa-textMuted leading-relaxed">
-                Students are taught structured levels including:
+                <EditableText settingKey="about.curriculum.subtitle" defaultText="Students are taught structured levels including:" />
               </p>
               <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-3">
                 {curriculumLevels.map((item) => (
@@ -193,10 +193,10 @@ export const About: React.FC = () => {
                 ))}
               </ul>
               <p className="text-base md:text-lg text-jadmaa-textMuted leading-relaxed max-w-3xl pt-2">
-                Each student progresses from beginner to advanced stages, with opportunities to become professional instructors based on skill and discipline.
+                <EditableText settingKey="about.curriculum.progression" defaultText="Each student progresses from beginner to advanced stages, with opportunities to become professional instructors based on skill and discipline." multiline />
               </p>
               <p className="text-base md:text-lg text-jadmaa-textMuted leading-relaxed max-w-3xl">
-                JADMAA Varmakalai welcomes everyone — from beginners taking their first step into martial arts to dedicated practitioners seeking advanced Varmakalai knowledge. Join us and become part of a community committed to preserving tradition while building strength for the future.
+                <EditableText settingKey="about.curriculum.welcome" defaultText="JADMAA Varmakalai welcomes everyone — from beginners taking their first step into martial arts to dedicated practitioners seeking advanced Varmakalai knowledge. Join us and become part of a community committed to preserving tradition while building strength for the future." multiline />
               </p>
               <Link to="/contact" className="btn-jadmaa-primary inline-block mt-2">
                 Join Now
