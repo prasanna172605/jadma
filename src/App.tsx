@@ -15,7 +15,7 @@ const AppContent: React.FC = () => {
   const isLearnPlayer = location.pathname.startsWith('/learn/');
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FAF6F0] text-[#2B2521] pb-[80px] md:pb-0">
+    <div className="min-h-screen flex flex-col bg-[#FAF6F0] text-[#2B2521]">
       <SEOManager />
       <ScrollObserver />
       {!isLearnPlayer && <Navbar />}

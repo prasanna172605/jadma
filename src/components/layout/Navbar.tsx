@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { 
-  User, LogOut, Settings as SettingsIcon, ChevronDown, 
-  Home, Info, BookOpen, Users, Phone, PenTool, LayoutDashboard, Library 
-} from 'lucide-react';
+import { Menu, X, User, LogOut, Settings as SettingsIcon, ChevronDown } from 'lucide-react';
 import { mainNavItems } from '../../data/navigation';
 import { useAuth } from '../../context/AuthContext';
 import { useSettings } from '../../context/SettingsContext';
@@ -64,35 +61,6 @@ export const Navbar: React.FC = () => {
   };
 
   const { isEditing } = useSettings();
-
-  const getNavIcon = (id: string, isActive: boolean) => {
-    const baseClass = isActive ? "w-4 h-4 sm:w-5 sm:h-5" : "w-4 h-4 sm:w-5 sm:h-5";
-    
-    switch(id) {
-      case 'nav-home': 
-      case 'home':
-        return <Home className={baseClass} />;
-      case 'nav-about':
-        return <Info className={baseClass} />;
-      case 'nav-courses':
-      case 'courses':
-        return <BookOpen className={baseClass} />;
-      case 'nav-careers':
-      case 'students':
-        return <Users className={baseClass} />;
-      case 'nav-contact':
-        return <Phone className={baseClass} />;
-      case 'nav-faq':
-      case 'blogs':
-        return <PenTool className={baseClass} />;
-      case 'dashboard':
-        return <LayoutDashboard className={baseClass} />;
-      case 'my-courses':
-        return <Library className={baseClass} />;
-      default:
-        return <Home className={baseClass} />;
-    }
-  };
 
   return (
     <>
@@ -210,93 +178,78 @@ export const Navbar: React.FC = () => {
             )}
           </nav>
 
-          {/* Mobile Profile / Login */}
+          {/* Mobile Hamburger */}
           <div className="flex items-center space-x-2 md:hidden">
             {isLoggedIn ? (
-              <div className="relative group">
-                <button
-                  className="flex items-center space-x-2 p-1.5 rounded-full hover:bg-[#E8DDD0] transition-colors"
-                  onClick={() => setProfileOpen(!profileOpen)}
-                >
-                  {user?.avatarUrl ? (
-                    <img
-                      src={user.avatarUrl}
-                      alt="Profile"
-                      className="w-8 h-8 rounded-full border-2 border-transparent group-hover:border-[#B12B2B] transition-all object-cover"
-                    />
-                  ) : (
-                    <div className="w-8 h-8 rounded-full bg-[#B12B2B] flex items-center justify-center text-white font-bold text-sm">
-                      {user?.name.charAt(0).toUpperCase()}
-                    </div>
-                  )}
-                </button>
-                
-                {profileOpen && (
-                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50">
-                    <div className="px-4 py-2 border-b border-gray-50 mb-1">
-                      <p className="text-sm font-bold text-gray-900 truncate">{user?.name}</p>
-                      <p className="text-xs text-gray-500 truncate">{user?.email}</p>
-                    </div>
-                    <div className="px-2 space-y-1">
-                      <Link
-                        to={user?.role === "ADMIN" || user?.role === "SUPER_ADMIN" ? "/admin" : user?.role === "INSTRUCTOR" ? "/instructor" : "/student"}
-                        className="flex items-center space-x-2 w-full px-2 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-jadmaa-red rounded-lg transition"
-                      >
-                        <User className="w-4 h-4" />
-                        <span>Profile Dashboard</span>
-                      </Link>
-                      <button
-                        onClick={() => {
-                          setProfileOpen(false);
-                          logout();
-                        }}
-                        className="flex items-center space-x-2 w-full px-2 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-jadmaa-red rounded-lg transition"
-                      >
-                        <LogOut className="w-4 h-4" />
-                        <span>Logout</span>
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
+              <Link
+                to={user?.role === "ADMIN" || user?.role === "SUPER_ADMIN" ? "/admin" : user?.role === "INSTRUCTOR" ? "/instructor" : "/student"}
+                className="px-3 py-1 text-sm font-bold text-white bg-[#B12B2B] rounded"
+              >
+                Profile
+              </Link>
             ) : (
               <Link
                 to="/login"
-                className="px-3 py-1.5 text-sm font-bold text-white bg-[#B12B2B] rounded shadow-sm"
+                className="px-3 py-1 text-sm font-bold text-white bg-[#B12B2B] rounded"
               >
-                Login
+                Login / Register
               </Link>
             )}
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="p-2 rounded-lg text-[#2B2521] hover:text-[#B12B2B]"
+              aria-label="Toggle Menu"
+            >
+              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
           </div>
 
         </div>
       </div>
-    </header>
 
-    {/* Mobile Bottom Navigation */}
-    <nav aria-label="Mobile Navigation" className="md:hidden fixed bottom-4 sm:bottom-5 left-1/2 -translate-x-1/2 z-[110] w-[96%] sm:w-[90%] max-w-[400px] h-[60px] sm:h-[64px] flex items-center justify-between px-2 sm:px-3 rounded-[32px] shadow-[0_8px_32px_rgba(0,0,0,0.12)] border bg-[#FAF6F0]/95 border-[#E8DDD0] backdrop-blur-xl">
-      {currentNavItems.map(item => {
-        const fullPath = location.pathname + location.hash;
-        const isActive = fullPath === item.href || (location.pathname === item.href && !item.href.includes('#'));
-        
-        return (
-          <Link key={item.id} to={item.href} aria-label={item.label} className="relative flex flex-1 flex-col items-center justify-start pt-2 sm:pt-2.5 h-full">
-            <div className={`transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] z-10 flex items-center justify-center rounded-full ${
-              isActive 
-                ? "-translate-y-5 sm:-translate-y-6 w-10 h-10 sm:w-12 sm:h-12 bg-[#B12B2B] text-white shadow-[0_8px_16px_rgba(177,43,43,0.4)] border-[3px] sm:border-[4px] border-[#FAF6F0]" 
-                : "w-6 h-6 sm:w-7 sm:h-7 bg-transparent text-[#5C5148]"
-            }`}>
-              {getNavIcon(item.id, isActive)}
-            </div>
-            <span className={`absolute bottom-1.5 sm:bottom-2 text-[8px] sm:text-[9px] font-bold uppercase tracking-wider transition-all duration-300 ease-in-out ${
-              isActive ? "opacity-100 text-[#B12B2B]" : "opacity-90 text-[#5C5148]"
-            }`}>
+      {/* Mobile Drawer */}
+      {isOpen && (
+        <div className="md:hidden bg-[#FAF6F0] border-t border-[#E8DDD0] shadow-xl px-4 py-4 space-y-2 text-left">
+          {currentNavItems.map((item) => (
+            <Link
+              key={item.id}
+              to={item.href}
+              className="block px-3 py-2 text-sm font-semibold text-[#5C5148] hover:text-[#B12B2B]"
+            >
               {item.label}
-            </span>
-          </Link>
-        )
-      })}
-    </nav>
+            </Link>
+          ))}
+
+          <div className="pt-3 border-t border-[#E8DDD0] space-y-2">
+            {isLoggedIn ? (
+              <>
+                <Link
+                  to={user?.role === "ADMIN" || user?.role === "SUPER_ADMIN" ? "/admin" : user?.role === "INSTRUCTOR" ? "/instructor" : "/student"}
+                  className="block w-full text-center py-2 bg-[#B12B2B] text-white text-sm font-bold rounded"
+                >
+                  My Profile
+                </Link>
+                <button
+                  onClick={logout}
+                  className="block w-full text-center py-2 text-sm font-bold text-[#5C5148] hover:text-[#B12B2B]"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <div className="flex space-x-2">
+                <Link
+                  to="/login"
+                  className="w-full text-center py-2 bg-[#B12B2B] text-white text-sm font-bold rounded"
+                >
+                  Login / Register
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </header>
 
     {/* Edit Website Prompt Modal */}
     {editPromptOpen && (
