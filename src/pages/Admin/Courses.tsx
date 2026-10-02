@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { adminApi } from '../../lib/api/adminApi';
-import { Search } from 'lucide-react';
+import { Search, Plus, Edit, Trash2 } from 'lucide-react';
+import { AdminCourseModal } from './AdminCourseModal';
 
 export const Courses: React.FC = () => {
   const [courses, setCourses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [pagination, setPagination] = useState({ page: 1, limit: 20, total: 0, totalPages: 0 });
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedCourse, setSelectedCourse] = useState<any>(null);
 
   const fetchCourses = async () => {
     setLoading(true);
@@ -28,19 +31,49 @@ export const Courses: React.FC = () => {
     return () => clearTimeout(delayDebounceFn);
   }, [search, pagination.page, pagination.limit]);
 
+  const handleDelete = async (id: string) => {
+    if (window.confirm('Are you sure you want to delete this course? This action cannot be undone.')) {
+      try {
+        await adminApi.deleteCourse(id);
+        fetchCourses();
+      } catch (err: any) {
+        alert(err.response?.data?.error?.message || 'Failed to delete course');
+      }
+    }
+  };
+
+  const openEditModal = (course: any) => {
+    setSelectedCourse(course);
+    setModalOpen(true);
+  };
+
+  const openCreateModal = () => {
+    setSelectedCourse(null);
+    setModalOpen(true);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-heading font-bold">Courses</h2>
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <input 
-            type="text" 
-            placeholder="Search courses..." 
-            className="pl-9 pr-4 py-2 border rounded-full text-sm focus:outline-none focus:border-jadmaa-red w-64"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-          />
+        <div className="flex space-x-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input 
+              type="text" 
+              placeholder="Search courses..." 
+              className="pl-9 pr-4 py-2 border rounded-full text-sm focus:outline-none focus:border-jadmaa-red w-64"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+            />
+          </div>
+          <button 
+            onClick={openCreateModal}
+            className="flex items-center space-x-2 bg-jadmaa-red hover:bg-[#8C1E1E] text-white px-4 py-2 rounded-lg font-bold text-sm transition"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add Course</span>
+          </button>
         </div>
       </div>
       
@@ -53,13 +86,14 @@ export const Courses: React.FC = () => {
               <th className="px-6 py-4 font-bold text-gray-700">Price</th>
               <th className="px-6 py-4 font-bold text-gray-700">Status</th>
               <th className="px-6 py-4 font-bold text-gray-700">Created</th>
+              <th className="px-6 py-4 font-bold text-gray-700 text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y">
             {loading && courses.length === 0 ? (
               <tr><td colSpan={5} className="px-6 py-8 text-center text-gray-500">Loading...</td></tr>
             ) : courses.length === 0 ? (
-              <tr><td colSpan={5} className="px-6 py-8 text-center text-gray-500">No courses found</td></tr>
+              <tr><td colSpan={6} className="px-6 py-8 text-center text-gray-500">No courses found</td></tr>
             ) : (
               courses.map(course => (
                 <tr key={course.id} className="hover:bg-gray-50">
@@ -72,6 +106,22 @@ export const Courses: React.FC = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4 text-gray-600">{new Date(course.createdAt).toLocaleDateString()}</td>
+                  <td className="px-6 py-4 text-right space-x-2">
+                    <button 
+                      onClick={() => openEditModal(course)}
+                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                      title="Edit Course"
+                    >
+                      <Edit className="w-4 h-4" />
+                    </button>
+                    <button 
+                      onClick={() => handleDelete(course.id)}
+                      className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
+                      title="Delete Course"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </td>
                 </tr>
               ))
             )}
@@ -94,6 +144,13 @@ export const Courses: React.FC = () => {
           >Next</button>
         </div>
       </div>
+
+      <AdminCourseModal 
+        isOpen={modalOpen} 
+        onClose={() => setModalOpen(false)} 
+        course={selectedCourse} 
+        onSuccess={fetchCourses} 
+      />
     </div>
   );
 };

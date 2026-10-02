@@ -39,6 +39,15 @@ export const adminApi = {
     return fetchApi(`/admin/courses${qs ? '?' + qs : ''}`);
   },
   getCourseById: (id: string) => fetchApi(`/admin/courses/${id}`),
+  createCourse: (data: any) => fetchApi('/admin/courses', {
+    method: 'POST',
+    body: JSON.stringify(data)
+  }),
+  updateCourse: (id: string, data: any) => fetchApi(`/admin/courses/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(data)
+  }),
+  deleteCourse: (id: string) => fetchApi(`/admin/courses/${id}`, { method: 'DELETE' }),
   
   // Enrollments
   getEnrollments: (params = {}) => {

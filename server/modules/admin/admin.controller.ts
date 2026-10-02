@@ -317,13 +317,39 @@ export const getCourseById = async (req: Request, res: Response) => {
 export const createCourse = async (req: Request, res: Response) => {
   try {
     const data = req.body;
+    const { youtubeUrl, ...courseData } = data;
     
     // Auto-generate slug if not provided
-    if (!data.slug) {
-      data.slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+    if (!courseData.slug) {
+      courseData.slug = courseData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
     }
     
-    const course = await prisma.course.create({ data });
+    const course = await prisma.course.create({ data: courseData });
+
+    // Handle Youtube link shortcut
+    if (youtubeUrl) {
+      let videoId = youtubeUrl;
+      const match = youtubeUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&?]+)/);
+      if (match) videoId = match[1];
+
+      await prisma.courseModule.create({
+        data: {
+          courseId: course.id,
+          title: 'Main Content',
+          sortOrder: 1,
+          lessons: {
+            create: {
+              title: course.title,
+              youtubeVideoId: videoId,
+              sortOrder: 1,
+              isRequired: true,
+              isPublished: true
+            }
+          }
+        }
+      });
+    }
+
     await logAdminAction((req as any).user.id, 'CREATE_COURSE', 'Course', course.id, { title: course.title }, req);
     if (course.status === 'PUBLISHED') {
       sendNewCourseSuggestionEmail(course.id).catch(err => console.error('Failed to trigger course recommendation emails:', err));
