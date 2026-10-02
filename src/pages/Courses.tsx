@@ -52,23 +52,20 @@ export const Courses: React.FC = () => {
         <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 space-y-3">
           <span className="text-base md:text-lg font-bold text-jadmaa-red uppercase tracking-wider block">
             <EditableText
-              contentKey="courses.hero.eyebrow"
+              settingKey="courses.hero.eyebrow"
               defaultText="Academy Curriculum"
-              as="span"
             />
           </span>
           <h1 className="font-heading font-extrabold text-[clamp(40px,6vw,60px)] text-jadmaa-charcoal">
             <EditableText
-              contentKey="courses.hero.title"
+              settingKey="courses.hero.title"
               defaultText="Explore All Courses"
-              as="span"
             />
           </h1>
           <p className="text-base md:text-lg text-jadmaa-textMuted max-w-2xl">
             <EditableText
-              contentKey="courses.hero.description"
+              settingKey="courses.hero.description"
               defaultText="Choose from authentic Varmakalai pressure point training, self-defence programs, children's fitness, and Siddha energy healing therapies."
-              as="span"
               multiline
             />
           </p>
@@ -149,16 +146,14 @@ export const Courses: React.FC = () => {
               <BookOpen className="w-10 h-10 text-gray-400 mx-auto" />
               <h3 className="font-heading font-extrabold text-lg text-jadmaa-charcoal">
                 <EditableText
-                  contentKey="courses.empty.title"
+                  settingKey="courses.empty.title"
                   defaultText="No courses match your criteria"
-                  as="span"
                 />
               </h3>
               <p className="text-sm md:text-xl text-jadmaa-textMuted">
                 <EditableText
-                  contentKey="courses.empty.description"
+                  settingKey="courses.empty.description"
                   defaultText="Try adjusting your category tabs or search query."
-                  as="span"
                 />
               </p>
               <button
