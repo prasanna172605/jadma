@@ -117,14 +117,14 @@ export const getStudentById = async (req: Request, res: Response) => {
     const student = await prisma.user.findUnique({
       where: { id: req.params.id },
       select: { 
-        id: true, name: true, email: true, phone: true, isActive: true, createdAt: true, lastLoginAt: true,
+        id: true, name: true, email: true, phone: true, isActive: true, createdAt: true, lastLoginAt: true, role: true,
         enrollments: { include: { course: { select: { title: true } } } },
         payments: { orderBy: { createdAt: 'desc' } },
         certificates: { include: { course: { select: { title: true } } } },
         lessonProgress: true
       }
     });
-    if (!student || student.role !== 'STUDENT') {
+    if (!student || (student.role !== 'STUDENT' && student.role !== 'ADMIN' && student.role !== 'SUPER_ADMIN')) {
       return res.status(404).json({ success: false, error: { message: 'Student not found' } });
     }
     res.json({ success: true, data: student });
