@@ -88,9 +88,11 @@ export const Contact: React.FC = () => {
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div>
                     <h3 className="font-heading font-extrabold text-[clamp(24px,4vw,40px)] text-jadmaa-charcoal">
-                      Send Us a Message
+                      <EditableText settingKey="contact.form.title" defaultText="Send Us a Message" />
                     </h3>
-                    <p className="text-sm md:text-xl text-jadmaa-textMuted">Fill out the form below to request a free trial class or course brochure.</p>
+                    <p className="text-sm md:text-xl text-jadmaa-textMuted">
+                      <EditableText settingKey="contact.form.subtitle" defaultText="Fill out the form below to request a free trial class or course brochure." />
+                    </p>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -191,10 +193,10 @@ export const Contact: React.FC = () => {
               
               <div className="space-y-4">
                 <h3 className="font-heading font-extrabold text-[clamp(24px,4vw,40px)] text-jadmaa-charcoal">
-                  Direct Contact Information
+                  <EditableText settingKey="contact.info.title" defaultText="Direct Contact Information" />
                 </h3>
                 <p className="text-sm md:text-xl text-jadmaa-textMuted leading-relaxed">
-                  Have urgent questions about class timings, registrations or therapeutic appointments? Reach out to our central team.
+                  <EditableText settingKey="contact.info.description" defaultText="Have urgent questions about class timings, registrations or therapeutic appointments? Reach out to our central team." multiline />
                 </p>
 
                 <div className="space-y-3 pt-2">
@@ -204,8 +206,12 @@ export const Contact: React.FC = () => {
                   >
                     <Phone className="w-5 h-5 text-jadmaa-red flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
                     <div>
-                      <p className="text-sm text-gray-500 uppercase font-bold text-left">Central Admissions Line</p>
-                      <p className="font-bold text-base md:text-lg text-jadmaa-charcoal text-left">+91 93452 20020</p>
+                      <p className="text-sm text-gray-500 uppercase font-bold text-left">
+                        <EditableText settingKey="contact.phone1.label" defaultText="Central Admissions Line" />
+                      </p>
+                      <p className="font-bold text-base md:text-lg text-jadmaa-charcoal text-left">
+                        <EditableText settingKey="contact.phone1.number" defaultText="+91 93452 20020" />
+                      </p>
                     </div>
                   </a>
 
@@ -215,8 +221,12 @@ export const Contact: React.FC = () => {
                   >
                     <Phone className="w-5 h-5 text-jadmaa-red flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
                     <div>
-                      <p className="text-sm text-gray-500 uppercase font-bold text-left">Secondary Support Line</p>
-                      <p className="font-bold text-base md:text-lg text-jadmaa-charcoal text-left">+91 96554 57500</p>
+                      <p className="text-sm text-gray-500 uppercase font-bold text-left">
+                        <EditableText settingKey="contact.phone2.label" defaultText="Secondary Support Line" />
+                      </p>
+                      <p className="font-bold text-base md:text-lg text-jadmaa-charcoal text-left">
+                        <EditableText settingKey="contact.phone2.number" defaultText="+91 96554 57500" />
+                      </p>
                     </div>
                   </a>
 
@@ -226,8 +236,12 @@ export const Contact: React.FC = () => {
                   >
                     <Mail className="w-5 h-5 text-jadmaa-red flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
                     <div>
-                      <p className="text-sm text-gray-500 uppercase font-bold text-left">Official Email</p>
-                      <p className="font-bold text-base md:text-lg text-jadmaa-charcoal text-left">info@jadmaa.com</p>
+                      <p className="text-sm text-gray-500 uppercase font-bold text-left">
+                        <EditableText settingKey="contact.email.label" defaultText="Official Email" />
+                      </p>
+                      <p className="font-bold text-base md:text-lg text-jadmaa-charcoal text-left">
+                        <EditableText settingKey="contact.email.value" defaultText="info@jadmaa.com" />
+                      </p>
                     </div>
                   </a>
                 </div>
@@ -235,7 +249,7 @@ export const Contact: React.FC = () => {
 
               <div className="space-y-3">
                 <h4 className="font-heading font-bold text-lg text-jadmaa-charcoal text-left">
-                  Branch Operating Hours
+                  <EditableText settingKey="contact.hours.title" defaultText="Branch Operating Hours" />
                 </h4>
                 <div className="space-y-3 reveal-stagger">
                   {mockBranches.map(b => (
@@ -267,10 +281,10 @@ export const Contact: React.FC = () => {
         <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 space-y-10">
           <div className="text-center max-w-2xl mx-auto space-y-2">
             <span className="text-sm md:text-base font-bold text-jadmaa-red uppercase tracking-wider">
-              VISIT OUR ACADEMIES
+              <EditableText settingKey="contact.branches.eyebrow" defaultText="VISIT OUR ACADEMIES" />
             </span>
             <h2 className="font-heading font-extrabold text-4xl text-[#2B2521]">
-              Our Branches
+              <EditableText settingKey="contact.branches.title" defaultText="Our Branches" />
             </h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
