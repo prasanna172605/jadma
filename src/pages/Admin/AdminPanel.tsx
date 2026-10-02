@@ -9,10 +9,11 @@ import { Courses } from './Courses';
 import { Enrollments } from './Enrollments';
 import { Payments } from './Payments';
 import { DatabaseManager } from './DatabaseManager';
+import { SettingsEditor } from './SettingsEditor';
 import { useAuth } from '../../context/AuthContext';
 import { Navigate, useLocation } from 'react-router-dom';
 
-type Tab = 'dashboard' | 'students' | 'instructors' | 'courses' | 'enrollments' | 'payments' | 'blogs' | 'database';
+type Tab = 'dashboard' | 'students' | 'instructors' | 'courses' | 'enrollments' | 'payments' | 'blogs' | 'settings' | 'database';
 
 export const AdminPanel: React.FC = () => {
   const location = useLocation();
@@ -22,7 +23,7 @@ export const AdminPanel: React.FC = () => {
   useEffect(() => {
     if (location.hash) {
       const hash = location.hash.replace('#', '') as Tab;
-      if (['dashboard', 'students', 'instructors', 'courses', 'enrollments', 'payments', 'blogs', 'database'].includes(hash)) {
+      if (['dashboard', 'students', 'instructors', 'courses', 'enrollments', 'payments', 'blogs', 'settings', 'database'].includes(hash)) {
         setActiveTab(hash);
       }
     } else {
@@ -66,6 +67,7 @@ export const AdminPanel: React.FC = () => {
     { id: 'enrollments', label: 'Enrollments' },
     { id: 'payments', label: 'Payments' },
     { id: 'blogs', label: 'Blog Manager' },
+    { id: 'settings', label: 'Settings' },
   ];
 
   if (user?.role === 'SUPER_ADMIN') {
@@ -112,6 +114,7 @@ export const AdminPanel: React.FC = () => {
           {activeTab === 'enrollments' && <Enrollments />}
           {activeTab === 'payments' && <Payments />}
           {activeTab === 'blogs' && <BlogManager />}
+          {activeTab === 'settings' && <SettingsEditor />}
           {activeTab === 'database' && user?.role === 'SUPER_ADMIN' && <DatabaseManager />}
         </div>
       </section>

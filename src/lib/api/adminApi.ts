@@ -66,5 +66,12 @@ export const adminApi = {
   getAuditLogs: (params = {}) => {
     const qs = new URLSearchParams(params as any).toString();
     return fetchApi(`/admin/audit-logs${qs ? '?' + qs : ''}`);
-  }
+  },
+
+  // Settings (Website Content Editor)
+  getSettings: () => fetchApi('/admin/settings'),
+  updateSetting: (key: string, value: string, description?: string) => fetchApi('/admin/settings', {
+    method: 'PATCH',
+    body: JSON.stringify({ key, value, description })
+  })
 };

@@ -27,6 +27,18 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
+
+app.get('/api/v1/settings', async (req, res) => {
+  try {
+    const settings = await prisma.systemSetting.findMany();
+    res.json({ success: true, data: settings });
+  } catch (err) {
+    res.status(500).json({ success: false, error: { message: 'Server error' } });
+  }
+});
+
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/courses', courseRoutes);
 app.use('/api/v1/payments', paymentRoutes);

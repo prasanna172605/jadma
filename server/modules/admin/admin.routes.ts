@@ -67,6 +67,6 @@ router.get('/audit-logs', authenticate, requireSuperAdmin, adminController.getAu
 
 // Settings
 router.get('/settings', authenticate, requireAdmin, adminController.getSettings);
-router.patch('/settings', authenticate, requireSuperAdmin, adminController.updateSettings);
+router.patch('/settings', authenticate, requireAdmin, adminController.updateSettings);
 
 export default router;

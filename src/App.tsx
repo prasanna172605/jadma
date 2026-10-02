@@ -5,6 +5,7 @@ import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { AppRoutes } from './routes/AppRoutes';
 import { AuthProvider } from './context/AuthContext';
+import { SettingsProvider } from './context/SettingsContext';
 import { WhatsAppButton } from './components/common/WhatsAppButton';
 import { ScrollObserver } from './components/common/ScrollObserver';
 import { SEOManager } from './components/common/SEOManager';
@@ -31,9 +32,11 @@ export function App() {
   return (
     <HelmetProvider>
       <BrowserRouter>
-        <AuthProvider>
-          <AppContent />
-        </AuthProvider>
+        <SettingsProvider>
+          <AuthProvider>
+            <AppContent />
+          </AuthProvider>
+        </SettingsProvider>
       </BrowserRouter>
     </HelmetProvider>
   );

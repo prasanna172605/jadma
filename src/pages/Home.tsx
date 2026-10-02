@@ -9,8 +9,10 @@ import { courseApi } from '../lib/api/courseApi';
 import type { Course } from '../types';
 import { reviewsApi, type Testimonial } from '../lib/api/reviewsApi';
 import { CountUp } from '../components/common/CountUp';
+import { useSettings } from '../context/SettingsContext';
 
 export const Home: React.FC = () => {
+  const { settings } = useSettings();
   const [featuredCourses, setFeaturedCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
@@ -84,12 +86,10 @@ export const Home: React.FC = () => {
                 1000+ YEAR OLD MOTHER OF MARTIAL ART
               </h6>
 
-              <h1 className="font-heading font-extrabold text-4xl sm:text-6xl lg:text-[64px] text-[#2B2521] leading-[1.12] tracking-tight">
-                Learn the Ancient Science of <br className="hidden sm:inline" /> Varmakalai
-              </h1>
-
+              <h1 className="font-heading font-extrabold text-4xl sm:text-6xl lg:text-[64px] text-[#2B2521] leading-[1.12] tracking-tight" dangerouslySetInnerHTML={{ __html: settings['home.hero.title'] || 'Learn the Ancient Science of <br class="hidden sm:inline" /> Varmakalai' }} />
+              
               <p className="font-body text-[#5C5148] text-lg md:text-xl leading-[1.65] max-w-xl">
-                Empower your body, sharpen your mind, and preserve a timeless martial tradition through professional Ancient Martial Art training.
+                {settings['home.hero.subtitle'] || 'Empower your body, sharpen your mind, and preserve a timeless martial tradition through professional Ancient Martial Art training.'}
               </p>
 
               <div className="flex flex-wrap items-center gap-3.5 pt-2">

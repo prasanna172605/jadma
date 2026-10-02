@@ -2,9 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, ShieldCheck, Phone, Mail } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useSettings } from '../../context/SettingsContext';
 
 export const Footer: React.FC = () => {
   const { user } = useAuth();
+  const { settings } = useSettings();
   return (
     <footer className="bg-jadmaa-charcoal text-white pt-14 pb-8 border-t-4 border-jadmaa-red text-left">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -28,8 +30,8 @@ export const Footer: React.FC = () => {
               </div>
             </Link>
 
-            <p className="text-gray-300 text-sm leading-relaxed">
-              JADMAA is the premier academy for authentic Varmakalai and traditional Tamil martial arts. We preserve, research, and teach this ancient Siddha science of vital pressure points for defense and holistic healing.
+            <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">
+              {settings['footer.about'] || 'JADMAA is the premier academy for authentic Varmakalai and traditional Tamil martial arts. We preserve, research, and teach this ancient Siddha science of vital pressure points for defense and holistic healing.'}
             </p>
 
             <div className="flex items-center space-x-3 pt-2">
@@ -101,15 +103,15 @@ export const Footer: React.FC = () => {
             <div className="space-y-3 text-sm text-gray-300">
               <div className="flex items-center space-x-2">
                 <Phone className="w-4 h-4 text-jadmaa-red flex-shrink-0" />
-                <a href="tel:+919345220020" className="hover:text-jadmaa-red transition-colors font-mono font-semibold">+91 93452 20020</a>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Phone className="w-4 h-4 text-jadmaa-red flex-shrink-0" />
-                <a href="tel:+919655457500" className="hover:text-jadmaa-red transition-colors font-mono font-semibold">+91 96554 57500</a>
+                <a href={`tel:${settings['contact.phone'] || '+919345220020'}`} className="hover:text-jadmaa-red transition-colors font-mono font-semibold">
+                  {settings['contact.phone'] || '+91 93452 20020'}
+                </a>
               </div>
               <div className="flex items-center space-x-2">
                 <Mail className="w-4 h-4 text-jadmaa-red flex-shrink-0" />
-                <a href="mailto:info@jadmaa.com" className="hover:text-jadmaa-red transition-colors font-mono">info@jadmaa.com</a>
+                <a href={`mailto:${settings['contact.email'] || 'info@jadmaa.com'}`} className="hover:text-jadmaa-red transition-colors font-mono">
+                  {settings['contact.email'] || 'info@jadmaa.com'}
+                </a>
               </div>
             </div>
           </div>
