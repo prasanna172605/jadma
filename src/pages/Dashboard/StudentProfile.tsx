@@ -11,6 +11,13 @@ export const StudentProfile: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<any>(null);
+  
+  // Profile update state
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [updateLoading, setUpdateLoading] = useState(false);
+  const [updateError, setUpdateError] = useState<string | null>(null);
+  const [updateSuccess, setUpdateSuccess] = useState<string | null>(null);
 
   // Password change state
   const [currentPassword, setCurrentPassword] = useState('');
@@ -42,6 +49,29 @@ export const StudentProfile: React.FC = () => {
     }
   };
 
+  const handleUpdateProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setUpdateLoading(true);
+    setUpdateError(null);
+    setUpdateSuccess(null);
+    try {
+      const res = await fetchApi('/auth/update-profile', { 
+        method: 'PUT', 
+        body: JSON.stringify({ name, phone }) 
+      });
+      if (res.success) {
+        setUpdateSuccess("Profile updated successfully.");
+        setProfile({ ...profile, name: res.data.name, phone: res.data.phone });
+      } else {
+        setUpdateError(res.error?.message || 'Failed to update profile');
+      }
+    } catch (err: any) {
+      setUpdateError(err.message || 'Failed to update profile');
+    } finally {
+      setUpdateLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (!isLoggedIn) {
       navigate('/login');
@@ -52,6 +82,8 @@ export const StudentProfile: React.FC = () => {
         const res = await fetchApi('/auth/me');
         if (res.success) {
           setProfile(res.data);
+          setName(res.data.name || '');
+          setPhone(res.data.phone || '');
         }
       } catch (err) {
       } finally {
@@ -115,18 +147,22 @@ export const StudentProfile: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm space-y-6">
               <h3 className="font-bold text-gray-900 border-b border-gray-100 pb-3">Personal Information</h3>
-              <form className="space-y-4">
+              
+              {updateError && <div className="bg-red-50 text-red-600 p-3 rounded text-sm mb-4 border border-red-100">{updateError}</div>}
+              {updateSuccess && <div className="bg-green-50 text-green-700 p-3 rounded text-sm mb-4 border border-green-100">{updateSuccess}</div>}
+              
+              <form className="space-y-4" onSubmit={handleUpdateProfile}>
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1">Full Name</label>
-                  <input type="text" defaultValue={profile?.name} className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-jadmaa-red focus:border-jadmaa-red" />
+                  <input type="text" value={name} onChange={(e) => setName(e.target.value)} required className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-jadmaa-red focus:border-jadmaa-red" />
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1">Phone Number</label>
-                  <input type="text" defaultValue={profile?.phone || ''} className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-jadmaa-red focus:border-jadmaa-red" />
+                  <input type="text" value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-jadmaa-red focus:border-jadmaa-red" />
                 </div>
                 <div className="pt-2">
-                  <button type="button" className="px-5 py-2.5 bg-gray-900 text-white font-semibold rounded text-sm hover:bg-gray-800 transition">
-                    Save Changes
+                  <button type="submit" disabled={updateLoading} className="px-5 py-2.5 bg-gray-900 text-white font-semibold rounded text-sm hover:bg-gray-800 transition disabled:opacity-50">
+                    {updateLoading ? 'Saving...' : 'Save Changes'}
                   </button>
                 </div>
               </form>

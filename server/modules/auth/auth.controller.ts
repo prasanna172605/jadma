@@ -176,3 +176,25 @@ export const getMe = async (req: Request, res: Response) => {
     res.status(500).json({ success: false, error: { message: 'Server error' } });
   }
 };
+
+export const updateProfile = async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user.id;
+    const { name, phone } = req.body;
+    
+    if (!name) {
+      return res.status(400).json({ success: false, error: { message: 'Name is required' } });
+    }
+
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: { name, phone }
+    });
+
+    res.json({ success: true, data: { name: user.name, phone: user.phone } });
+  } catch (err) {
+    console.error('Update profile error:', err);
+    res.status(500).json({ success: false, error: { message: 'Server error' } });
+  }
+};
+

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 
 // Public Pages
 import { Home } from '../pages/Home';
@@ -26,6 +26,7 @@ import { CertificatesPage } from '../pages/Dashboard/CertificatesPage';
 import { PaymentStatus } from '../pages/Dashboard/PaymentStatus';
 import { AdminPanel } from '../pages/Admin/AdminPanel';
 import { InstructorPanel } from '../pages/Instructor/InstructorPanel';
+import { StudentPanel } from '../pages/Dashboard/StudentPanel';
 
 const ScrollToTop: React.FC = () => {
   const { pathname } = useLocation();
@@ -59,10 +60,11 @@ export const AppRoutes: React.FC = () => {
         <Route path="/reset-password" element={<ResetPassword />} />
 
         {/* LMS Routes */}
-        <Route path="/dashboard" element={<StudentDashboard />} />
-        <Route path="/my-courses" element={<MyCourses />} />
+        <Route path="/dashboard" element={<Navigate to="/student" />} />
+        <Route path="/student" element={<StudentPanel />} />
+        <Route path="/my-courses" element={<Navigate to="/student" />} />
+        <Route path="/profile" element={<Navigate to="/student" />} />
         <Route path="/learn/:courseId" element={<LearnCourse />} />
-        <Route path="/profile" element={<StudentProfile />} />
         <Route path="/certificates" element={<CertificatesPage />} />
         <Route path="/payment/status/:merchantOrderId" element={<PaymentStatus />} />
         <Route path="/admin" element={<AdminPanel />} />

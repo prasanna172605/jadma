@@ -12,14 +12,7 @@ export const Navbar: React.FC = () => {
 
   const isStudent = isLoggedIn && user?.role === 'student';
 
-  const studentNavItems = [
-    { id: 'dashboard', label: 'Dashboard', href: '/dashboard' },
-    { id: 'my-courses', label: 'My Courses', href: '/my-courses' },
-    { id: 'courses', label: 'Browse Courses', href: '/courses' },
-    { id: 'certificates', label: 'Certificates', href: '/certificates' },
-  ];
-
-  const currentNavItems = isStudent ? studentNavItems : mainNavItems;
+  const currentNavItems = mainNavItems;
 
 
   useEffect(() => {
@@ -76,7 +69,7 @@ export const Navbar: React.FC = () => {
             {isLoggedIn ? (
               <div className="flex items-center space-x-6">
                 <Link
-                  to={user?.role === "admin" || user?.role === "super_admin" ? "/admin" : user?.role === "instructor" ? "/instructor" : "/profile"}
+                  to={user?.role === "admin" || user?.role === "super_admin" ? "/admin" : user?.role === "instructor" ? "/instructor" : "/student"}
                   className="flex items-center space-x-1.5 text-sm font-semibold text-gray-700 hover:text-jadmaa-red transition"
                 >
                   <User className="w-4 h-4" />
@@ -107,7 +100,7 @@ export const Navbar: React.FC = () => {
           <div className="flex items-center space-x-2 md:hidden">
             {isLoggedIn ? (
               <Link
-                to={user?.role === "admin" || user?.role === "super_admin" ? "/admin" : user?.role === "instructor" ? "/instructor" : "/dashboard"}
+                to={user?.role === "admin" || user?.role === "super_admin" ? "/admin" : user?.role === "instructor" ? "/instructor" : "/student"}
                 className="px-3 py-1 text-sm font-bold text-white bg-[#B12B2B] rounded"
               >
                 Profile
@@ -149,7 +142,7 @@ export const Navbar: React.FC = () => {
             {isLoggedIn ? (
               <>
                 <Link
-                  to={user?.role === "admin" || user?.role === "super_admin" ? "/admin" : user?.role === "instructor" ? "/instructor" : "/profile"}
+                  to={user?.role === "admin" || user?.role === "super_admin" ? "/admin" : user?.role === "instructor" ? "/instructor" : "/student"}
                   className="block w-full text-center py-2 bg-[#B12B2B] text-white text-sm font-bold rounded"
                 >
                   My Profile

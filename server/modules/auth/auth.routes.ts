@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { register, login, getMe, refresh, logout } from './auth.controller.js';
+import { register, login, getMe, refresh, logout, updateProfile } from './auth.controller.js';
 import { forgotPassword, resetPassword, changePassword } from './password.controller.js';
 import { authenticate } from '../../middleware/auth.middleware.js';
 
@@ -10,6 +10,7 @@ router.post('/login', login);
 router.post('/refresh', refresh);
 router.post('/logout', logout);
 router.get('/me', authenticate, getMe);
+router.put('/update-profile', authenticate, updateProfile);
 
 
 router.post('/forgot-password', forgotPassword);
