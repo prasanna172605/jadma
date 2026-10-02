@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { MapPin, ShieldCheck, Phone, Mail } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useSettings } from '../../context/SettingsContext';
-import { getSettingValue } from '../../lib/cms/defaultContent';
+import { EditableText } from '../common/EditableText';
 
 export const Footer: React.FC = () => {
   const { user } = useAuth();
@@ -19,7 +19,7 @@ export const Footer: React.FC = () => {
           <div className="space-y-4">
             <Link to="/" className="flex items-center space-x-3">
               <img 
-                src={getSettingValue(settings, 'site.header.logo')}
+                src="/images/logo-1.png" 
                 alt="JADMAA Logo" 
                 className="h-12 w-auto bg-white p-1 rounded-lg"
               />
@@ -32,12 +32,16 @@ export const Footer: React.FC = () => {
             </Link>
 
             <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">
-              {getSettingValue(settings, 'site.footer.description')}
+              <EditableText 
+                settingKey="footer.about"
+                defaultText="JADMAA is the premier academy for authentic Varmakalai and traditional Tamil martial arts. We preserve, research, and teach this ancient Siddha science of vital pressure points for defense and holistic healing."
+                multiline={true}
+              />
             </p>
 
             <div className="flex items-center space-x-3 pt-2">
               <a 
-                href={getSettingValue(settings, 'site.footer.social.instagram')}
+                href="https://www.instagram.com/jadmaavarmakalai/" 
                 target="_blank" 
                 rel="noreferrer"
                 className="w-9 h-9 rounded-full bg-gray-800 hover:bg-jadmaa-red flex items-center justify-center text-gray-300 hover:text-white transition-all"
@@ -46,7 +50,7 @@ export const Footer: React.FC = () => {
                 <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
               </a>
               <a 
-                href={getSettingValue(settings, 'site.footer.social.facebook')}
+                href="https://www.facebook.com/profile.php?id=61591816677608" 
                 target="_blank" 
                 rel="noreferrer"
                 className="w-9 h-9 rounded-full bg-gray-800 hover:bg-jadmaa-red flex items-center justify-center text-gray-300 hover:text-white transition-all"
@@ -55,7 +59,7 @@ export const Footer: React.FC = () => {
                 <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M9 8H6v4h3v12h5V12h3.642L18 8h-4V6.333C14 5.374 14.5 5 15.5 5H18V0h-3.808C10.592 0 9 1.583 9 4.615V8z"/></svg>
               </a>
               <a 
-                href={getSettingValue(settings, 'site.footer.social.youtube')}
+                href="https://www.youtube.com/@JADMAAVarmakalai" 
                 target="_blank" 
                 rel="noreferrer"
                 className="w-9 h-9 rounded-full bg-gray-800 hover:bg-jadmaa-red flex items-center justify-center text-gray-300 hover:text-white transition-all"
@@ -105,13 +109,13 @@ export const Footer: React.FC = () => {
               <div className="flex items-center space-x-2">
                 <Phone className="w-4 h-4 text-jadmaa-red flex-shrink-0" />
                 <span className="font-mono font-semibold">
-                  {getSettingValue(settings, 'site.footer.phone')}
+                  <EditableText settingKey="contact.phone" defaultText="+91 93452 20020" />
                 </span>
               </div>
               <div className="flex items-center space-x-2">
                 <Mail className="w-4 h-4 text-jadmaa-red flex-shrink-0" />
                 <span className="font-mono font-semibold">
-                  {getSettingValue(settings, 'site.footer.email')}
+                  <EditableText settingKey="contact.email" defaultText="info@jadmaa.com" />
                 </span>
               </div>
             </div>
@@ -154,7 +158,7 @@ export const Footer: React.FC = () => {
           </div>
           <div className="flex items-center space-x-6">
             <Link to="/login" className="hover:text-white font-semibold">Login / Register</Link>
-            <Link to={user?.role === "ADMIN" || user?.role === "SUPER_ADMIN" ? "/admin" : user?.role === "INSTRUCTOR" ? "/instructor" : "/dashboard"} className="hover:text-jadmaa-red font-semibold text-gray-300">Student LMS</Link>
+            <Link to={user?.role === "admin" || user?.role === "super_admin" ? "/admin" : user?.role === "instructor" ? "/instructor" : "/dashboard"} className="hover:text-jadmaa-red font-semibold text-gray-300">Student LMS</Link>
           </div>
         </div>
 

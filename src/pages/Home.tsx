@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { SEO } from '../components/common/SEO';
 import { CourseCard } from '../components/courses/CourseCard';
@@ -10,7 +10,7 @@ import type { Course } from '../types';
 import { reviewsApi, type Testimonial } from '../lib/api/reviewsApi';
 import { CountUp } from '../components/common/CountUp';
 import { useSettings } from '../context/SettingsContext';
-import { getSettingValue } from '../lib/cms/defaultContent';
+import { EditableText } from '../components/common/EditableText';
 
 export const Home: React.FC = () => {
   const { settings } = useSettings();
@@ -84,23 +84,30 @@ export const Home: React.FC = () => {
             <div className="lg:col-span-7 space-y-5 text-left" data-aos="fade-right">
               
               <h6 className="text-[#B12B2B] text-base font-bold tracking-wider uppercase font-body">
-                {getSettingValue(settings, 'home.hero.eyebrow')}
+                1000+ YEAR OLD MOTHER OF MARTIAL ART
               </h6>
 
               <h1 className="font-heading font-extrabold text-[clamp(40px,8vw,72px)] text-[#2B2521] leading-[1.12] tracking-tight">
-                <span dangerouslySetInnerHTML={{ __html: getSettingValue(settings, 'home.hero.title') }} />
+                <EditableText 
+                  settingKey="home.hero.title" 
+                  defaultText='Learn the Ancient Science of <br class="hidden sm:inline" /> Varmakalai' 
+                />
               </h1>
               
-              <p className="font-body text-[#5C5148] text-lg md:text-xl leading-[1.65] max-w-xl whitespace-pre-wrap">
-                {getSettingValue(settings, 'home.hero.subtitle')}
+              <p className="font-body text-[#5C5148] text-lg md:text-xl leading-[1.65] max-w-xl">
+                <EditableText 
+                  settingKey="home.hero.subtitle" 
+                  defaultText="Empower your body, sharpen your mind, and preserve a timeless martial tradition through professional Ancient Martial Art training." 
+                  multiline={true}
+                />
               </p>
 
               <div className="flex flex-wrap items-center gap-3.5 pt-2">
-                <Link to={getSettingValue(settings, 'home.hero.primaryButton.link')} className="btn-jadmaa-primary">
-                  {getSettingValue(settings, 'home.hero.primaryButton.label')}
+                <Link to="/courses" className="btn-jadmaa-primary">
+                  View Courses
                 </Link>
-                <Link to={getSettingValue(settings, 'home.hero.secondaryButton.link')} className="btn-jadmaa-outline">
-                  {getSettingValue(settings, 'home.hero.secondaryButton.label')}
+                <Link to="/contact" className="btn-jadmaa-outline">
+                  Contact Us
                 </Link>
               </div>
 

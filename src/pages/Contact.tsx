@@ -3,11 +3,9 @@ import { useLocation } from 'react-router-dom';
 import { SEO } from '../components/common/SEO';
 import { mockBranches } from '../data/branches';
 import { Phone, Mail, Send, CheckCircle2, Clock, ExternalLink } from 'lucide-react';
-import { useSettings } from '../context/SettingsContext';
-import { getSettingValue } from '../lib/cms/defaultContent';
+import { EditableText } from '../components/common/EditableText';
 
 export const Contact: React.FC = () => {
-  const { settings } = useSettings();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const initialCourse = queryParams.get('course') || 'Varma Foundation';
@@ -49,13 +47,13 @@ export const Contact: React.FC = () => {
       <section className="bg-jadmaa-cream py-12 border-b border-jadmaa-border text-left">
         <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 space-y-3 reveal-on-scroll">
           <span className="text-base md:text-lg font-bold text-jadmaa-red uppercase tracking-wider">
-            {getSettingValue(settings, 'contact.hero.eyebrow')}
+            <EditableText settingKey="contact.banner.subtitle" defaultText="Admissions & Enquiries" />
           </span>
           <h1 className="font-heading font-extrabold text-[clamp(40px,6vw,60px)] text-jadmaa-charcoal">
-            {getSettingValue(settings, 'contact.hero.title')}
+            <EditableText settingKey="contact.banner.title" defaultText="Get in Touch With JADMAA" />
           </h1>
           <p className="text-base md:text-lg text-jadmaa-textMuted max-w-2xl">
-            {getSettingValue(settings, 'contact.hero.description')}
+            <EditableText settingKey="contact.banner.desc" defaultText="Book a free demo class, inquire about course admissions, or consult with our Varmakalai masters." multiline />
           </p>
         </div>
       </section>

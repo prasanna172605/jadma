@@ -4,7 +4,6 @@ import { Menu, X, User, LogOut, Settings as SettingsIcon, ChevronDown } from 'lu
 import { mainNavItems } from '../../data/navigation';
 import { useAuth } from '../../context/AuthContext';
 import { useSettings } from '../../context/SettingsContext';
-import { getSettingValue, getBooleanSetting } from '../../lib/cms/defaultContent';
 
 export const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -61,7 +60,7 @@ export const Navbar: React.FC = () => {
     }
   };
 
-  const { settings, isEditing } = useSettings();
+  const { isEditing } = useSettings();
 
   return (
     <>
@@ -80,12 +79,12 @@ export const Navbar: React.FC = () => {
           {/* Logo & Brand Name */}
           <Link to="/" className="flex items-center space-x-3 group">
             <img 
-              src={getSettingValue(settings, 'site.header.logo')}
+              src="/images/logo-1.png" 
               alt="JADMAA Varmakalai Logo" 
               className="h-10 sm:h-12 w-auto object-contain"
             />
             <span className="font-heading font-extrabold text-lg sm:text-xl text-[#2B2521] tracking-tight leading-none">
-              {getSettingValue(settings, 'site.header.brandName').split(' ')[0]} <span className="text-[#B12B2B]">{getSettingValue(settings, 'site.header.brandName').split(' ').slice(1).join(' ')}</span>
+              JADMAA <span className="text-[#B12B2B]">VARMAKALAI</span>
             </span>
           </Link>
 

@@ -2,8 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { SEO } from '../components/common/SEO';
 import { CheckCircle2, Eye, Target } from 'lucide-react';
-import { useSettings } from '../context/SettingsContext';
-import { getSettingValue } from '../lib/cms/defaultContent';
+import { EditableText } from '../components/common/EditableText';
 
 const whyChooseItems = [
   'Authentic Traditional Varmakalai Training',
@@ -26,7 +25,6 @@ const curriculumLevels = [
 ];
 
 export const About: React.FC = () => {
-  const { settings } = useSettings();
   return (
     <>
       <SEO 
@@ -38,13 +36,13 @@ export const About: React.FC = () => {
       <section className="bg-jadmaa-cream py-12 border-b border-jadmaa-border text-left">
         <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 space-y-3 reveal-on-scroll">
           <span className="text-base md:text-lg font-bold text-jadmaa-red uppercase tracking-wider">
-            {getSettingValue(settings, 'about.hero.eyebrow')}
+            <EditableText settingKey="about.banner.subtitle" defaultText="Our Organization" />
           </span>
           <h1 className="font-heading font-extrabold text-[clamp(40px,6vw,60px)] text-jadmaa-charcoal">
-            {getSettingValue(settings, 'about.hero.title')}
+            <EditableText settingKey="about.banner.title" defaultText="About JADMAA Varmakalai Academy" />
           </h1>
           <p className="text-base md:text-lg text-jadmaa-textMuted max-w-2xl">
-            {getSettingValue(settings, 'about.hero.description')}
+            <EditableText settingKey="about.banner.desc" defaultText="Preserving the ancient 1000+ year old Tamil martial art, vital point energy science, and Siddha therapeutic traditions." multiline />
           </p>
         </div>
       </section>
@@ -57,16 +55,16 @@ export const About: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-6 space-y-5 text-left reveal-left">
               <span className="text-base md:text-lg font-bold text-jadmaa-red uppercase tracking-wider">
-                1000+ Year Heritage
+                <EditableText settingKey="about.history.subtitle" defaultText="1000+ Year Heritage" />
               </span>
               <h2 className="font-heading font-extrabold text-[clamp(40px,6vw,60px)] text-jadmaa-charcoal">
-                The Science of Varmakalai
+                <EditableText settingKey="about.history.title" defaultText="The Science of Varmakalai" />
               </h2>
               <p className="text-base md:text-lg text-jadmaa-textMuted leading-relaxed">
-                Varmakalai (Vital Points Art) is a legendary Tamil martial and medical science formulated by ancient Siddhar sages such as Agastya Siddhar. It centers on the precise knowledge of 108 vital nerve points across the human body.
+                <EditableText settingKey="about.history.p1" defaultText="Varmakalai (Vital Points Art) is a legendary Tamil martial and medical science formulated by ancient Siddhar sages such as Agastya Siddhar. It centers on the precise knowledge of 108 vital nerve points across the human body (*Varma Pulligal*)." multiline />
               </p>
               <p className="text-base md:text-lg text-jadmaa-textMuted leading-relaxed">
-                JADMAA was founded to safeguard this priceless cultural heritage from dilution or distortion. We teach both defensive tactics and therapeutic healing in a structured, ethical, and accessible manner.
+                <EditableText settingKey="about.history.p2" defaultText="JADMAA was founded to safeguard this priceless cultural heritage from dilution or distortion. We teach both defensive tactics (*Adimurai*) and therapeutic healing (*Varma Vaidhiyam*) in a structured, ethical, and accessible manner." multiline />
               </p>
             </div>
 
@@ -89,10 +87,10 @@ export const About: React.FC = () => {
                   <Eye className="w-5 h-5" />
                 </div>
                 <h3 className="font-heading font-extrabold text-xl text-jadmaa-charcoal">
-                  {getSettingValue(settings, 'about.vision.title')}
+                  <EditableText settingKey="about.vision.title" defaultText="Our Vision" />
                 </h3>
                 <p className="text-base md:text-lg text-jadmaa-textMuted leading-relaxed">
-                  {getSettingValue(settings, 'about.vision.description')}
+                  <EditableText settingKey="about.vision.desc" defaultText="To become one of India’s most trusted Varmakalai schools by preserving this ancient martial tradition and making it accessible to future generations through quality education and disciplined training." multiline />
                 </p>
               </div>
 
@@ -101,10 +99,10 @@ export const About: React.FC = () => {
                   <Target className="w-5 h-5" />
                 </div>
                 <h3 className="font-heading font-extrabold text-xl text-jadmaa-charcoal">
-                  {getSettingValue(settings, 'about.mission.title')}
+                  <EditableText settingKey="about.mission.title" defaultText="Our Mission" />
                 </h3>
                 <p className="text-base md:text-lg text-jadmaa-textMuted leading-relaxed">
-                  {getSettingValue(settings, 'about.mission.description')}
+                  <EditableText settingKey="about.mission.desc" defaultText="To inspire individuals to live healthier, stronger, and more confident lives by providing authentic Varmakalai education that develops physical fitness, self-defence ability, mental focus, discipline, and respect while protecting the cultural heritage of Tamil martial arts and traditional Varma treatment practices." multiline />
                 </p>
               </div>
             </div>
@@ -147,7 +145,7 @@ export const About: React.FC = () => {
                 Bojagarajan
               </h3>
               <p className="text-xs font-semibold text-jadmaa-textMuted">
-                Founder &amp; Chief Instructor
+                Founder & Chief Instructor
               </p>
               <p className="text-base md:text-lg text-jadmaa-textMuted leading-relaxed">
                 JADMAA Varmakalai was founded by Bojagarajan, a Varmakalai practitioner with over 15 years of experience in the art. He was trained in traditional Varmakalai under his master, Aasan R. Rajendran of Madurai, and carries that lineage forward today — personally training students and instructors across our Thanjavur, Kumbakonam, and Ariyalur branches.
