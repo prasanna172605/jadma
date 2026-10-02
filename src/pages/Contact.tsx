@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { SEO } from '../components/common/SEO';
 import { mockBranches } from '../data/branches';
-import { Phone, Mail, Send, CheckCircle2, Clock, ExternalLink, MapPin } from 'lucide-react';
+import { Phone, Mail, Send, CheckCircle2, Clock, ExternalLink } from 'lucide-react';
 import { EditableText } from '../components/common/EditableText';
 
 export const Contact: React.FC = () => {

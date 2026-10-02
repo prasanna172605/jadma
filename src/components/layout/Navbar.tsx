@@ -14,8 +14,6 @@ export const Navbar: React.FC = () => {
   const [editPromptOpen, setEditPromptOpen] = useState(false);
   const [editPromptText, setEditPromptText] = useState('');
 
-  const isStudent = isLoggedIn && user?.role === 'STUDENT';
-
   let currentNavItems = mainNavItems;
   if (isLoggedIn) {
     if (user?.role === 'STUDENT') {

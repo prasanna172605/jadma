@@ -31,7 +31,7 @@ export const ForgotPassword: React.FC = () => {
     setError(null);
     
     try {
-      const res = await authApi.forgotPassword(email);
+      await authApi.forgotPassword(email);
       setSuccess(true);
       setResendCount(prev => prev + 1);
       setMessage(resendCount > 0 ? "Another password reset link has been sent." : "Check your email for a password reset link.");
