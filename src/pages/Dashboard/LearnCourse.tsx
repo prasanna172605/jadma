@@ -8,7 +8,7 @@ import { useAuth } from '../../context/AuthContext';
 
 export const LearnCourse: React.FC = () => {
   const { courseId } = useParams();
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   
   const [course, setCourse] = useState<any>(null);
@@ -18,6 +18,7 @@ export const LearnCourse: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (authLoading) return;
     if (!isLoggedIn) {
       navigate('/login');
       return;
@@ -60,7 +61,7 @@ export const LearnCourse: React.FC = () => {
     };
     
     fetchData();
-  }, [courseId, isLoggedIn, navigate]);
+  }, [courseId, isLoggedIn, navigate, authLoading]);
 
   const toggleComplete = async (id: string, forceStatus?: boolean) => {
     const isCompleted = forceStatus !== undefined ? forceStatus : !completedLessons[id];

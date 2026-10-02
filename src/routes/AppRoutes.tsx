@@ -18,9 +18,6 @@ import { ForgotPassword } from '../pages/Auth/ForgotPassword';
 import { ResetPassword } from '../pages/Auth/ResetPassword';
 
 // LMS Pages
-import { StudentDashboard } from '../pages/Dashboard/StudentDashboard';
-import { StudentProfile } from '../pages/Dashboard/StudentProfile';
-import { MyCourses } from '../pages/Dashboard/MyCourses';
 import { LearnCourse } from '../pages/Dashboard/LearnCourse';
 import { CertificatesPage } from '../pages/Dashboard/CertificatesPage';
 import { PaymentStatus } from '../pages/Dashboard/PaymentStatus';

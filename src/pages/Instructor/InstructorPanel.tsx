@@ -2,7 +2,27 @@ import React from 'react';
 import { SEO } from '../../components/common/SEO';
 import { GraduationCap, Video, Users, CheckSquare } from 'lucide-react';
 
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+
 export const InstructorPanel: React.FC = () => {
+  const { user, isLoggedIn, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-jadmaa-cream flex items-center justify-center">
+        <div className="animate-pulse flex flex-col items-center">
+          <div className="h-8 w-8 bg-jadmaa-red rounded-full mb-4"></div>
+          <div className="h-4 w-32 bg-gray-300 rounded"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isLoggedIn || user?.role !== 'instructor') {
+    return <Navigate to="/login" />;
+  }
+
   return (
     <>
       <SEO title="Instructor Panel Placeholder | JADMAA LMS" />

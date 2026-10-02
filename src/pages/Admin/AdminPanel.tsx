@@ -16,7 +16,18 @@ type Tab = 'dashboard' | 'students' | 'instructors' | 'courses' | 'enrollments' 
 
 export const AdminPanel: React.FC = () => {
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
-  const { user, isLoggedIn } = useAuth();
+  const { user, isLoggedIn, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-jadmaa-cream flex items-center justify-center">
+        <div className="animate-pulse flex flex-col items-center">
+          <div className="h-8 w-8 bg-jadmaa-red rounded-full mb-4"></div>
+          <div className="h-4 w-32 bg-gray-300 rounded"></div>
+        </div>
+      </div>
+    );
+  }
 
   if (!isLoggedIn) {
     return <Navigate to="/login" />;

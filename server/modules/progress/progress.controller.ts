@@ -76,7 +76,7 @@ export const getCourseProgress = async (req: Request, res: Response) => {
     const completedLessonIds = progress.map(p => p.lessonId);
     
     let totalLessons = 0;
-    (course as any).modules.forEach(m => {
+    (course as any).modules.forEach((m: any) => {
       totalLessons += m.lessons.length;
     });
 
@@ -151,8 +151,8 @@ export const updateLessonProgress = async (req: Request, res: Response) => {
       });
       
       let requiredLessonIds: string[] = [];
-      (course as any)?.modules.forEach(m => {
-        requiredLessonIds.push(...m.lessons.map(l => l.id));
+      (course as any)?.modules.forEach((m: any) => {
+        requiredLessonIds.push(...m.lessons.map((l: any) => l.id));
       });
 
       const allProgress = await prisma.lessonProgress.findMany({
@@ -162,7 +162,7 @@ export const updateLessonProgress = async (req: Request, res: Response) => {
       
       const isFinished = requiredLessonIds.every(id => completedIds.includes(id));
       
-      if (isFinished && enrollment.status !== 'COMPLETED') {
+      if (isFinished) {
         // Mark enrollment as completed
         await prisma.enrollment.update({
           where: { id: enrollment.id },
@@ -239,7 +239,7 @@ export const getDashboard = async (req: Request, res: Response) => {
         where: { userId: user.id, courseId: e.courseId, completed: true }
       });
       let totalLessons = 0;
-      (e.course as any).modules.forEach(m => totalLessons += m.lessons.length);
+      (e.course as any).modules.forEach((m: any) => totalLessons += m.lessons.length);
       const percentage = totalLessons > 0 ? Math.round((progressCount / totalLessons) * 100) : 0;
       
       if (e.status === 'COMPLETED') completedCourses++;
