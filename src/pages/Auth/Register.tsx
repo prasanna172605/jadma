@@ -27,7 +27,7 @@ export const Register: React.FC = () => {
     }
     try {
       await register(formData.name, formData.email, formData.phone, formData.password);
-      navigate('/dashboard');
+      navigate('/student');
     } catch (error) {
       alert("Registration failed. Please try again.");
     }

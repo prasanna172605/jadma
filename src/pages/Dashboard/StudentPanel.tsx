@@ -28,7 +28,7 @@ export const StudentPanel: React.FC = () => {
   }
 
   // Only allow student
-  if (user?.role !== 'student') {
+  if (user?.role !== 'STUDENT') {
     return <Navigate to="/" />;
   }
 

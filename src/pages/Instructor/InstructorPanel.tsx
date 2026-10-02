@@ -19,7 +19,7 @@ export const InstructorPanel: React.FC = () => {
     );
   }
 
-  if (!isLoggedIn || user?.role !== 'instructor') {
+  if (!isLoggedIn || user?.role !== 'INSTRUCTOR') {
     return <Navigate to="/login" />;
   }
 

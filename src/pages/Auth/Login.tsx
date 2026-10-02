@@ -21,12 +21,12 @@ export const Login: React.FC = () => {
     
     try {
       const user = await login(email, password);
-      if (user.role === 'admin' || user.role === 'super_admin') {
+      if (user.role === 'ADMIN' || user.role === 'SUPER_ADMIN') {
         navigate('/admin');
-      } else if (user.role === 'instructor') {
+      } else if (user.role === 'INSTRUCTOR') {
         navigate('/instructor');
       } else {
-        navigate('/dashboard');
+        navigate('/student');
       }
     } catch (error) {
       alert("Login failed. Please check your credentials.");
