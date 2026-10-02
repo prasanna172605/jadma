@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, User, LogOut } from 'lucide-react';
+import { Menu, X, User, LogOut, Settings as SettingsIcon, ChevronDown } from 'lucide-react';
 import { mainNavItems } from '../../data/navigation';
 import { useAuth } from '../../context/AuthContext';
 
@@ -9,6 +9,7 @@ export const Navbar: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const { user, isLoggedIn, logout } = useAuth();
+  const [profileOpen, setProfileOpen] = useState(false);
 
   const isStudent = isLoggedIn && user?.role === 'STUDENT';
 
@@ -18,19 +19,16 @@ export const Navbar: React.FC = () => {
       currentNavItems = [
         { id: 'home', label: 'Home', href: '/' },
         { id: 'courses', label: 'Courses', href: '/courses' },
-        { id: 'my-courses', label: 'My Courses', href: '/student#my-courses' },
-        { id: 'settings', label: 'Settings', href: '/student#settings' }
+        { id: 'my-courses', label: 'My Courses', href: '/student#my-courses' }
       ];
     } else if (user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN') {
       currentNavItems = [
         { id: 'courses', label: 'Courses', href: '/admin#courses' },
-        { id: 'students', label: 'My Students', href: '/admin#students' },
-        { id: 'settings', label: 'Settings', href: '/admin#settings' }
+        { id: 'students', label: 'My Students', href: '/admin#students' }
       ];
     } else if (user?.role === 'INSTRUCTOR') {
       currentNavItems = [
-        { id: 'students', label: 'My Students', href: '/instructor#students' },
-        { id: 'settings', label: 'Settings', href: '/instructor#settings' }
+        { id: 'students', label: 'My Students', href: '/instructor#students' }
       ];
     }
   }
@@ -89,22 +87,48 @@ export const Navbar: React.FC = () => {
 
             {/* Auth / Profile Links */}
             {isLoggedIn ? (
-              <div className="flex items-center space-x-6">
-                <Link
-                  to={user?.role === "ADMIN" || user?.role === "SUPER_ADMIN" ? "/admin" : user?.role === "INSTRUCTOR" ? "/instructor" : "/student"}
-                  className="flex items-center space-x-1.5 text-sm font-semibold text-gray-700 hover:text-jadmaa-red transition"
+              <div className="relative">
+                <button
+                  onClick={() => setProfileOpen(!profileOpen)}
+                  className="flex items-center space-x-1.5 text-sm font-semibold text-gray-700 hover:text-jadmaa-red transition py-1.5"
                 >
                   <User className="w-4 h-4" />
                   <span>Profile</span>
-                </Link>
-                <button
-                  onClick={logout}
-                  className="flex items-center space-x-1.5 text-sm font-semibold text-gray-700 hover:text-jadmaa-red transition"
-                  title="Logout"
-                >
-                  <LogOut className="w-4 h-4" />
-                  <span>Logout</span>
+                  <ChevronDown className="w-4 h-4" />
                 </button>
+                
+                {profileOpen && (
+                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-100 p-4 z-50 animate-fade-in">
+                    <div className="mb-3 pb-3 border-b border-gray-100">
+                      <p className="text-sm font-bold text-gray-800 truncate">{user?.name}</p>
+                      <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                      <span className="inline-block mt-1 px-2 py-0.5 bg-gray-100 text-xs font-bold text-gray-600 rounded">
+                        {user?.role}
+                      </span>
+                    </div>
+                    
+                    <div className="space-y-1">
+                      <Link
+                        to={user?.role === "ADMIN" || user?.role === "SUPER_ADMIN" ? "/admin#settings" : user?.role === "INSTRUCTOR" ? "/instructor#settings" : "/student#settings"}
+                        onClick={() => setProfileOpen(false)}
+                        className="flex items-center space-x-2 w-full px-2 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-jadmaa-red rounded-lg transition"
+                      >
+                        <SettingsIcon className="w-4 h-4" />
+                        <span>Edit Profile</span>
+                      </Link>
+                      <button
+                        onClick={() => {
+                          setProfileOpen(false);
+                          logout();
+                        }}
+                        className="flex items-center space-x-2 w-full px-2 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-jadmaa-red rounded-lg transition"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        <span>Logout</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="flex items-center space-x-4">

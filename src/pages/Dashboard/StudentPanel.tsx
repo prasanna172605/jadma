@@ -64,27 +64,6 @@ export const StudentPanel: React.FC = () => {
           </h1>
           <p className="text-xs text-jadmaa-textMuted pb-4">Manage your learning, courses, and profile.</p>
           
-          <div className="flex space-x-1 border-b border-jadmaa-border overflow-x-auto whitespace-nowrap">
-            {tabs.map(tab => (
-              <button
-                key={tab.id}
-                onClick={() => {
-                  if (tab.id === 'courses') {
-                     window.location.href = '/courses';
-                     return;
-                  }
-                  window.location.hash = tab.id;
-                }}
-                className={`px-4 py-3 text-sm font-bold border-b-2 transition-colors ${
-                  activeTab === tab.id 
-                    ? 'border-jadmaa-red text-jadmaa-red' 
-                    : 'border-transparent text-jadmaa-textMuted hover:text-jadmaa-charcoal'
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
         </div>
       </section>
       

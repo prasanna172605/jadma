@@ -46,7 +46,7 @@ export const register = async (req: Request, res: Response) => {
       console.error('[AuthController] Failed to add contact to Brevo marketing list:', err);
     });
 
-    res.json({ success: true, data: { id: user.id, name: user.name, email: user.email } });
+    res.json({ success: true, data: { id: user.id, name: user.name, email: user.email, phone: user.phone } });
   } catch (err: any) {
     if (err instanceof z.ZodError) {
       return res.status(400).json({ success: false, error: { message: 'Validation error', details: (err as any).errors } });
@@ -96,6 +96,7 @@ export const login = async (req: Request, res: Response) => {
           id: user.id, 
           name: user.name, 
           email: user.email, 
+          phone: user.phone,
           role: user.role, 
           avatarUrl: user.avatarUrl,
           enrolledCourses: user.enrollments.map(e => e.courseId) 
@@ -153,6 +154,7 @@ export const getMe = async (req: Request, res: Response) => {
         id: true, 
         name: true, 
         email: true, 
+        phone: true,
         role: true, 
         avatarUrl: true,
         enrollments: {
