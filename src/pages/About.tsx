@@ -34,7 +34,7 @@ export const About: React.FC = () => {
 
       {/* Page Banner */}
       <section className="bg-jadmaa-cream py-12 border-b border-jadmaa-border text-left">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3 reveal-on-scroll">
+        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 space-y-3 reveal-on-scroll">
           <span className="text-base md:text-lg font-bold text-jadmaa-red uppercase tracking-wider">
             <EditableText settingKey="about.banner.subtitle" defaultText="Our Organization" />
           </span>
@@ -49,7 +49,7 @@ export const About: React.FC = () => {
 
       {/* Main Content */}
       <section className="py-16 bg-white border-b border-jadmaa-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 space-y-16">
           
           {/* Section 1: History */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">

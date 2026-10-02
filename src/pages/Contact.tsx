@@ -45,7 +45,7 @@ export const Contact: React.FC = () => {
       />
 
       <section className="bg-jadmaa-cream py-12 border-b border-jadmaa-border text-left">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3 reveal-on-scroll">
+        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 space-y-3 reveal-on-scroll">
           <span className="text-base md:text-lg font-bold text-jadmaa-red uppercase tracking-wider">
             <EditableText settingKey="contact.banner.subtitle" defaultText="Admissions & Enquiries" />
           </span>
@@ -59,7 +59,7 @@ export const Contact: React.FC = () => {
       </section>
 
       <section className="py-16 bg-white border-b border-jadmaa-border text-left">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 space-y-12">
           
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
             
@@ -264,7 +264,7 @@ export const Contact: React.FC = () => {
 
       {/* Majestic "Our Branches" section with live location maps */}
       <section className="bg-jadmaa-cream/40 py-16 border-b border-jadmaa-border text-center">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 space-y-10">
           <div className="text-center max-w-2xl mx-auto space-y-2">
             <span className="text-sm md:text-base font-bold text-jadmaa-red uppercase tracking-wider">
               VISIT OUR ACADEMIES

@@ -77,7 +77,7 @@ export const Home: React.FC = () => {
 
       {/* 1. HERO SECTION */}
       <section className="relative bg-[#FAF6F0] pt-10 pb-12 md:pt-14 md:pb-16 border-b border-[#E8DDD0] overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             
             {/* Left Column */}
@@ -87,7 +87,7 @@ export const Home: React.FC = () => {
                 1000+ YEAR OLD MOTHER OF MARTIAL ART
               </h6>
 
-              <h1 className="font-heading font-extrabold text-4xl sm:text-6xl lg:text-[64px] text-[#2B2521] leading-[1.12] tracking-tight">
+              <h1 className="font-heading font-extrabold text-[clamp(40px,8vw,72px)] text-[#2B2521] leading-[1.12] tracking-tight">
                 <EditableText 
                   settingKey="home.hero.title" 
                   defaultText='Learn the Ancient Science of <br class="hidden sm:inline" /> Varmakalai' 
@@ -153,14 +153,14 @@ export const Home: React.FC = () => {
 
       {/* 2. ABOUT JADMAA TEASER SECTION */}
       <section className="py-16 bg-white border-b border-[#E8DDD0] text-left overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-stretch">
             
             <div className="lg:col-span-7 space-y-4" data-aos="fade-up">
               <span className="text-sm md:text-base font-bold text-[#B12B2B] uppercase tracking-wider">
                 ABOUT JADMAA
               </span>
-              <h2 className="font-heading font-extrabold text-4xl sm:text-5xl text-[#2B2521]">
+              <h2 className="font-heading font-extrabold text-[clamp(32px,5vw,56px)] text-[#2B2521]">
                 Ancient Power. Modern Training.
               </h2>
               <p className="font-body text-base md:text-lg text-[#5C5148] leading-relaxed">
@@ -190,14 +190,14 @@ export const Home: React.FC = () => {
 
       {/* 3. WHY CHOOSE JADMAA SECTION */}
       <section className="py-16 bg-[#FAF6F0] border-b border-[#E8DDD0] text-left overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             
             <div className="lg:col-span-6 space-y-4" data-aos="fade-right">
               <span className="text-sm md:text-base font-bold text-[#B12B2B] uppercase tracking-wider">
                 EXCELLENCE & INTEGRITY
               </span>
-              <h2 className="font-heading font-extrabold text-4xl sm:text-5xl text-[#2B2521]">
+              <h2 className="font-heading font-extrabold text-[clamp(32px,5vw,56px)] text-[#2B2521]">
                 Why Choose JADMAA?
               </h2>
               <p className="font-body text-lg md:text-xl text-[#5C5148] leading-relaxed">
@@ -243,7 +243,7 @@ export const Home: React.FC = () => {
 
       {/* 4. VARMA WELLNESS & TRADITIONAL THERAPY SECTION */}
       <section className="py-16 bg-[#FAF6F0] border-b border-[#E8DDD0] text-left overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 space-y-8">
           
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             
@@ -262,7 +262,7 @@ export const Home: React.FC = () => {
                 <span className="text-sm md:text-base font-bold text-[#B12B2B] uppercase tracking-wider">
                   SIDDHA VARMA HEALING
                 </span>
-                <h2 className="font-heading font-extrabold text-4xl sm:text-5xl text-[#2B2521] mt-1">
+                <h2 className="font-heading font-extrabold text-[clamp(32px,5vw,56px)] text-[#2B2521] mt-1">
                   Varma Wellness & Traditional Therapy
                 </h2>
                 <p className="text-lg md:text-xl text-[#5C5148] mt-2 leading-relaxed">
@@ -304,13 +304,13 @@ export const Home: React.FC = () => {
 
       {/* 5. TRAINING AT JADMAA SECTION */}
       <section className="py-16 bg-white border-b border-[#E8DDD0] text-left">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 space-y-10">
           
           <div className="text-center max-w-2xl mx-auto space-y-2" data-aos="fade-up">
             <span className="text-sm md:text-base font-bold text-[#B12B2B] uppercase tracking-wider">
               ACADEMY SYLLABUS
             </span>
-            <h2 className="font-heading font-extrabold text-4xl sm:text-5xl text-[#2B2521]">
+            <h2 className="font-heading font-extrabold text-[clamp(32px,5vw,56px)] text-[#2B2521]">
               Training at JADMAA
             </h2>
             <p className="text-base md:text-lg text-[#5C5148]">
@@ -399,14 +399,14 @@ export const Home: React.FC = () => {
 
       {/* 6. GROWTH & LEADERSHIP SECTION */}
       <section className="py-16 bg-[#FAF6F0] border-b border-[#E8DDD0] text-left overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             
             <div className="lg:col-span-7 space-y-4" data-aos="fade-right">
               <span className="text-sm md:text-base font-bold text-[#B12B2B] uppercase tracking-wider">
                 GROWTH & LEADERSHIP
               </span>
-              <h2 className="font-heading font-extrabold text-4xl sm:text-5xl text-[#2B2521]">
+              <h2 className="font-heading font-extrabold text-[clamp(32px,5vw,56px)] text-[#2B2521]">
                 Build Your Future Through Traditional Martial Art
               </h2>
               <p className="font-body text-lg md:text-xl text-[#5C5148] leading-relaxed">
@@ -436,14 +436,14 @@ export const Home: React.FC = () => {
 
       {/* 7. FEATURED COURSES SECTION */}
       <section className="py-16 bg-white border-b border-[#E8DDD0] text-left">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 space-y-8">
           
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4" data-aos="fade-up">
             <div>
               <span className="text-sm md:text-base font-bold text-[#B12B2B] uppercase tracking-wider">
                 STRUCTURED CURRICULUM
               </span>
-              <h2 className="font-heading font-extrabold text-4xl sm:text-5xl text-[#2B2521] mt-1">
+              <h2 className="font-heading font-extrabold text-[clamp(32px,5vw,56px)] text-[#2B2521] mt-1">
                 Featured Courses
               </h2>
               <p className="text-base md:text-lg text-[#5C5148] mt-1">
@@ -470,7 +470,7 @@ export const Home: React.FC = () => {
 
       {/* 8. BRANCH LOCATIONS SECTION */}
       <section className="py-16 bg-white border-b border-[#E8DDD0] text-left">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 space-y-8">
           
           <div className="text-center max-w-2xl mx-auto space-y-2" data-aos="fade-up">
             <span className="text-sm md:text-base font-bold text-[#B12B2B] uppercase tracking-wider">
@@ -509,7 +509,7 @@ export const Home: React.FC = () => {
 
       {/* 9. TESTIMONIALS SECTION */}
       <section className="py-16 bg-[#FAF6F0] border-b border-[#E8DDD0] text-left">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 space-y-8">
           <div className="text-center max-w-2xl mx-auto space-y-2" data-aos="fade-up">
             <span className="text-sm md:text-base font-bold text-[#B12B2B] uppercase tracking-wider">
               STUDENT REVIEWS
