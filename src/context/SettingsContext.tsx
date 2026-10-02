@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { fetchApi } from '../lib/api/apiClient';
 import { adminApi } from '../lib/api/adminApi';
+import { defaultCmsContent } from '../lib/cms/defaultContent';
 
 interface SettingsContextType {
   settings: Record<string, string>;
@@ -33,12 +34,21 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     try {
       const res = await fetchApi('/settings');
       const map: Record<string, string> = {};
-      res.data.forEach((s: any) => {
-        map[s.key] = s.value;
-      });
+      // Merge with defaults so we never have empty values for missing DB entries
+      Object.assign(map, defaultCmsContent);
+
+      if (res.data) {
+        res.data.forEach((s: any) => {
+          if (s.value !== undefined && s.value !== null) {
+            map[s.key] = s.value;
+          }
+        });
+      }
       setSettings(map);
     } catch (err) {
       console.error('Failed to load settings', err);
+      // Fallback to defaults entirely
+      setSettings({ ...defaultCmsContent });
     } finally {
       setLoading(false);
     }
@@ -53,12 +63,13 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       // Optimistically update local state
       setSettings(prev => ({ ...prev, [key]: value }));
       
-      // Persist to backend (Requires ADMIN token)
+      // Persist to backend (Requires SUPER_ADMIN / ADMIN token)
       await adminApi.updateSettings({ [key]: value });
     } catch (err) {
       console.error(`Failed to update setting ${key}`, err);
       // Reload on failure
       loadSettings();
+      throw err;
     }
   };
 
