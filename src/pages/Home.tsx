@@ -10,6 +10,7 @@ import type { Course } from '../types';
 import { reviewsApi, type Testimonial } from '../lib/api/reviewsApi';
 import { CountUp } from '../components/common/CountUp';
 import { useSettings } from '../context/SettingsContext';
+import { EditableText } from '../components/common/EditableText';
 
 export const Home: React.FC = () => {
   const { settings } = useSettings();
@@ -86,10 +87,19 @@ export const Home: React.FC = () => {
                 1000+ YEAR OLD MOTHER OF MARTIAL ART
               </h6>
 
-              <h1 className="font-heading font-extrabold text-4xl sm:text-6xl lg:text-[64px] text-[#2B2521] leading-[1.12] tracking-tight" dangerouslySetInnerHTML={{ __html: settings['home.hero.title'] || 'Learn the Ancient Science of <br class="hidden sm:inline" /> Varmakalai' }} />
+              <h1 className="font-heading font-extrabold text-4xl sm:text-6xl lg:text-[64px] text-[#2B2521] leading-[1.12] tracking-tight">
+                <EditableText 
+                  settingKey="home.hero.title" 
+                  defaultText='Learn the Ancient Science of <br class="hidden sm:inline" /> Varmakalai' 
+                />
+              </h1>
               
               <p className="font-body text-[#5C5148] text-lg md:text-xl leading-[1.65] max-w-xl">
-                {settings['home.hero.subtitle'] || 'Empower your body, sharpen your mind, and preserve a timeless martial tradition through professional Ancient Martial Art training.'}
+                <EditableText 
+                  settingKey="home.hero.subtitle" 
+                  defaultText="Empower your body, sharpen your mind, and preserve a timeless martial tradition through professional Ancient Martial Art training." 
+                  multiline={true}
+                />
               </p>
 
               <div className="flex flex-wrap items-center gap-3.5 pt-2">

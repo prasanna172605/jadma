@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, User, LogOut, Settings as SettingsIcon, ChevronDown } from 'lucide-react';
 import { mainNavItems } from '../../data/navigation';
 import { useAuth } from '../../context/AuthContext';
+import { useSettings } from '../../context/SettingsContext';
 
 export const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -10,6 +11,8 @@ export const Navbar: React.FC = () => {
   const location = useLocation();
   const { user, isLoggedIn, logout } = useAuth();
   const [profileOpen, setProfileOpen] = useState(false);
+  const [editPromptOpen, setEditPromptOpen] = useState(false);
+  const [editPromptText, setEditPromptText] = useState('');
 
   const isStudent = isLoggedIn && user?.role === 'STUDENT';
 
@@ -48,7 +51,26 @@ export const Navbar: React.FC = () => {
     setIsOpen(false);
   }, [location.pathname]);
 
+  const handleEditWebsiteSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editPromptText.toLowerCase() === 'edit website') {
+      setEditPromptOpen(false);
+      window.location.href = '/?edit=true';
+    } else {
+      alert('Incorrect text. Please type "edit website".');
+    }
+  };
+
+  const { isEditing } = useSettings();
+
   return (
+    <>
+    {isEditing && (
+      <div className="bg-jadmaa-red text-white text-center py-2 text-sm font-bold flex items-center justify-center space-x-4">
+        <span>🎨 Visual Edit Mode is Active. Click on text to edit. Changes save automatically.</span>
+        <button onClick={() => window.location.href = '/'} className="px-3 py-1 bg-white text-jadmaa-red rounded-full text-xs hover:bg-gray-100">Exit Edit Mode</button>
+      </div>
+    )}
     <header className={`sticky top-0 z-50 bg-[#FAF6F0] transition-shadow duration-200 border-b border-[#E8DDD0] ${
       scrolled ? 'shadow-sm py-3' : 'py-4'
     }`}>
@@ -110,14 +132,27 @@ export const Navbar: React.FC = () => {
                     </div>
                     
                     <div className="space-y-1">
-                      <Link
-                        to={user?.role === "ADMIN" || user?.role === "SUPER_ADMIN" ? "/admin#settings" : user?.role === "INSTRUCTOR" ? "/instructor#settings" : "/student#settings"}
-                        onClick={() => setProfileOpen(false)}
-                        className="flex items-center space-x-2 w-full px-2 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-jadmaa-red rounded-lg transition"
-                      >
-                        <SettingsIcon className="w-4 h-4" />
-                        <span>Edit Profile</span>
-                      </Link>
+                      {(user?.role === "ADMIN" || user?.role === "SUPER_ADMIN") ? (
+                        <button
+                          onClick={() => {
+                            setProfileOpen(false);
+                            setEditPromptOpen(true);
+                          }}
+                          className="flex items-center space-x-2 w-full px-2 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-jadmaa-red rounded-lg transition"
+                        >
+                          <SettingsIcon className="w-4 h-4" />
+                          <span>Edit Website</span>
+                        </button>
+                      ) : (
+                        <Link
+                          to={user?.role === "INSTRUCTOR" ? "/instructor#settings" : "/student#settings"}
+                          onClick={() => setProfileOpen(false)}
+                          className="flex items-center space-x-2 w-full px-2 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-jadmaa-red rounded-lg transition"
+                        >
+                          <SettingsIcon className="w-4 h-4" />
+                          <span>Edit Profile</span>
+                        </Link>
+                      )}
                       <button
                         onClick={() => {
                           setProfileOpen(false);
@@ -216,5 +251,40 @@ export const Navbar: React.FC = () => {
         </div>
       )}
     </header>
+
+    {/* Edit Website Prompt Modal */}
+    {editPromptOpen && (
+      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-fade-in">
+        <div className="bg-white rounded-2xl w-full max-w-md p-6 shadow-xl relative text-left">
+          <button onClick={() => setEditPromptOpen(false)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+            <X className="w-5 h-5" />
+          </button>
+          <h3 className="text-xl font-heading font-bold text-gray-900 mb-2">Enable Edit Mode</h3>
+          <p className="text-sm text-gray-600 mb-4">You are about to enter visual editing mode for the entire website. This will allow you to click on text and change it live.</p>
+          <form onSubmit={handleEditWebsiteSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-1">
+                Please type <span className="font-mono bg-gray-100 px-1 py-0.5 rounded text-jadmaa-red">edit website</span> to confirm:
+              </label>
+              <input
+                type="text"
+                autoFocus
+                value={editPromptText}
+                onChange={e => setEditPromptText(e.target.value)}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-jadmaa-red"
+                placeholder="edit website"
+              />
+            </div>
+            <button
+              type="submit"
+              className="w-full bg-jadmaa-red hover:bg-red-800 text-white font-bold py-2 rounded-lg transition-colors"
+            >
+              Confirm
+            </button>
+          </form>
+        </div>
+      </div>
+    )}
+    </>
   );
 };

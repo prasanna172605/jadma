@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { MapPin, ShieldCheck, Phone, Mail } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useSettings } from '../../context/SettingsContext';
+import { EditableText } from '../common/EditableText';
 
 export const Footer: React.FC = () => {
   const { user } = useAuth();
@@ -31,7 +32,11 @@ export const Footer: React.FC = () => {
             </Link>
 
             <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">
-              {settings['footer.about'] || 'JADMAA is the premier academy for authentic Varmakalai and traditional Tamil martial arts. We preserve, research, and teach this ancient Siddha science of vital pressure points for defense and holistic healing.'}
+              <EditableText 
+                settingKey="footer.about"
+                defaultText="JADMAA is the premier academy for authentic Varmakalai and traditional Tamil martial arts. We preserve, research, and teach this ancient Siddha science of vital pressure points for defense and holistic healing."
+                multiline={true}
+              />
             </p>
 
             <div className="flex items-center space-x-3 pt-2">
@@ -103,15 +108,15 @@ export const Footer: React.FC = () => {
             <div className="space-y-3 text-sm text-gray-300">
               <div className="flex items-center space-x-2">
                 <Phone className="w-4 h-4 text-jadmaa-red flex-shrink-0" />
-                <a href={`tel:${settings['contact.phone'] || '+919345220020'}`} className="hover:text-jadmaa-red transition-colors font-mono font-semibold">
-                  {settings['contact.phone'] || '+91 93452 20020'}
-                </a>
+                <span className="font-mono font-semibold">
+                  <EditableText settingKey="contact.phone" defaultText="+91 93452 20020" />
+                </span>
               </div>
               <div className="flex items-center space-x-2">
                 <Mail className="w-4 h-4 text-jadmaa-red flex-shrink-0" />
-                <a href={`mailto:${settings['contact.email'] || 'info@jadmaa.com'}`} className="hover:text-jadmaa-red transition-colors font-mono">
-                  {settings['contact.email'] || 'info@jadmaa.com'}
-                </a>
+                <span className="font-mono font-semibold">
+                  <EditableText settingKey="contact.email" defaultText="info@jadmaa.com" />
+                </span>
               </div>
             </div>
           </div>
