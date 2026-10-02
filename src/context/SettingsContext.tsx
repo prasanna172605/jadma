@@ -68,7 +68,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       setSettings(prev => ({ ...prev, [key]: value }));
       
       // Persist to backend (Requires SUPER_ADMIN / ADMIN token)
-      await adminApi.updateSettings({ [key]: value });
+      await adminApi.updateSetting(key, value);
     } catch (err) {
       console.error(`Failed to update setting ${key}`, err);
       // Reload on failure
