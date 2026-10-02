@@ -14,8 +14,9 @@ export const Navbar: React.FC = () => {
   const [editPromptOpen, setEditPromptOpen] = useState(false);
   const [editPromptText, setEditPromptText] = useState('');
 
+  const { isEditing } = useSettings();
   let currentNavItems = mainNavItems;
-  if (isLoggedIn) {
+  if (isLoggedIn && !isEditing) {
     if (user?.role === 'STUDENT') {
       currentNavItems = [
         { id: 'dashboard', label: 'Dashboard', href: '/student#dashboard' },
@@ -59,8 +60,6 @@ export const Navbar: React.FC = () => {
       alert('Incorrect text. Please type "edit website".');
     }
   };
-
-  const { isEditing } = useSettings();
 
   return (
     <>
