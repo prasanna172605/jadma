@@ -67,22 +67,22 @@ export const Instructors: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h2 className="text-xl font-heading font-bold">Instructors</h2>
-        <div className="flex space-x-4">
-          <div className="relative">
+        <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-3">
+          <div className="relative w-full sm:w-auto">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input 
               type="text" 
               placeholder="Search instructors..." 
-              className="pl-9 pr-4 py-2 border rounded-full text-sm focus:outline-none focus:border-jadmaa-red w-64"
+              className="pl-9 pr-4 py-2 border rounded-full text-sm focus:outline-none focus:border-jadmaa-red w-full sm:w-64"
               value={search}
               onChange={e => setSearch(e.target.value)}
             />
           </div>
           <button 
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center px-4 py-2 bg-jadmaa-red text-white text-sm font-bold rounded hover:bg-red-800 transition-colors"
+            className="flex items-center justify-center px-4 py-2 bg-jadmaa-red text-white text-sm font-bold rounded hover:bg-red-800 transition-colors shrink-0 w-full sm:w-auto"
           >
             <Plus className="w-4 h-4 mr-2" />
             Add Instructor
@@ -90,48 +90,95 @@ export const Instructors: React.FC = () => {
         </div>
       </div>
       
-      <div className="bg-white border rounded-xl overflow-x-auto shadow-sm">
-        <table className="w-full text-left text-sm whitespace-nowrap">
-          <thead className="bg-gray-50 border-b">
-            <tr>
-              <th className="px-6 py-4 font-bold text-gray-700">Display Name</th>
-              <th className="px-6 py-4 font-bold text-gray-700">Title</th>
-              <th className="px-6 py-4 font-bold text-gray-700">Joined</th>
-              <th className="px-6 py-4 font-bold text-gray-700">Status</th>
-              <th className="px-6 py-4 font-bold text-gray-700">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y">
-            {loading && instructors.length === 0 ? (
-              <tr><td colSpan={6} className="px-6 py-8 text-center text-gray-500">Loading...</td></tr>
-            ) : instructors.length === 0 ? (
-              <tr><td colSpan={6} className="px-6 py-8 text-center text-gray-500">No instructors found</td></tr>
-            ) : (
-              instructors.map(instructor => (
-                <tr key={instructor.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 font-medium">{instructor.displayName}</td>
-                  <td className="px-6 py-4 text-gray-600">{instructor.title || '-'}</td>
-                  <td className="px-6 py-4 text-gray-600">{new Date(instructor.createdAt).toLocaleDateString()}</td>
-                  <td className="px-6 py-4">
-                    <span className={`px-2 py-1 text-xs font-bold rounded-full ${instructor.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>
-                      {instructor.isActive ? 'Active' : 'Inactive'}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    {!instructor.user?.isAdmin && instructor.user?.role !== 'SUPER_ADMIN' ? (
-                      <button onClick={() => toggleStatus(instructor.id, instructor.isActive)} className="text-jadmaa-red hover:underline font-medium text-xs">
-                        {instructor.isActive ? 'Deactivate' : 'Activate'}
-                      </button>
-                    ) : (
-                      <span className="text-gray-400 text-xs italic">Protected (Admin)</span>
-                    )}
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+      <>
+        {/* Desktop Table View */}
+        <div className="hidden md:block bg-white border rounded-xl overflow-x-auto shadow-sm">
+          <table className="w-full text-left text-sm whitespace-nowrap">
+            <thead className="bg-gray-50 border-b">
+              <tr>
+                <th className="px-6 py-4 font-bold text-gray-700">Display Name</th>
+                <th className="px-6 py-4 font-bold text-gray-700">Title</th>
+                <th className="px-6 py-4 font-bold text-gray-700">Joined</th>
+                <th className="px-6 py-4 font-bold text-gray-700">Status</th>
+                <th className="px-6 py-4 font-bold text-gray-700">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y">
+              {loading && instructors.length === 0 ? (
+                <tr><td colSpan={5} className="px-6 py-8 text-center text-gray-500">Loading...</td></tr>
+              ) : instructors.length === 0 ? (
+                <tr><td colSpan={5} className="px-6 py-8 text-center text-gray-500">No instructors found</td></tr>
+              ) : (
+                instructors.map(instructor => (
+                  <tr key={instructor.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 font-medium">{instructor.displayName}</td>
+                    <td className="px-6 py-4 text-gray-600">{instructor.title || '-'}</td>
+                    <td className="px-6 py-4 text-gray-600">{new Date(instructor.createdAt).toLocaleDateString()}</td>
+                    <td className="px-6 py-4">
+                      <span className={`px-2 py-1 text-xs font-bold rounded-full ${instructor.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>
+                        {instructor.isActive ? 'Active' : 'Inactive'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      {!instructor.user?.isAdmin && instructor.user?.role !== 'SUPER_ADMIN' ? (
+                        <button onClick={() => toggleStatus(instructor.id, instructor.isActive)} className="text-jadmaa-red hover:underline font-medium text-xs">
+                          {instructor.isActive ? 'Deactivate' : 'Activate'}
+                        </button>
+                      ) : (
+                        <span className="text-gray-400 text-xs italic">Protected (Admin)</span>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Mobile Grid View */}
+        <div className="md:hidden grid grid-cols-1 gap-4">
+          {loading && instructors.length === 0 ? (
+            <div className="p-8 text-center text-gray-500 bg-white border rounded-xl shadow-sm">Loading...</div>
+          ) : instructors.length === 0 ? (
+            <div className="p-8 text-center text-gray-500 bg-white border rounded-xl shadow-sm">No instructors found</div>
+          ) : (
+            instructors.map(instructor => (
+              <div key={instructor.id} className="bg-white border rounded-xl p-4 shadow-sm flex flex-col space-y-3">
+                <div className="flex justify-between items-start gap-2">
+                  <h3 className="font-bold text-gray-900 leading-tight">{instructor.displayName}</h3>
+                  <span className={`px-2 py-1 text-[10px] font-bold rounded-full shrink-0 ${instructor.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>
+                    {instructor.isActive ? 'Active' : 'Inactive'}
+                  </span>
+                </div>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-gray-600">
+                  <div>
+                    <span className="block text-xs text-gray-400 font-bold uppercase mb-0.5">Title</span>
+                    {instructor.title || '-'}
+                  </div>
+                  <div>
+                    <span className="block text-xs text-gray-400 font-bold uppercase mb-0.5">Joined</span>
+                    {new Date(instructor.createdAt).toLocaleDateString()}
+                  </div>
+                </div>
+
+                <div className="flex justify-end space-x-2 pt-3 border-t mt-2">
+                  {!instructor.user?.isAdmin && instructor.user?.role !== 'SUPER_ADMIN' ? (
+                    <button 
+                      onClick={() => toggleStatus(instructor.id, instructor.isActive)}
+                      className={`flex-1 flex items-center justify-center space-x-1 py-2 rounded-lg transition font-medium text-sm ${instructor.isActive ? 'text-red-600 bg-red-50 hover:bg-red-100' : 'text-emerald-600 bg-emerald-50 hover:bg-emerald-100'}`}
+                    >
+                      <span>{instructor.isActive ? 'Deactivate' : 'Activate'}</span>
+                    </button>
+                  ) : (
+                    <div className="flex-1 text-center py-2 text-gray-400 text-xs italic bg-gray-50 rounded-lg">Protected (Admin)</div>
+                  )}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </>
       
       {/* Pagination */}
       <div className="flex justify-between items-center text-sm text-gray-600">

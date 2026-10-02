@@ -147,14 +147,14 @@ export const BlogManager: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h3 className="font-heading font-extrabold text-2xl text-jadmaa-charcoal">Blog Posts</h3>
         <button 
           onClick={() => {
             setCurrentBlog({ published: true });
             setIsEditing(true);
           }}
-          className="flex items-center space-x-1 bg-jadmaa-charcoal text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-gray-800 transition-colors"
+          className="flex items-center justify-center space-x-1 bg-jadmaa-charcoal text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-gray-800 transition-colors shrink-0 w-full sm:w-auto"
         >
           <Plus className="w-4 h-4" />
           <span>New Post</span>
@@ -166,56 +166,104 @@ export const BlogManager: React.FC = () => {
       ) : error ? (
         <div className="py-8 text-center text-jadmaa-red">Error: {error}</div>
       ) : blogs.length > 0 ? (
-        <div className="bg-white rounded-2xl border border-jadmaa-border overflow-hidden shadow-sm">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-jadmaa-cream border-b border-jadmaa-border text-jadmaa-textMuted">
-              <tr>
-                <th className="px-6 py-3 font-bold">Title</th>
-                <th className="px-6 py-3 font-bold">Date</th>
-                <th className="px-6 py-3 font-bold">Status</th>
-                <th className="px-6 py-3 font-bold text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-jadmaa-border">
-              {blogs.map(blog => (
-                <tr key={blog.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 font-semibold text-jadmaa-charcoal">{blog.title}</td>
-                  <td className="px-6 py-4 text-jadmaa-textMuted">{format(new Date(blog.createdAt), 'MMM dd, yyyy')}</td>
-                  <td className="px-6 py-4">
-                    {blog.published ? (
-                      <span className="inline-flex items-center space-x-1 text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md text-xs font-bold">
-                        <CheckCircle className="w-3 h-3" /> <span>Published</span>
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center space-x-1 text-gray-600 bg-gray-100 px-2 py-1 rounded-md text-xs font-bold">
-                        <XCircle className="w-3 h-3" /> <span>Draft</span>
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-6 py-4 text-right space-x-3">
-                    <button 
-                      onClick={() => {
-                        setCurrentBlog(blog);
-                        setIsEditing(true);
-                      }}
-                      className="text-jadmaa-textMuted hover:text-jadmaa-charcoal transition-colors"
-                      title="Edit"
-                    >
-                      <Edit className="w-4 h-4" />
-                    </button>
-                    <button 
-                      onClick={() => handleDelete(blog.id)}
-                      className="text-jadmaa-textMuted hover:text-jadmaa-red transition-colors"
-                      title="Delete"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </td>
+        <>
+          {/* Desktop Table View */}
+          <div className="hidden md:block bg-white rounded-2xl border border-jadmaa-border overflow-hidden shadow-sm">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-jadmaa-cream border-b border-jadmaa-border text-jadmaa-textMuted">
+                <tr>
+                  <th className="px-6 py-3 font-bold">Title</th>
+                  <th className="px-6 py-3 font-bold">Date</th>
+                  <th className="px-6 py-3 font-bold">Status</th>
+                  <th className="px-6 py-3 font-bold text-right">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-jadmaa-border">
+                {blogs.map(blog => (
+                  <tr key={blog.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 font-semibold text-jadmaa-charcoal">{blog.title}</td>
+                    <td className="px-6 py-4 text-jadmaa-textMuted">{format(new Date(blog.createdAt), 'MMM dd, yyyy')}</td>
+                    <td className="px-6 py-4">
+                      {blog.published ? (
+                        <span className="inline-flex items-center space-x-1 text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md text-xs font-bold">
+                          <CheckCircle className="w-3 h-3" /> <span>Published</span>
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center space-x-1 text-gray-600 bg-gray-100 px-2 py-1 rounded-md text-xs font-bold">
+                          <XCircle className="w-3 h-3" /> <span>Draft</span>
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 text-right space-x-3">
+                      <button 
+                        onClick={() => {
+                          setCurrentBlog(blog);
+                          setIsEditing(true);
+                        }}
+                        className="text-jadmaa-textMuted hover:text-jadmaa-charcoal transition-colors"
+                        title="Edit"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </button>
+                      <button 
+                        onClick={() => handleDelete(blog.id)}
+                        className="text-jadmaa-textMuted hover:text-jadmaa-red transition-colors"
+                        title="Delete"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile Grid View */}
+          <div className="md:hidden grid grid-cols-1 gap-4">
+            {blogs.map(blog => (
+              <div key={blog.id} className="bg-white border border-jadmaa-border rounded-xl p-4 shadow-sm flex flex-col space-y-3">
+                <div className="flex justify-between items-start gap-2">
+                  <h3 className="font-bold text-jadmaa-charcoal leading-tight">{blog.title}</h3>
+                  {blog.published ? (
+                    <span className="inline-flex items-center space-x-1 text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md text-[10px] font-bold shrink-0">
+                      <CheckCircle className="w-3 h-3" /> <span>Published</span>
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center space-x-1 text-gray-600 bg-gray-100 px-2 py-1 rounded-md text-[10px] font-bold shrink-0">
+                      <XCircle className="w-3 h-3" /> <span>Draft</span>
+                    </span>
+                  )}
+                </div>
+                
+                <div className="text-sm text-jadmaa-textMuted">
+                  <span className="block text-xs text-gray-400 font-bold uppercase mb-0.5">Date</span>
+                  {format(new Date(blog.createdAt), 'MMM dd, yyyy')}
+                </div>
+
+                <div className="flex justify-end space-x-2 pt-3 border-t border-jadmaa-border mt-2">
+                  <button 
+                    onClick={() => {
+                      setCurrentBlog(blog);
+                      setIsEditing(true);
+                    }}
+                    className="flex-1 flex items-center justify-center space-x-1 py-2 text-jadmaa-textMuted hover:text-jadmaa-charcoal bg-gray-50 hover:bg-gray-100 rounded-lg transition font-medium text-sm"
+                  >
+                    <Edit className="w-4 h-4" />
+                    <span>Edit</span>
+                  </button>
+                  <button 
+                    onClick={() => handleDelete(blog.id)}
+                    className="flex-1 flex items-center justify-center space-x-1 py-2 text-jadmaa-red bg-red-50 hover:bg-red-100 rounded-lg transition font-medium text-sm"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    <span>Delete</span>
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
       ) : (
         <div className="text-center py-12 bg-jadmaa-cream/40 rounded-2xl border border-dashed border-jadmaa-border">
           <p className="text-sm text-jadmaa-textMuted">No blog posts found. Create your first post!</p>

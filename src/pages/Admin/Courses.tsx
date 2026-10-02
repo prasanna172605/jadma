@@ -54,22 +54,22 @@ export const Courses: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h2 className="text-xl font-heading font-bold">Courses</h2>
-        <div className="flex space-x-4">
-          <div className="relative">
+        <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-3">
+          <div className="relative w-full sm:w-auto">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input 
               type="text" 
               placeholder="Search courses..." 
-              className="pl-9 pr-4 py-2 border rounded-full text-sm focus:outline-none focus:border-jadmaa-red w-64"
+              className="pl-9 pr-4 py-2 border rounded-full text-sm focus:outline-none focus:border-jadmaa-red w-full sm:w-64"
               value={search}
               onChange={e => setSearch(e.target.value)}
             />
           </div>
           <button 
             onClick={openCreateModal}
-            className="flex items-center space-x-2 bg-jadmaa-red hover:bg-[#8C1E1E] text-white px-4 py-2 rounded-lg font-bold text-sm transition"
+            className="flex items-center justify-center space-x-2 bg-jadmaa-red hover:bg-[#8C1E1E] text-white px-4 py-2 rounded-lg font-bold text-sm transition shrink-0 w-full sm:w-auto"
           >
             <Plus className="w-4 h-4" />
             <span>Add Course</span>
@@ -77,57 +77,112 @@ export const Courses: React.FC = () => {
         </div>
       </div>
       
-      <div className="bg-white border rounded-xl overflow-x-auto shadow-sm">
-        <table className="w-full text-left text-sm whitespace-nowrap">
-          <thead className="bg-gray-50 border-b">
-            <tr>
-              <th className="px-6 py-4 font-bold text-gray-700">Title</th>
-              <th className="px-6 py-4 font-bold text-gray-700">Instructor</th>
-              <th className="px-6 py-4 font-bold text-gray-700">Price</th>
-              <th className="px-6 py-4 font-bold text-gray-700">Status</th>
-              <th className="px-6 py-4 font-bold text-gray-700">Created</th>
-              <th className="px-6 py-4 font-bold text-gray-700 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y">
-            {loading && courses.length === 0 ? (
-              <tr><td colSpan={5} className="px-6 py-8 text-center text-gray-500">Loading...</td></tr>
-            ) : courses.length === 0 ? (
-              <tr><td colSpan={6} className="px-6 py-8 text-center text-gray-500">No courses found</td></tr>
-            ) : (
-              courses.map(course => (
-                <tr key={course.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 font-medium">{course.title}</td>
-                  <td className="px-6 py-4 text-gray-600">{course.instructor?.displayName || 'Unknown'}</td>
-                  <td className="px-6 py-4 text-gray-600">₹{course.price}</td>
-                  <td className="px-6 py-4">
-                    <span className={`px-2 py-1 text-xs font-bold rounded-full ${course.status === 'PUBLISHED' ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-700'}`}>
-                      {course.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-gray-600">{new Date(course.createdAt).toLocaleDateString()}</td>
-                  <td className="px-6 py-4 text-right space-x-2">
-                    <button 
-                      onClick={() => openEditModal(course)}
-                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
-                      title="Edit Course"
-                    >
-                      <Edit className="w-4 h-4" />
-                    </button>
-                    <button 
-                      onClick={() => handleDelete(course.id)}
-                      className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
-                      title="Delete Course"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+      <>
+        {/* Desktop Table View */}
+        <div className="hidden md:block bg-white border rounded-xl overflow-x-auto shadow-sm">
+          <table className="w-full text-left text-sm whitespace-nowrap">
+            <thead className="bg-gray-50 border-b">
+              <tr>
+                <th className="px-6 py-4 font-bold text-gray-700">Title</th>
+                <th className="px-6 py-4 font-bold text-gray-700">Instructor</th>
+                <th className="px-6 py-4 font-bold text-gray-700">Price</th>
+                <th className="px-6 py-4 font-bold text-gray-700">Status</th>
+                <th className="px-6 py-4 font-bold text-gray-700">Created</th>
+                <th className="px-6 py-4 font-bold text-gray-700 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y">
+              {loading && courses.length === 0 ? (
+                <tr><td colSpan={6} className="px-6 py-8 text-center text-gray-500">Loading...</td></tr>
+              ) : courses.length === 0 ? (
+                <tr><td colSpan={6} className="px-6 py-8 text-center text-gray-500">No courses found</td></tr>
+              ) : (
+                courses.map(course => (
+                  <tr key={course.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 font-medium whitespace-normal max-w-[300px] truncate">{course.title}</td>
+                    <td className="px-6 py-4 text-gray-600">{course.instructor?.displayName || 'Unknown'}</td>
+                    <td className="px-6 py-4 text-gray-600">₹{course.price}</td>
+                    <td className="px-6 py-4">
+                      <span className={`px-2 py-1 text-xs font-bold rounded-full ${course.status === 'PUBLISHED' ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-700'}`}>
+                        {course.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-gray-600">{new Date(course.createdAt).toLocaleDateString()}</td>
+                    <td className="px-6 py-4 text-right space-x-2">
+                      <button 
+                        onClick={() => openEditModal(course)}
+                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                        title="Edit Course"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </button>
+                      <button 
+                        onClick={() => handleDelete(course.id)}
+                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
+                        title="Delete Course"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Mobile Grid View */}
+        <div className="md:hidden grid grid-cols-1 gap-4">
+          {loading && courses.length === 0 ? (
+            <div className="p-8 text-center text-gray-500 bg-white border rounded-xl shadow-sm">Loading...</div>
+          ) : courses.length === 0 ? (
+            <div className="p-8 text-center text-gray-500 bg-white border rounded-xl shadow-sm">No courses found</div>
+          ) : (
+            courses.map(course => (
+              <div key={course.id} className="bg-white border rounded-xl p-4 shadow-sm flex flex-col space-y-3">
+                <div className="flex justify-between items-start gap-2">
+                  <h3 className="font-bold text-gray-900 leading-tight">{course.title}</h3>
+                  <span className={`px-2 py-1 text-[10px] font-bold rounded-full shrink-0 ${course.status === 'PUBLISHED' ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-700'}`}>
+                    {course.status}
+                  </span>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-2 text-sm text-gray-600">
+                  <div>
+                    <span className="block text-xs text-gray-400 font-bold uppercase mb-0.5">Instructor</span>
+                    {course.instructor?.displayName || 'Unknown'}
+                  </div>
+                  <div>
+                    <span className="block text-xs text-gray-400 font-bold uppercase mb-0.5">Price</span>
+                    ₹{course.price}
+                  </div>
+                  <div className="col-span-2">
+                    <span className="block text-xs text-gray-400 font-bold uppercase mb-0.5">Created</span>
+                    {new Date(course.createdAt).toLocaleDateString()}
+                  </div>
+                </div>
+
+                <div className="flex justify-end space-x-2 pt-3 border-t">
+                  <button 
+                    onClick={() => openEditModal(course)}
+                    className="flex-1 flex items-center justify-center space-x-1 py-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition font-medium text-sm"
+                  >
+                    <Edit className="w-4 h-4" />
+                    <span>Edit</span>
+                  </button>
+                  <button 
+                    onClick={() => handleDelete(course.id)}
+                    className="flex-1 flex items-center justify-center space-x-1 py-2 text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition font-medium text-sm"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    <span>Delete</span>
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </>
       
       <div className="flex justify-between items-center text-sm text-gray-600">
         <div>Showing page {pagination.page} of {pagination.totalPages || 1} ({pagination.total} total)</div>
