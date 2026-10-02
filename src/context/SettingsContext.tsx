@@ -23,10 +23,14 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    // Check URL for edit parameter
+    // Check URL for edit parameter - also works after page load
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('edit') === 'true') {
+    const editParam = urlParams.get('edit') === 'true';
+    const editSession = sessionStorage.getItem('jadmaa_edit_mode') === 'true';
+    
+    if (editParam || editSession) {
       setIsEditing(true);
+      sessionStorage.setItem('jadmaa_edit_mode', 'true');
     }
   }, []);
 

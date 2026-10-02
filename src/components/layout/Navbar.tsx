@@ -55,6 +55,7 @@ export const Navbar: React.FC = () => {
     e.preventDefault();
     if (editPromptText.toLowerCase() === 'edit website') {
       setEditPromptOpen(false);
+      sessionStorage.setItem('jadmaa_edit_mode', 'true');
       window.location.href = '/?edit=true';
     } else {
       alert('Incorrect text. Please type "edit website".');
@@ -66,7 +67,10 @@ export const Navbar: React.FC = () => {
     {isEditing && (
       <div className="bg-jadmaa-red text-white text-center py-2 text-sm font-bold flex items-center justify-center space-x-4">
         <span>🎨 Visual Edit Mode is Active. Click on text to edit. Changes save automatically.</span>
-        <button onClick={() => window.location.href = '/'} className="px-3 py-1 bg-white text-jadmaa-red rounded-full text-xs hover:bg-gray-100">Exit Edit Mode</button>
+        <button onClick={() => {
+          sessionStorage.removeItem('jadmaa_edit_mode');
+          window.location.href = '/';
+        }} className="px-3 py-1 bg-white text-jadmaa-red rounded-full text-xs hover:bg-gray-100">Exit Edit Mode</button>
       </div>
     )}
     <header className={`sticky top-0 z-50 bg-[#FAF6F0] transition-shadow duration-200 border-b border-[#E8DDD0] ${
