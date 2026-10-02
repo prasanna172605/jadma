@@ -37,5 +37,5 @@ export const authorize = (roles: string[]) => {
   };
 };
 
-export const requireAdmin = authorize(['admin', 'super_admin']);
-export const requireSuperAdmin = authorize(['super_admin']);
+export const requireAdmin = authorize(['ADMIN', 'SUPER_ADMIN']);
+export const requireSuperAdmin = authorize(['SUPER_ADMIN']);
