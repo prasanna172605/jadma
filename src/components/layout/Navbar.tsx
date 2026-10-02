@@ -12,7 +12,28 @@ export const Navbar: React.FC = () => {
 
   const isStudent = isLoggedIn && user?.role === 'STUDENT';
 
-  const currentNavItems = mainNavItems;
+  let currentNavItems = mainNavItems;
+  if (isLoggedIn) {
+    if (user?.role === 'STUDENT') {
+      currentNavItems = [
+        { id: 'home', label: 'Home', href: '/' },
+        { id: 'courses', label: 'Courses', href: '/courses' },
+        { id: 'my-courses', label: 'My Courses', href: '/student#my-courses' },
+        { id: 'settings', label: 'Settings', href: '/student#settings' }
+      ];
+    } else if (user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN') {
+      currentNavItems = [
+        { id: 'courses', label: 'Courses', href: '/admin#courses' },
+        { id: 'students', label: 'My Students', href: '/admin#students' },
+        { id: 'settings', label: 'Settings', href: '/admin#settings' }
+      ];
+    } else if (user?.role === 'INSTRUCTOR') {
+      currentNavItems = [
+        { id: 'students', label: 'My Students', href: '/instructor#students' },
+        { id: 'settings', label: 'Settings', href: '/instructor#settings' }
+      ];
+    }
+  }
 
 
   useEffect(() => {
@@ -49,7 +70,8 @@ export const Navbar: React.FC = () => {
           {/* Desktop Navigation Links */}
           <nav className="hidden md:flex items-center space-x-6 lg:space-x-8">
             {currentNavItems.map((item) => {
-              const isActive = location.pathname === item.href;
+              const fullPath = location.pathname + location.hash;
+              const isActive = fullPath === item.href || (location.pathname === item.href && !item.href.includes('#'));
               return (
                 <Link
                   key={item.id}

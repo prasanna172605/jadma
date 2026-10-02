@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SEO } from '../../components/common/SEO';
 import { useAuth } from '../../context/AuthContext';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { StudentDashboard } from './StudentDashboard';
 import { MyCourses } from './MyCourses';
 import { StudentProfile } from './StudentProfile';
@@ -9,8 +9,20 @@ import { StudentProfile } from './StudentProfile';
 type Tab = 'dashboard' | 'courses' | 'my-courses' | 'settings';
 
 export const StudentPanel: React.FC = () => {
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
   const { user, isLoggedIn, loading } = useAuth();
+
+  useEffect(() => {
+    if (location.hash) {
+      const hash = location.hash.replace('#', '') as Tab;
+      if (['dashboard', 'courses', 'my-courses', 'settings'].includes(hash)) {
+        setActiveTab(hash);
+      }
+    } else {
+      setActiveTab('dashboard');
+    }
+  }, [location.hash]);
 
   if (loading) {
     return (
@@ -61,7 +73,7 @@ export const StudentPanel: React.FC = () => {
                      window.location.href = '/courses';
                      return;
                   }
-                  setActiveTab(tab.id)
+                  window.location.hash = tab.id;
                 }}
                 className={`px-4 py-3 text-sm font-bold border-b-2 transition-colors ${
                   activeTab === tab.id 

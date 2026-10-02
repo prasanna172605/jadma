@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SEO } from '../../components/common/SEO';
 import { ShieldAlert } from 'lucide-react';
 import { BlogManager } from './BlogManager';
@@ -10,13 +10,25 @@ import { Enrollments } from './Enrollments';
 import { Payments } from './Payments';
 import { DatabaseManager } from './DatabaseManager';
 import { useAuth } from '../../context/AuthContext';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 
 type Tab = 'dashboard' | 'students' | 'instructors' | 'courses' | 'enrollments' | 'payments' | 'blogs' | 'database';
 
 export const AdminPanel: React.FC = () => {
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
   const { user, isLoggedIn, loading } = useAuth();
+
+  useEffect(() => {
+    if (location.hash) {
+      const hash = location.hash.replace('#', '') as Tab;
+      if (['dashboard', 'students', 'instructors', 'courses', 'enrollments', 'payments', 'blogs', 'database'].includes(hash)) {
+        setActiveTab(hash);
+      }
+    } else {
+      setActiveTab('dashboard');
+    }
+  }, [location.hash]);
 
   if (loading) {
     return (
@@ -77,7 +89,7 @@ export const AdminPanel: React.FC = () => {
             {tabs.map(tab => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => window.location.hash = tab.id}
                 className={`px-4 py-3 text-sm font-bold border-b-2 transition-colors ${
                   activeTab === tab.id 
                     ? 'border-jadmaa-red text-jadmaa-red' 
