@@ -67,8 +67,11 @@ export const defaultCmsContent: Record<string, string> = {
   'home.branches.description': 'Find a JADMAA training center near you.',
 
   // --- COURSES PAGE ---
-  'courses.hero.title': 'Master Varmakalai',
-  'courses.hero.subtitle': 'Explore our comprehensive curriculum of authentic Tamil martial arts and traditional healing practices.',
+  'courses.hero.eyebrow': 'Academy Curriculum',
+  'courses.hero.title': 'Explore All Courses',
+  'courses.hero.description': 'Choose from authentic Varmakalai pressure point training, self-defence programs, children\'s fitness, and Siddha energy healing therapies.',
+  'courses.empty.title': 'No courses match your criteria',
+  'courses.empty.description': 'Try adjusting your category tabs or search query.',
   
   // --- ABOUT PAGE ---
   'about.hero.eyebrow': 'OUR STORY',
