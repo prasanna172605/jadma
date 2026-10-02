@@ -100,7 +100,7 @@ export const CourseDetails: React.FC = () => {
 
       {/* Course Hero Banner */}
       <section className="bg-jadmaa-charcoal text-white py-12 border-b-4 border-jadmaa-red text-left">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             
             <div className="lg:col-span-8 space-y-4">
@@ -119,7 +119,7 @@ export const CourseDetails: React.FC = () => {
                 </div>
               </div>
 
-              <h1 className="font-heading font-extrabold text-4xl sm:text-5xl lg:text-5xl text-white leading-tight">
+              <h1 className="font-heading font-extrabold text-[clamp(40px,6vw,60px)] text-white leading-tight">
                 {course.title}
               </h1>
 
@@ -205,7 +205,7 @@ export const CourseDetails: React.FC = () => {
 
       {/* Main Tabbed Details Area */}
       <section className="py-12 bg-white border-b border-jadmaa-border min-h-[600px] text-left">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 space-y-8">
           
           {/* Navigation Tabs */}
           <div className="flex border-b border-jadmaa-border space-x-6 text-sm font-bold">
@@ -243,7 +243,7 @@ export const CourseDetails: React.FC = () => {
                 
                 {/* Description */}
                 <div className="space-y-3">
-                  <h3 className="font-heading font-extrabold text-2xl md:text-3xl text-jadmaa-charcoal">
+                  <h3 className="font-heading font-extrabold text-[clamp(24px,4vw,40px)] text-jadmaa-charcoal">
                     About This Course
                   </h3>
                   <p className="text-base md:text-lg text-jadmaa-textMuted leading-relaxed">
@@ -321,7 +321,7 @@ export const CourseDetails: React.FC = () => {
           {activeTab === 'curriculum' && (
             <div className="max-w-4xl space-y-6">
               <div className="flex items-center justify-between">
-                <h3 className="font-heading font-extrabold text-2xl md:text-3xl text-jadmaa-charcoal">
+                <h3 className="font-heading font-extrabold text-[clamp(24px,4vw,40px)] text-jadmaa-charcoal">
                   Course Modules & Lessons
                 </h3>
                 <span className="text-sm md:text-xl text-jadmaa-textMuted">Click module headers to expand</span>
@@ -359,8 +359,8 @@ export const CourseDetails: React.FC = () => {
 
       {/* Related Courses */}
       <section className="py-12 bg-jadmaa-cream border-b border-jadmaa-border text-left">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-          <h3 className="font-heading font-extrabold text-2xl md:text-3xl text-jadmaa-charcoal">
+        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 space-y-6">
+          <h3 className="font-heading font-extrabold text-[clamp(24px,4vw,40px)] text-jadmaa-charcoal">
             Related Varmakalai Programs
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

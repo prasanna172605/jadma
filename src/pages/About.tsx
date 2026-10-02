@@ -38,7 +38,7 @@ export const About: React.FC = () => {
           <span className="text-base md:text-lg font-bold text-jadmaa-red uppercase tracking-wider">
             <EditableText settingKey="about.banner.subtitle" defaultText="Our Organization" />
           </span>
-          <h1 className="font-heading font-extrabold text-4xl md:text-5xl text-jadmaa-charcoal">
+          <h1 className="font-heading font-extrabold text-[clamp(40px,6vw,60px)] text-jadmaa-charcoal">
             <EditableText settingKey="about.banner.title" defaultText="About JADMAA Varmakalai Academy" />
           </h1>
           <p className="text-base md:text-lg text-jadmaa-textMuted max-w-2xl">
@@ -57,7 +57,7 @@ export const About: React.FC = () => {
               <span className="text-base md:text-lg font-bold text-jadmaa-red uppercase tracking-wider">
                 <EditableText settingKey="about.history.subtitle" defaultText="1000+ Year Heritage" />
               </span>
-              <h2 className="font-heading font-extrabold text-4xl md:text-5xl text-jadmaa-charcoal">
+              <h2 className="font-heading font-extrabold text-[clamp(40px,6vw,60px)] text-jadmaa-charcoal">
                 <EditableText settingKey="about.history.title" defaultText="The Science of Varmakalai" />
               </h2>
               <p className="text-base md:text-lg text-jadmaa-textMuted leading-relaxed">
@@ -109,7 +109,7 @@ export const About: React.FC = () => {
 
             {/* Why Choose JADMAA Varmakalai? */}
             <div className="bg-jadmaa-cream/40 rounded-2xl border border-jadmaa-border p-8 text-left reveal-on-scroll">
-              <h3 className="font-heading font-extrabold text-2xl md:text-3xl text-jadmaa-charcoal mb-6">
+              <h3 className="font-heading font-extrabold text-[clamp(24px,4vw,40px)] text-jadmaa-charcoal mb-6">
                 Why Choose JADMAA Varmakalai?
               </h3>
               <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
@@ -141,7 +141,7 @@ export const About: React.FC = () => {
               <span className="text-base md:text-lg font-bold text-jadmaa-red uppercase tracking-wider">
                 Meet Our Founder
               </span>
-              <h3 className="font-heading font-extrabold text-2xl md:text-3xl text-jadmaa-charcoal">
+              <h3 className="font-heading font-extrabold text-[clamp(24px,4vw,40px)] text-jadmaa-charcoal">
                 Bojagarajan
               </h3>
               <p className="text-xs font-semibold text-jadmaa-textMuted">
@@ -178,7 +178,7 @@ export const About: React.FC = () => {
             </div>
 
             <div className="space-y-4">
-              <h3 className="font-heading font-extrabold text-2xl md:text-3xl text-jadmaa-charcoal">
+              <h3 className="font-heading font-extrabold text-[clamp(24px,4vw,40px)] text-jadmaa-charcoal">
                 Learn from the best martial arts instructors around
               </h3>
               <p className="text-base md:text-lg text-jadmaa-textMuted leading-relaxed">

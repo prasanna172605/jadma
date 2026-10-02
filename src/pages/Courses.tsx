@@ -48,11 +48,11 @@ export const Courses: React.FC = () => {
 
       {/* Page Header */}
       <section className="bg-jadmaa-cream py-12 border-b border-jadmaa-border text-left">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3">
+        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 space-y-3">
           <span className="text-base md:text-lg font-bold text-jadmaa-red uppercase tracking-wider">
             Academy Curriculum
           </span>
-          <h1 className="font-heading font-extrabold text-4xl md:text-5xl text-jadmaa-charcoal">
+          <h1 className="font-heading font-extrabold text-[clamp(40px,6vw,60px)] text-jadmaa-charcoal">
             Explore All Courses
           </h1>
           <p className="text-base md:text-lg text-jadmaa-textMuted max-w-2xl">
@@ -63,7 +63,7 @@ export const Courses: React.FC = () => {
 
       {/* Course Catalog Content */}
       <section className="py-12 bg-white border-b border-jadmaa-border min-h-screen">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 space-y-8">
           
           {/* Filters Bar */}
           <div className="bg-jadmaa-cream/60 p-4 rounded-2xl border border-jadmaa-border space-y-4">

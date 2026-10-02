@@ -63,7 +63,7 @@ export const Careers: React.FC = () => {
       
       {/* Banner */}
       <section className="bg-jadmaa-cream py-12 md:py-16 border-b border-jadmaa-border text-left">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4 reveal-on-scroll">
+        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 space-y-4 reveal-on-scroll">
           <span className="text-base md:text-lg font-bold text-jadmaa-red uppercase tracking-wider">
             Career Opportunities
           </span>
@@ -78,9 +78,9 @@ export const Careers: React.FC = () => {
 
       {/* From Student to Branch Trainer */}
       <section className="py-16 bg-white border-b border-jadmaa-border text-left">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12">
           <div className="text-center max-w-3xl mx-auto space-y-4 mb-12 reveal-on-scroll">
-            <h2 className="font-heading font-extrabold text-4xl md:text-5xl text-jadmaa-charcoal">
+            <h2 className="font-heading font-extrabold text-[clamp(40px,6vw,60px)] text-jadmaa-charcoal">
               From Student to Branch Trainer
             </h2>
             <p className="text-base md:text-lg text-jadmaa-textMuted">
@@ -108,14 +108,14 @@ export const Careers: React.FC = () => {
 
       {/* Who Can Apply & Form */}
       <section className="py-16 bg-jadmaa-cream border-b border-jadmaa-border text-left">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
             
             <div className="lg:col-span-5 space-y-6 reveal-on-scroll">
               <span className="text-base md:text-lg font-bold text-jadmaa-red uppercase tracking-wider">
                 Who Can Apply?
               </span>
-              <h2 className="font-heading font-extrabold text-4xl md:text-5xl text-jadmaa-charcoal">
+              <h2 className="font-heading font-extrabold text-[clamp(40px,6vw,60px)] text-jadmaa-charcoal">
                 Join the Instructor Program
               </h2>
               <p className="text-base md:text-lg text-jadmaa-textMuted leading-relaxed">
@@ -139,7 +139,7 @@ export const Careers: React.FC = () => {
 
             <div className="lg:col-span-7 reveal-on-scroll" style={{ transitionDelay: '100ms' }}>
               <div className="bg-white rounded-2xl shadow-sm border border-jadmaa-border p-6 md:p-8">
-                <h3 className="font-heading font-extrabold text-2xl md:text-3xl text-jadmaa-charcoal mb-6">
+                <h3 className="font-heading font-extrabold text-[clamp(24px,4vw,40px)] text-jadmaa-charcoal mb-6">
                   Apply for the Instructor Program
                 </h3>
                 

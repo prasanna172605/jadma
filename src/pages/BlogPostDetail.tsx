@@ -82,7 +82,7 @@ export const BlogPostDetail: React.FC = () => {
 
         {/* Hero Image */}
         {blog.thumbnailUrl && (
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 relative z-10 reveal-on-scroll">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 -mt-10 relative z-10 reveal-on-scroll">
             <img 
               src={blog.thumbnailUrl} 
               alt={blog.title}
@@ -92,7 +92,7 @@ export const BlogPostDetail: React.FC = () => {
         )}
 
         {/* Content */}
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 py-16">
           <div className="prose prose-lg prose-red max-w-none text-jadmaa-textMuted reveal-on-scroll">
             <ReactMarkdown>{blog.content}</ReactMarkdown>
           </div>

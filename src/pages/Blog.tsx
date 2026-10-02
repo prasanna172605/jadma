@@ -33,7 +33,7 @@ export const Blog: React.FC = () => {
       />
       
       <section className="bg-jadmaa-cream py-12 md:py-16 border-b border-jadmaa-border text-left">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4 reveal-on-scroll">
+        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 space-y-4 reveal-on-scroll">
           <span className="text-base md:text-lg font-bold text-jadmaa-red uppercase tracking-wider">
             Academy Journal
           </span>
@@ -47,7 +47,7 @@ export const Blog: React.FC = () => {
       </section>
 
       <section className="py-16 bg-white border-b border-jadmaa-border text-left min-h-screen">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12">
           {loading ? (
             <div className="text-center py-16 text-jadmaa-textMuted">Loading articles...</div>
           ) : error ? (

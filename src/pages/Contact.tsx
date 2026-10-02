@@ -49,7 +49,7 @@ export const Contact: React.FC = () => {
           <span className="text-base md:text-lg font-bold text-jadmaa-red uppercase tracking-wider">
             <EditableText settingKey="contact.banner.subtitle" defaultText="Admissions & Enquiries" />
           </span>
-          <h1 className="font-heading font-extrabold text-4xl md:text-5xl text-jadmaa-charcoal">
+          <h1 className="font-heading font-extrabold text-[clamp(40px,6vw,60px)] text-jadmaa-charcoal">
             <EditableText settingKey="contact.banner.title" defaultText="Get in Touch With JADMAA" />
           </h1>
           <p className="text-base md:text-lg text-jadmaa-textMuted max-w-2xl">
@@ -71,7 +71,7 @@ export const Contact: React.FC = () => {
                   <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
                     <CheckCircle2 className="w-10 h-10" />
                   </div>
-                  <h3 className="font-heading font-extrabold text-2xl md:text-3xl text-jadmaa-charcoal">
+                  <h3 className="font-heading font-extrabold text-[clamp(24px,4vw,40px)] text-jadmaa-charcoal">
                     Enquiry Submitted Successfully!
                   </h3>
                   <p className="text-sm md:text-xl text-jadmaa-textMuted max-w-md mx-auto leading-relaxed">
@@ -87,7 +87,7 @@ export const Contact: React.FC = () => {
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div>
-                    <h3 className="font-heading font-extrabold text-2xl md:text-3xl text-jadmaa-charcoal">
+                    <h3 className="font-heading font-extrabold text-[clamp(24px,4vw,40px)] text-jadmaa-charcoal">
                       Send Us a Message
                     </h3>
                     <p className="text-sm md:text-xl text-jadmaa-textMuted">Fill out the form below to request a free trial class or course brochure.</p>
@@ -190,7 +190,7 @@ export const Contact: React.FC = () => {
             <div className="lg:col-span-5 space-y-8 reveal-right">
               
               <div className="space-y-4">
-                <h3 className="font-heading font-extrabold text-2xl md:text-3xl text-jadmaa-charcoal">
+                <h3 className="font-heading font-extrabold text-[clamp(24px,4vw,40px)] text-jadmaa-charcoal">
                   Direct Contact Information
                 </h3>
                 <p className="text-sm md:text-xl text-jadmaa-textMuted leading-relaxed">
