@@ -314,3 +314,158 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #B12B2B;
 }
+
+/* ==========================================
+   JADMAA.COM COURSE CARD — ENROLL BUTTON
+   Outline style, border-jadmaa-red, hover fills red
+   ========================================== */
+.jd-enroll-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 18px;
+  border-radius: 8px;
+  border: 1.5px solid #B12B2B;
+  color: #B12B2B;
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 0.22s cubic-bezier(0.22, 0.61, 0.36, 1),
+              color 0.22s ease,
+              transform 0.22s cubic-bezier(0.22, 0.61, 0.36, 1),
+              box-shadow 0.22s ease;
+}
+
+.jd-enroll-btn:hover {
+  background-color: #B12B2B;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(177, 43, 43, 0.22);
+}
+
+.jd-enroll-btn:active {
+  transform: translateY(0);
+}
+
+/* ==========================================
+   JADMAA.COM MARQUEE (TESTIMONIALS / LOGOS)
+   ========================================== */
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 28s linear infinite;
+  display: flex;
+  width: max-content;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* ==========================================
+   MOBILE HORIZONTAL SWIPE CAROUSEL
+   Used for course grids on mobile
+   ========================================== */
+.mobile-swipe-scroll {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 8px;
+}
+
+.mobile-swipe-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.mobile-swipe-scroll > * {
+  scroll-snap-align: start;
+  flex-shrink: 0;
+  width: 85vw;
+  max-width: 320px;
+}
+
+@media (min-width: 768px) {
+  .mobile-swipe-scroll {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    overflow-x: visible;
+    scroll-snap-type: none;
+  }
+  .mobile-swipe-scroll > * {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .mobile-swipe-scroll {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ==========================================
+   JD-POP — jadmaa.com exact scroll pop
+   cubic-bezier(0.22, 0.61, 0.36, 1) spring
+   ========================================== */
+@keyframes jdPop {
+  0%   { opacity: 0; transform: translateY(32px) scale(0.97); }
+  60%  { opacity: 1; transform: translateY(-4px) scale(1.01); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.jd-pop {
+  opacity: 0;
+}
+
+.jd-pop.is-revealed {
+  animation: jdPop 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+/* Stagger helpers for jd-pop children */
+.jd-pop.is-revealed:nth-child(1) { animation-delay: 0.00s; }
+.jd-pop.is-revealed:nth-child(2) { animation-delay: 0.08s; }
+.jd-pop.is-revealed:nth-child(3) { animation-delay: 0.16s; }
+.jd-pop.is-revealed:nth-child(4) { animation-delay: 0.24s; }
+.jd-pop.is-revealed:nth-child(5) { animation-delay: 0.32s; }
+.jd-pop.is-revealed:nth-child(6) { animation-delay: 0.40s; }
+
+/* ==========================================
+   RESPONSIVE TYPOGRAPHY ADJUSTMENTS
+   Mobile-first, matches jadmaa.com scaling
+   ========================================== */
+@media (max-width: 640px) {
+  body {
+    font-size: 1rem;
+  }
+  p {
+    font-size: 1rem;
+  }
+  /* Stack hero on mobile */
+  .hero-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ==========================================
+   SECTION SPACING SYSTEM
+   Consistent vertical rhythm across pages
+   ========================================== */
+.section-sm  { padding-top: 48px;  padding-bottom: 48px; }
+.section-md  { padding-top: 80px;  padding-bottom: 80px; }
+.section-lg  { padding-top: 112px; padding-bottom: 112px; }
+
+@media (max-width: 768px) {
+  .section-sm  { padding-top: 32px;  padding-bottom: 32px; }
+  .section-md  { padding-top: 48px;  padding-bottom: 48px; }
+  .section-lg  { padding-top: 64px;  padding-bottom: 64px; }
+}
+

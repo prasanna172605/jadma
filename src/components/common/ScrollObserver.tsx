@@ -50,7 +50,7 @@ export const ScrollObserver: React.FC = () => {
 
       const observeElements = () => {
         const revealElements = document.querySelectorAll(
-          '.reveal-on-scroll, .reveal-left, .reveal-right, .reveal-scale, .reveal-stagger'
+          '.reveal-on-scroll, .reveal-left, .reveal-right, .reveal-scale, .reveal-stagger, .jd-pop'
         );
         revealElements.forEach((el) => {
           if (!el.classList.contains('is-revealed')) {

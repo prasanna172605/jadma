@@ -421,11 +421,11 @@ export const Home: React.FC = () => {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="mobile-swipe-scroll">
             {loading ? (
               <div className="col-span-3 text-center py-8 text-jadmaa-textMuted">Loading courses...</div>
             ) : featuredCourses.map((course, idx) => (
-              <div key={course.id} data-aos="fade-up" data-aos-delay={idx * 100}>
+              <div key={course.id} className="jd-pop reveal-on-scroll">
                 <CourseCard course={course} hidePrice />
               </div>
             ))}
