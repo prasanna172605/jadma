@@ -42,6 +42,7 @@ export interface Course {
   requirements: string[];
   targetAudience: string[];
   modules: Module[];
+  studentsCount?: number;
 }
 
 export interface Branch {
