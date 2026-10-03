@@ -57,10 +57,10 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, hidePrice = fals
           </div>
         </div>
 
-        {/* Title — Bricolage Grotesque, 22px, weight 600 — exact jadmaa.com */}
+        {/* Title — Roboto, 20px, weight 600 — exact jadmaa.com */}
         <h3
-          className="font-heading font-semibold text-[#2B2521] group-hover:text-[#B12B2B] transition-colors line-clamp-2 leading-snug"
-          style={{ fontSize: '22px', lineHeight: '1.3' }}
+          className="font-heading font-semibold text-[#2B2521] group-hover:text-[#B12B2B] transition-colors line-clamp-2 leading-snug text-[20px]"
+          style={{ lineHeight: '1.3' }}
         >
           <Link to={`/courses/${course.slug}`}>{course.title}</Link>
         </h3>
@@ -103,10 +103,10 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, hidePrice = fals
           {!hidePrice && (
             <div className="shrink-0">
               {course.isFree ? (
-                <span className="font-heading font-extrabold text-base text-emerald-600">Free</span>
+                <span className="font-heading font-bold text-base text-emerald-600">Free</span>
               ) : (
                 <div className="flex items-baseline gap-1.5">
-                  <span className="font-heading font-extrabold text-lg text-[#2B2521]">
+                  <span className="font-heading font-bold text-lg text-[#2B2521]">
                     ₹{course.price.toLocaleString('en-IN')}
                   </span>
                   {course.originalPrice && (

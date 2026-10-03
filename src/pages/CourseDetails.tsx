@@ -187,7 +187,7 @@ export const CourseDetails: React.FC = () => {
                 </div>
               </div>
 
-              <h1 className="font-heading font-extrabold text-[clamp(40px,6vw,60px)] text-white leading-tight">
+              <h1 className="font-heading font-bold text-3xl sm:text-4xl lg:text-5xl text-white leading-tight">
                 {course.title}
               </h1>
 

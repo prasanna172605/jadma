@@ -49,7 +49,7 @@ export const Contact: React.FC = () => {
           <span className="text-base md:text-lg font-bold text-jadmaa-red uppercase tracking-wider">
             <EditableText settingKey="contact.banner.subtitle" defaultText="Admissions & Enquiries" />
           </span>
-          <h1 className="font-heading font-extrabold text-[clamp(40px,6vw,60px)] text-jadmaa-charcoal">
+          <h1 className="font-heading font-bold text-3xl sm:text-4xl lg:text-5xl text-jadmaa-charcoal">
             <EditableText settingKey="contact.banner.title" defaultText="Get in Touch With JADMAA" />
           </h1>
           <p className="text-base md:text-lg text-jadmaa-textMuted max-w-2xl">

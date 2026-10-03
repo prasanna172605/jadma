@@ -38,7 +38,7 @@ export const About: React.FC = () => {
           <span className="text-base md:text-lg font-bold text-jadmaa-red uppercase tracking-wider">
             <EditableText settingKey="about.banner.subtitle" defaultText="Our Organization" />
           </span>
-          <h1 className="font-heading font-extrabold text-[clamp(40px,6vw,60px)] text-jadmaa-charcoal">
+          <h1 className="font-heading font-bold text-3xl sm:text-4xl lg:text-5xl text-jadmaa-charcoal">
             <EditableText settingKey="about.banner.title" defaultText="About JADMAA Varmakalai Academy" />
           </h1>
           <p className="text-base md:text-lg text-jadmaa-textMuted max-w-2xl">
@@ -57,7 +57,7 @@ export const About: React.FC = () => {
               <span className="text-base md:text-lg font-bold text-jadmaa-red uppercase tracking-wider">
                 <EditableText settingKey="about.history.subtitle" defaultText="1000+ Year Heritage" />
               </span>
-              <h2 className="font-heading font-extrabold text-[clamp(40px,6vw,60px)] text-jadmaa-charcoal">
+              <h2 className="font-heading font-bold text-2xl sm:text-3xl lg:text-4xl text-jadmaa-charcoal">
                 <EditableText settingKey="about.history.title" defaultText="The Science of Varmakalai" />
               </h2>
               <p className="text-base md:text-lg text-jadmaa-textMuted leading-relaxed">

@@ -56,7 +56,7 @@ export const Courses: React.FC = () => {
               defaultText="Academy Curriculum"
             />
           </span>
-          <h1 className="font-heading font-extrabold text-[clamp(40px,6vw,60px)] text-jadmaa-charcoal">
+          <h1 className="font-heading font-bold text-3xl sm:text-4xl lg:text-5xl text-jadmaa-charcoal">
             <EditableText
               settingKey="courses.hero.title"
               defaultText="Explore All Courses"
