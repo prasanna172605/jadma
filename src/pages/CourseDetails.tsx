@@ -217,8 +217,12 @@ export const CourseDetails: React.FC = () => {
                   className="w-10 h-10 rounded-full border-2 border-jadmaa-red object-cover bg-white" 
                 />
                 <div>
-                  <p className="text-xs text-gray-400">Instructor</p>
-                  <p className="text-sm font-bold text-white">{course.instructor.name}</p>
+                  <p className="text-xs text-gray-400">Aasan</p>
+                  <p className="text-sm font-bold text-white">
+                    {course.instructor.name?.toLowerCase().startsWith('aasan') 
+                      ? course.instructor.name 
+                      : `Aasan - ${course.instructor.name}`}
+                  </p>
                 </div>
               </div>
 
@@ -305,7 +309,7 @@ export const CourseDetails: React.FC = () => {
                 activeTab === 'instructor' ? 'border-jadmaa-red text-jadmaa-red' : 'border-transparent text-jadmaa-textMuted hover:text-jadmaa-charcoal'
               }`}
             >
-              Instructor Profile
+              Aasan Profile
             </button>
           </div>
 
