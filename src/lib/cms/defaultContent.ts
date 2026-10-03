@@ -30,11 +30,11 @@ export const defaultCmsContent: Record<string, string> = {
   'site.footer.social.youtube': 'https://www.youtube.com/@JADMAAVarmakalai',
 
   // --- HOME PAGE ---
-  'home.hero.eyebrow': '1000+ YEAR OLD MOTHER OF MARTIAL ART',
-  'home.hero.title': 'Learn the Ancient Science of <br class="hidden sm:inline" /> Varmakalai',
-  'home.hero.subtitle': 'Empower your body, sharpen your mind, and preserve a timeless martial tradition through professional Ancient Martial Art training.',
-  'home.hero.cta1': 'View Courses',
-  'home.hero.cta2': 'Contact Us',
+  'home.hero.eyebrow': '1000+ Year Old Mother of Martial Arts',
+  'home.hero.title': 'Learn the Ancient Science of Varmakalai',
+  'home.hero.subtitle': 'Empower your body, sharpen your mind, and preserve a timeless tradition through professional Varmakalai (Varma Kalai) martial arts training.',
+  'home.hero.cta1': 'Join Now',
+  'home.hero.cta2': 'Book Free Demo Class',
   'home.hero.image': '/images/hero-kick-action-transparent.png',
   
   'home.stats.tradition': 'Years of Tradition',

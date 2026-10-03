@@ -92,7 +92,7 @@ export const Navbar: React.FC = () => {
           </Link>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center space-x-6 lg:space-x-8">
+          <nav className="hidden md:flex items-center space-x-1 lg:space-x-2">
             {currentNavItems.map((item) => {
               const fullPath = location.pathname + location.hash;
               const isActive = fullPath === item.href || (location.pathname === item.href && !item.href.includes('#'));
@@ -100,10 +100,10 @@ export const Navbar: React.FC = () => {
                 <Link
                   key={item.id}
                   to={item.href}
-                  className={`text-sm font-semibold transition-colors duration-150 relative py-1.5 ${
+                  className={`font-body text-[15px] font-medium tracking-normal px-3.5 py-2 transition-colors duration-150 relative ${
                     isActive 
-                      ? 'text-[#B12B2B] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-[#B12B2B]' 
-                      : 'text-[#5C5148] hover:text-[#B12B2B]'
+                      ? 'text-[#B12B2B] after:absolute after:bottom-1 after:left-3.5 after:right-3.5 after:h-[2px] after:bg-[#B12B2B]' 
+                      : 'text-[#2B2521] hover:text-[#B12B2B]'
                   }`}
                 >
                   {item.label}
@@ -113,10 +113,10 @@ export const Navbar: React.FC = () => {
 
             {/* Auth / Profile Links */}
             {isLoggedIn ? (
-              <div className="relative">
+              <div className="relative ml-2">
                 <button
                   onClick={() => setProfileOpen(!profileOpen)}
-                  className="flex items-center space-x-1.5 text-sm font-semibold text-gray-700 hover:text-jadmaa-red transition py-1.5"
+                  className="flex items-center space-x-1.5 font-body text-[15px] font-medium text-[#2B2521] hover:text-[#B12B2B] transition px-3 py-2"
                 >
                   <User className="w-4 h-4" />
                   <span>Profile</span>
@@ -170,10 +170,10 @@ export const Navbar: React.FC = () => {
                 )}
               </div>
             ) : (
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center ml-3">
                 <Link
                   to="/login"
-                  className="px-3.5 py-1.5 text-sm font-bold text-white bg-[#B12B2B] hover:bg-[#8C1E1E] rounded transition-all"
+                  className="px-4 py-2 text-[14px] font-semibold text-white bg-[#B12B2B] hover:bg-[#8F2020] rounded-lg transition-colors tracking-wide"
                 >
                   Login / Register
                 </Link>
