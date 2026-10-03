@@ -206,8 +206,8 @@ export const CourseDetails: React.FC = () => {
                 <span>
                   <strong>Categories:</strong>{' '}
                   <span className="text-jadmaa-red font-medium">{course.category}</span>
-                  {course.category !== 'Varmakalai Training' && (
-                    <span className="text-jadmaa-red font-medium">, Varmakalai Training</span>
+                  {course.category !== 'Varmakalai' && (
+                    <span className="text-jadmaa-red font-medium">, Varmakalai</span>
                   )}
                 </span>
                 <span className="text-[#D1CBC3]">•</span>
