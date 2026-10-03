@@ -9,6 +9,7 @@ import {
 import { courseApi } from '../lib/api/courseApi';
 import { paymentApi } from '../lib/api/paymentApi';
 import { enrollmentApi } from '../lib/api/enrollmentApi';
+import { loadRazorpayScript } from '../lib/razorpay';
 import { useAuth } from '../context/AuthContext';
 import type { Course } from '../types';
 
@@ -62,22 +63,89 @@ export const CourseDetails: React.FC = () => {
         const res = await enrollmentApi.enrollFree(course.id);
         if (res.success) {
           alert('Enrolled successfully!');
-          // Ideally refresh user context or update local state
           navigate(`/learn/${course.id}`);
         } else {
           alert(res.error?.message || 'Failed to enroll');
         }
       } else {
-        const res = await paymentApi.createOrder(course.id);
-        if (res.success && res.data?.redirectUrl) {
-          // Redirect to PhonePe payment page
-          window.location.href = res.data.redirectUrl;
-        } else {
-          alert(res.error?.message || 'Failed to initiate payment');
+        // Load Razorpay Checkout SDK
+        const scriptLoaded = await loadRazorpayScript();
+        if (!scriptLoaded) {
+          alert('Failed to load Razorpay payment gateway. Please check your internet connection.');
+          return;
         }
+
+        // Create order on backend (authoritative DB pricing)
+        const orderRes = await paymentApi.createOrder(course.id);
+        if (!orderRes.success || !orderRes.data) {
+          alert(orderRes.error?.message || 'Failed to initiate Razorpay order');
+          return;
+        }
+
+        const { keyId, orderId, amount, currency, prefill } = orderRes.data;
+
+        // Initialize Razorpay Standard Checkout
+        const options = {
+          key: keyId,
+          amount,
+          currency: currency || 'INR',
+          name: 'JADMAA',
+          description: course.title,
+          image: '/logo.png',
+          order_id: orderId,
+          prefill: {
+            name: prefill?.name || user?.name || '',
+            email: prefill?.email || user?.email || '',
+            contact: prefill?.contact || '',
+          },
+          theme: {
+            color: '#A020F0', // Brand accent or #991B1B jadmaa-red
+          },
+          modal: {
+            ondismiss: () => {
+              setEnrolling(false);
+            },
+          },
+          handler: async (response: {
+            razorpay_payment_id: string;
+            razorpay_order_id: string;
+            razorpay_signature: string;
+          }) => {
+            try {
+              setEnrolling(true);
+              // Verify payment on backend
+              const verifyRes = await paymentApi.verifyRazorpayPayment({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              });
+
+              if (verifyRes.success) {
+                // Navigate to payment status confirmation page
+                navigate(`/payment/status/${response.razorpay_order_id}?status=success`);
+              } else {
+                alert(verifyRes.error?.message || 'Payment verification failed.');
+                navigate(`/payment/status/${response.razorpay_order_id}?status=failed`);
+              }
+            } catch (err: any) {
+              console.error('Verification error:', err);
+              navigate(`/payment/status/${response.razorpay_order_id}?status=failed`);
+            } finally {
+              setEnrolling(false);
+            }
+          },
+        };
+
+        const rzp = new (window as any).Razorpay(options);
+        rzp.on('payment.failed', (failResponse: any) => {
+          console.error('Payment failed:', failResponse.error);
+          alert(`Payment Failed: ${failResponse.error?.description || 'Transaction unsuccessful'}`);
+          setEnrolling(false);
+        });
+        rzp.open();
       }
     } catch (err: any) {
-      alert('An error occurred during enrollment');
+      alert('An error occurred during checkout');
     } finally {
       setEnrolling(false);
     }
@@ -180,9 +248,15 @@ export const CourseDetails: React.FC = () => {
                 <button
                   onClick={handleEnrollClick}
                   disabled={enrolling}
-                  className="w-full py-3.5 px-4 bg-jadmaa-red hover:bg-jadmaa-redDark text-white font-bold text-sm rounded-xl shadow-lg transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+                  className="w-full py-3.5 px-4 bg-jadmaa-red hover:bg-jadmaa-redDark text-white font-bold text-sm rounded-xl shadow-lg transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
                 >
-                  {enrolling ? "Processing..." : (course.isFree ? "Enroll for Free Now" : "Enroll & Start Learning")}
+                  {enrolling ? (
+                    <span>Processing Payment...</span>
+                  ) : course.isFree ? (
+                    <span>Enroll for Free Now</span>
+                  ) : (
+                    <span>Pay with Razorpay • ₹{course.price}</span>
+                  )}
                 </button>
 
                 <div className="space-y-2 text-sm md:text-xl text-jadmaa-textMuted border-t border-gray-100 pt-4">

@@ -161,7 +161,7 @@ model Payment {
   id                   String        @id @default(uuid())
   userId               String
   courseId             String
-  gateway              Gateway       @default(PHONEPE)
+  gateway              Gateway       @default(RAZORPAY)
   merchantOrderId      String        @unique
   gatewayTransactionId String?       @unique
   amount               Float
@@ -352,6 +352,7 @@ enum PaymentStatus {
 }
 
 enum Gateway {
+  RAZORPAY
   PHONEPE
 }
 

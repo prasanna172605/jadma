@@ -1,11 +1,28 @@
 import { Router } from 'express';
-import { createOrder, paymentCallback, checkPaymentStatus } from './payment.controller.js';
+import {
+  createOrder,
+  verifyRazorpayPayment,
+  razorpayWebhook,
+  checkPaymentStatus,
+  paymentCallback,
+} from './payment.controller.js';
 import { authenticate } from '../../middleware/auth.middleware.js';
 
 const router = Router();
 
+// 1. Create order on Razorpay (Primary customer payment entry)
 router.post('/create-order', authenticate, createOrder);
-router.post('/callback', paymentCallback); // Webhook, no auth required
+
+// 2. Razorpay payment verification callback (Standard Checkout success verification)
+router.post('/razorpay/verify', authenticate, verifyRazorpayPayment);
+
+// 3. Razorpay webhook endpoint (Server-to-server asynchronous status events)
+router.post('/razorpay/webhook', razorpayWebhook);
+
+// 4. Check payment status by order ID (for student polling & status view)
 router.get('/:merchantOrderId/status', authenticate, checkPaymentStatus);
+
+// 5. Preserved dormant legacy PhonePe callback
+router.post('/callback', paymentCallback);
 
 export default router;

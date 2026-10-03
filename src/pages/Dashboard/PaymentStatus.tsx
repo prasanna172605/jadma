@@ -47,7 +47,7 @@ export const PaymentStatus: React.FC = () => {
             <>
               <Loader2 className="w-16 h-16 text-jadmaa-red animate-spin mx-auto" />
               <h2 className="text-2xl font-heading font-bold text-jadmaa-charcoal">Verifying Payment...</h2>
-              <p className="text-sm text-jadmaa-textMuted">Please wait while we confirm your payment with PhonePe.</p>
+              <p className="text-sm text-jadmaa-textMuted">Please wait while we confirm your payment transaction.</p>
             </>
           ) : status === 'SUCCESS' ? (
             <>

@@ -124,7 +124,7 @@ export const StudentDetailsModal: React.FC<StudentDetailsModalProps> = ({ studen
                         </span>
                       </div>
                       <div className="flex justify-between items-center text-xs text-gray-500">
-                        <span>{payment.merchantTransactionId || 'N/A'}</span>
+                        <span className="font-mono">{payment.merchantOrderId || payment.merchantTransactionId || 'N/A'}</span>
                         <span>{new Date(payment.createdAt).toLocaleDateString()}</span>
                       </div>
                     </div>

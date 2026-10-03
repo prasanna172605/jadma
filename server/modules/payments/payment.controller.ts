@@ -1,182 +1,492 @@
 import { Request, Response } from 'express';
 import { prisma } from '../../db.js';
 import crypto from 'crypto';
+import { razorpayService } from './razorpay.service.js';
+import { phonePeService } from './phonepe.service.js';
 
-// PhonePe helper variables
-const PHONEPE_MERCHANT_ID = process.env.PHONEPE_CLIENT_ID || 'PGTESTPAYUAT86';
-const PHONEPE_SALT_KEY = process.env.PHONEPE_CLIENT_SECRET || '96434309-7796-489d-8924-ab56988a6076';
-const PHONEPE_SALT_INDEX = process.env.PHONEPE_CLIENT_VERSION || '1';
-const PHONEPE_ENV = process.env.PHONEPE_ENV || 'SANDBOX';
-
-const PHONEPE_URL = PHONEPE_ENV === 'PRODUCTION' 
-  ? 'https://api.phonepe.com/apis/hermes/pg/v1/pay'
-  : 'https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay';
-
+/**
+ * 1. CREATE ORDER (Razorpay is the PRIMARY & ONLY customer-facing gateway)
+ * Creates order on Razorpay and local Payment record with PENDING status.
+ */
 export const createOrder = async (req: Request, res: Response) => {
   try {
     const user = (req as any).user;
-    const { courseId } = req.body;
+    if (!user || !user.id) {
+      return res.status(401).json({ success: false, error: { message: 'Unauthorized' } });
+    }
 
+    const { courseId } = req.body;
     if (!courseId) {
       return res.status(400).json({ success: false, error: { message: 'Course ID is required' } });
     }
 
-    const course = await prisma.course.findUnique({ where: { id: courseId } });
+    // Retrieve authoritative course information from DB
+    const course = await prisma.course.findUnique({
+      where: { id: courseId },
+      select: {
+        id: true,
+        title: true,
+        price: true,
+        isFree: true,
+        status: true,
+      },
+    });
+
     if (!course || course.status !== 'PUBLISHED') {
       return res.status(404).json({ success: false, error: { message: 'Course not found or not published' } });
     }
 
-    // Check if already enrolled
+    // Check if user is already enrolled
     const existingEnrollment = await prisma.enrollment.findUnique({
-      where: { userId_courseId: { userId: user.id, courseId: course.id } }
+      where: {
+        userId_courseId: {
+          userId: user.id,
+          courseId: course.id,
+        },
+      },
     });
 
     if (existingEnrollment && existingEnrollment.status === 'ACTIVE') {
       return res.status(400).json({ success: false, error: { message: 'Already enrolled in this course' } });
     }
 
-    if (course.isFree || course.price === 0) {
-      // Free course logic handled separately via enrollments endpoint, but we can catch it here just in case.
-      return res.status(400).json({ success: false, error: { message: 'This course is free. Use the free enrollment endpoint.' } });
+    if (course.isFree || course.price <= 0) {
+      return res.status(400).json({
+        success: false,
+        error: { message: 'This course is free. Please enroll via the free enrollment option.' },
+      });
     }
 
-    const merchantTransactionId = `MT_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
-    
-    // Store payment as PENDING
-    await prisma.payment.create({
+    // Amount authoritative check in INR and paise
+    const amountInINR = Number(course.price);
+    const amountInPaise = Math.round(amountInINR * 100);
+
+    // Generate unique local receipt / transaction reference
+    const receipt = `RCP_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`;
+
+    // Create Razorpay order on server
+    const rzpOrder = await razorpayService.createOrder({
+      amountInPaise,
+      currency: 'INR',
+      receipt,
+      notes: {
+        courseId: course.id,
+        courseTitle: course.title.substring(0, 40),
+        userId: user.id,
+        userEmail: user.email || '',
+      },
+    });
+
+    // Store local Payment record with PENDING status and gateway RAZORPAY
+    const paymentRecord = await prisma.payment.create({
       data: {
         userId: user.id,
         courseId: course.id,
-        merchantOrderId: merchantTransactionId,
-        amount: course.price,
-        gateway: 'PHONEPE',
-        status: 'PENDING'
-      }
-    });
-
-    // Prepare PhonePe payload
-    const payload = {
-      merchantId: PHONEPE_MERCHANT_ID,
-      merchantTransactionId,
-      merchantUserId: user.id,
-      amount: course.price * 100, // PhonePe expects amount in paise
-      redirectUrl: `${process.env.FRONTEND_URL}/payment/status/${merchantTransactionId}`,
-      redirectMode: "REDIRECT",
-      callbackUrl: `${process.env.API_BASE_URL}/payments/callback`,
-      paymentInstrument: {
-        type: "PAY_PAGE"
-      }
-    };
-
-    const base64Payload = Buffer.from(JSON.stringify(payload)).toString('base64');
-    const endpoint = '/pg/v1/pay';
-    const stringToHash = base64Payload + endpoint + PHONEPE_SALT_KEY;
-    const sha256 = crypto.createHash('sha256').update(stringToHash).digest('hex');
-    const checksum = `${sha256}###${PHONEPE_SALT_INDEX}`;
-
-    // Actually, rather than making the server-to-server call to PhonePe from here, we can just return the base64 and checksum for the frontend to post, OR we can make the server-to-server call here to get the redirect url and send it to the frontend.
-    // Making the S2S call:
-    const response = await fetch(PHONEPE_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-VERIFY': checksum,
-        'accept': 'application/json'
+        gateway: 'RAZORPAY',
+        merchantOrderId: rzpOrder.id, // Store Razorpay Order ID as merchantOrderId
+        amount: amountInINR,
+        currency: 'INR',
+        status: 'PENDING',
+        paymentResponse: JSON.stringify({ rzpOrderId: rzpOrder.id, receipt }),
       },
-      body: JSON.stringify({ request: base64Payload })
     });
 
-    const data = await response.json() as any;
+    // Fetch student info for prefill in checkout
+    const dbUser = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: { name: true, email: true, phone: true },
+    });
 
-    if (data.success && data.data && data.data.instrumentResponse && data.data.instrumentResponse.redirectInfo) {
-      const redirectUrl = data.data.instrumentResponse.redirectInfo.url;
-      res.json({ success: true, data: { redirectUrl, merchantTransactionId } });
-    } else {
-      console.error("PhonePe Create Order Failed:", data);
-      res.status(500).json({ success: false, error: { message: 'Failed to initiate payment' } });
-    }
-  } catch (err) {
-    console.error('createOrder error:', err);
-    res.status(500).json({ success: false, error: { message: 'Server error' } });
+    // Return checkout details to frontend (NEVER return secret key!)
+    return res.status(200).json({
+      success: true,
+      data: {
+        keyId: razorpayService.getKeyId(),
+        orderId: rzpOrder.id,
+        amount: amountInPaise,
+        currency: 'INR',
+        paymentRecordId: paymentRecord.id,
+        course: {
+          id: course.id,
+          title: course.title,
+        },
+        prefill: {
+          name: dbUser?.name || '',
+          email: dbUser?.email || '',
+          contact: dbUser?.phone || '',
+        },
+      },
+    });
+  } catch (err: any) {
+    console.error('Razorpay createOrder error:', err);
+    return res.status(500).json({
+      success: false,
+      error: { message: err?.message || 'Failed to initiate payment with Razorpay' },
+    });
   }
 };
 
+/**
+ * 2. VERIFY RAZORPAY PAYMENT (Client callback)
+ * Validates HMAC signature, order status, amounts, marks Payment SUCCESS, and activates Enrollment.
+ */
+export const verifyRazorpayPayment = async (req: Request, res: Response) => {
+  try {
+    const user = (req as any).user;
+    if (!user || !user.id) {
+      return res.status(401).json({ success: false, error: { message: 'Unauthorized' } });
+    }
+
+    const {
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+    } = req.body;
+
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+      return res.status(400).json({
+        success: false,
+        error: { message: 'Missing required Razorpay payment credentials' },
+      });
+    }
+
+    // 1. Verify HMAC SHA-256 signature server-side
+    const isValidSignature = razorpayService.verifyPaymentSignature({
+      orderId: razorpay_order_id,
+      paymentId: razorpay_payment_id,
+      signature: razorpay_signature,
+    });
+
+    if (!isValidSignature) {
+      console.warn(`Invalid Razorpay signature for order ${razorpay_order_id}`);
+      return res.status(400).json({
+        success: false,
+        error: { message: 'Invalid payment signature. Verification failed.' },
+      });
+    }
+
+    // 2. Fetch local Payment record
+    const payment = await prisma.payment.findUnique({
+      where: { merchantOrderId: razorpay_order_id },
+      include: { course: true },
+    });
+
+    if (!payment) {
+      return res.status(404).json({
+        success: false,
+        error: { message: 'Payment record not found for this order.' },
+      });
+    }
+
+    // 3. Ensure the authenticated user owns this payment
+    if (payment.userId !== user.id) {
+      return res.status(403).json({
+        success: false,
+        error: { message: 'Forbidden: Payment does not belong to this user.' },
+      });
+    }
+
+    // Idempotency check: if already SUCCESS, return success immediately
+    if (payment.status === 'SUCCESS') {
+      return res.status(200).json({
+        success: true,
+        message: 'Payment already verified and enrollment active.',
+        data: {
+          paymentId: payment.id,
+          orderId: payment.merchantOrderId,
+          courseId: payment.courseId,
+          status: 'SUCCESS',
+        },
+      });
+    }
+
+    // 4. Verify payment with Razorpay API directly for extra security
+    try {
+      const rzpPayment = await razorpayService.getPayment(razorpay_payment_id);
+      if (rzpPayment.order_id !== razorpay_order_id) {
+        return res.status(400).json({
+          success: false,
+          error: { message: 'Payment does not correspond to the order.' },
+        });
+      }
+
+      // Check amount matching (Razorpay amount in paise vs stored INR)
+      const expectedPaise = Math.round(payment.amount * 100);
+      if (Number(rzpPayment.amount) < expectedPaise) {
+        return res.status(400).json({
+          success: false,
+          error: { message: 'Payment amount mismatch detected.' },
+        });
+      }
+    } catch (apiErr: any) {
+      console.warn('Could not fetch payment directly from Razorpay API:', apiErr.message);
+      // Signature was already verified cryptographically
+    }
+
+    // 5. Transactional state update & active enrollment creation
+    const updatedPayment = await prisma.$transaction(async (tx) => {
+      const p = await tx.payment.update({
+        where: { id: payment.id },
+        data: {
+          status: 'SUCCESS',
+          gateway: 'RAZORPAY',
+          gatewayTransactionId: razorpay_payment_id,
+          paidAt: new Date(),
+          paymentResponse: JSON.stringify({
+            razorpay_payment_id,
+            razorpay_order_id,
+            razorpay_signature,
+            verifiedAt: new Date().toISOString(),
+          }),
+        },
+      });
+
+      // Upsert active enrollment idempotently
+      await tx.enrollment.upsert({
+        where: {
+          userId_courseId: {
+            userId: payment.userId,
+            courseId: payment.courseId,
+          },
+        },
+        update: {
+          status: 'ACTIVE',
+          paymentId: payment.id,
+        },
+        create: {
+          userId: payment.userId,
+          courseId: payment.courseId,
+          paymentId: payment.id,
+          status: 'ACTIVE',
+        },
+      });
+
+      return p;
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Payment verified and course unlocked successfully.',
+      data: {
+        paymentId: updatedPayment.id,
+        orderId: updatedPayment.merchantOrderId,
+        courseId: updatedPayment.courseId,
+        status: updatedPayment.status,
+      },
+    });
+  } catch (err: any) {
+    console.error('verifyRazorpayPayment error:', err);
+    return res.status(500).json({
+      success: false,
+      error: { message: err?.message || 'Server error while verifying payment' },
+    });
+  }
+};
+
+/**
+ * 3. RAZORPAY WEBHOOK
+ * Listens for asynchronous events from Razorpay (order.paid, payment.captured, payment.failed).
+ * Strictly verifies webhook signature and processes idempotently.
+ */
+export const razorpayWebhook = async (req: Request, res: Response) => {
+  try {
+    const signature = req.headers['x-razorpay-signature'] as string;
+    if (!signature) {
+      return res.status(400).json({ success: false, error: 'Missing x-razorpay-signature header' });
+    }
+
+    const rawBody = (req as any).rawBody || JSON.stringify(req.body);
+
+    // Verify webhook signature
+    const isValid = razorpayService.verifyWebhookSignature(rawBody, signature);
+    if (!isValid) {
+      console.warn('Invalid Razorpay webhook signature');
+      return res.status(400).json({ success: false, error: 'Invalid webhook signature' });
+    }
+
+    const event = req.body;
+    const eventType = event.event;
+
+    if (eventType === 'order.paid' || eventType === 'payment.captured') {
+      const paymentEntity = event.payload?.payment?.entity;
+      const orderId = paymentEntity?.order_id || event.payload?.order?.entity?.id;
+      const paymentId = paymentEntity?.id;
+
+      if (orderId) {
+        await prisma.$transaction(async (tx) => {
+          const payment = await tx.payment.findUnique({
+            where: { merchantOrderId: orderId },
+          });
+
+          if (!payment) {
+            console.warn(`Webhook order not found in DB: ${orderId}`);
+            return;
+          }
+
+          if (payment.status !== 'SUCCESS') {
+            await tx.payment.update({
+              where: { id: payment.id },
+              data: {
+                status: 'SUCCESS',
+                gateway: 'RAZORPAY',
+                gatewayTransactionId: paymentId || payment.gatewayTransactionId,
+                paidAt: payment.paidAt || new Date(),
+                paymentResponse: JSON.stringify(event),
+              },
+            });
+
+            // Activate enrollment
+            await tx.enrollment.upsert({
+              where: {
+                userId_courseId: {
+                  userId: payment.userId,
+                  courseId: payment.courseId,
+                },
+              },
+              update: {
+                status: 'ACTIVE',
+                paymentId: payment.id,
+              },
+              create: {
+                userId: payment.userId,
+                courseId: payment.courseId,
+                paymentId: payment.id,
+                status: 'ACTIVE',
+              },
+            });
+          }
+        });
+      }
+    } else if (eventType === 'payment.failed') {
+      const paymentEntity = event.payload?.payment?.entity;
+      const orderId = paymentEntity?.order_id;
+      const paymentId = paymentEntity?.id;
+
+      if (orderId) {
+        await prisma.payment.updateMany({
+          where: {
+            merchantOrderId: orderId,
+            status: { not: 'SUCCESS' },
+          },
+          data: {
+            status: 'FAILED',
+            gatewayTransactionId: paymentId,
+            paymentResponse: JSON.stringify(event),
+          },
+        });
+      }
+    }
+
+    return res.status(200).json({ status: 'ok' });
+  } catch (err: any) {
+    console.error('Razorpay webhook processing error:', err);
+    return res.status(500).json({ success: false, error: 'Internal webhook error' });
+  }
+};
+
+/**
+ * 4. CHECK PAYMENT STATUS BY ORDER ID
+ */
+export const checkPaymentStatus = async (req: Request, res: Response) => {
+  try {
+    const merchantOrderId = req.params.merchantOrderId as string;
+    if (!merchantOrderId) {
+      return res.status(400).json({ success: false, error: { message: 'Order ID is required' } });
+    }
+
+    const payment = await prisma.payment.findUnique({
+      where: { merchantOrderId },
+      include: {
+        course: { select: { id: true, title: true } },
+      },
+    });
+
+    if (!payment) {
+      return res.status(404).json({ success: false, error: { message: 'Payment record not found' } });
+    }
+
+    return res.json({
+      success: true,
+      data: {
+        id: payment.id,
+        merchantOrderId: payment.merchantOrderId,
+        gatewayTransactionId: payment.gatewayTransactionId,
+        gateway: payment.gateway,
+        status: payment.status,
+        amount: payment.amount,
+        courseId: payment.courseId,
+        courseTitle: payment.course?.title,
+        paidAt: payment.paidAt,
+      },
+    });
+  } catch (err: any) {
+    console.error('checkPaymentStatus error:', err);
+    return res.status(500).json({ success: false, error: { message: 'Server error' } });
+  }
+};
+
+/**
+ * Historical/Dormant PhonePe Callback handler (Preserved for backward compatibility)
+ */
 export const paymentCallback = async (req: Request, res: Response) => {
   try {
     const { response } = req.body;
     if (!response) {
-      return res.status(400).send("No response");
+      return res.status(400).send('No response');
+    }
+
+    const checksum = req.headers['x-verify'] as string;
+    if (!phonePeService.verifyChecksum(response, checksum)) {
+      return res.status(400).send('Invalid checksum');
     }
 
     const decodedResponse = Buffer.from(response, 'base64').toString('utf-8');
     const parsedResponse = JSON.parse(decodedResponse);
 
-    const merchantTransactionId = parsedResponse.data.merchantTransactionId;
-    const transactionId = parsedResponse.data.transactionId;
-    const state = parsedResponse.code; // e.g. PAYMENT_SUCCESS
-    
-    // Verify checksum provided in headers
-    const checksum = req.headers['x-verify'] as string;
-    const expectedChecksum = crypto.createHash('sha256').update(response + PHONEPE_SALT_KEY).digest('hex') + '###' + PHONEPE_SALT_INDEX;
-    
-    if (checksum !== expectedChecksum) {
-      return res.status(400).send("Invalid checksum");
-    }
+    const merchantTransactionId = parsedResponse?.data?.merchantTransactionId;
+    const transactionId = parsedResponse?.data?.transactionId;
+    const isSuccess = parsedResponse?.code === 'PAYMENT_SUCCESS';
 
-    // Process payment in a transaction
-    await prisma.$transaction(async (tx) => {
-      const payment = await tx.payment.findUnique({ where: { merchantOrderId: merchantTransactionId } });
-      if (!payment || payment.status === 'SUCCESS') return; // Idempotent
+    if (merchantTransactionId) {
+      await prisma.$transaction(async (tx) => {
+        const payment = await tx.payment.findUnique({
+          where: { merchantOrderId: merchantTransactionId },
+        });
+        if (!payment || payment.status === 'SUCCESS') return;
 
-      const isSuccess = state === 'PAYMENT_SUCCESS';
+        await tx.payment.update({
+          where: { id: payment.id },
+          data: {
+            status: isSuccess ? 'SUCCESS' : 'FAILED',
+            gatewayTransactionId: transactionId,
+            paymentResponse: decodedResponse,
+            paidAt: isSuccess ? new Date() : null,
+          },
+        });
 
-      await tx.payment.update({
-        where: { id: payment.id },
-        data: {
-          status: isSuccess ? 'SUCCESS' : 'FAILED',
-          gatewayTransactionId: transactionId,
-          paymentResponse: decodedResponse,
-          paidAt: isSuccess ? new Date() : null
+        if (isSuccess) {
+          await tx.enrollment.upsert({
+            where: {
+              userId_courseId: {
+                userId: payment.userId,
+                courseId: payment.courseId,
+              },
+            },
+            update: { status: 'ACTIVE', paymentId: payment.id },
+            create: {
+              userId: payment.userId,
+              courseId: payment.courseId,
+              paymentId: payment.id,
+              status: 'ACTIVE',
+            },
+          });
         }
       });
-
-      if (isSuccess) {
-        // Enroll user
-        await tx.enrollment.upsert({
-          where: { userId_courseId: { userId: payment.userId, courseId: payment.courseId } },
-          update: { status: 'ACTIVE', paymentId: payment.id },
-          create: {
-            userId: payment.userId,
-            courseId: payment.courseId,
-            paymentId: payment.id,
-            status: 'ACTIVE'
-          }
-        });
-      }
-    });
-
-    res.send("OK");
-  } catch (err) {
-    console.error('paymentCallback error:', err);
-    res.status(500).send("Error");
-  }
-};
-
-export const checkPaymentStatus = async (req: Request, res: Response) => {
-  try {
-    const merchantOrderId = req.params.merchantOrderId as string;
-    const payment = await prisma.payment.findUnique({ where: { merchantOrderId } });
-    
-    if (!payment) {
-      return res.status(404).json({ success: false, error: { message: 'Payment not found' } });
     }
-    
-    // In a real scenario you would also check status API of PhonePe if status is still PENDING
-    // For this implementation, we will just return our DB status since the webhook handles the update
-    
-    res.json({ success: true, data: { status: payment.status, courseId: payment.courseId } });
+
+    return res.send('OK');
   } catch (err) {
-    console.error('checkPaymentStatus error:', err);
-    res.status(500).json({ success: false, error: { message: 'Server error' } });
+    console.error('Legacy phonePe paymentCallback error:', err);
+    return res.status(500).send('Error');
   }
 };
