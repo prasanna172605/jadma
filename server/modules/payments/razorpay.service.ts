@@ -42,7 +42,7 @@ export class RazorpayService {
   }
 
   public getKeyId(): string {
-    return this.keyId;
+    return this.keyId || process.env.RAZORPAY_KEY_ID || '';
   }
 
   public isConfigured(): boolean {
