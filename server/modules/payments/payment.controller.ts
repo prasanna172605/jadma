@@ -20,6 +20,8 @@ export const createOrder = async (req: Request, res: Response) => {
       return res.status(400).json({ success: false, error: { message: 'Course ID is required' } });
     }
 
+    console.log(`[Razorpay:createOrder] Started for user ${user.id}, courseId ${courseId}`);
+
     // Retrieve authoritative course information from DB
     const course = await prisma.course.findUnique({
       where: { id: courseId },
@@ -33,8 +35,11 @@ export const createOrder = async (req: Request, res: Response) => {
     });
 
     if (!course || course.status !== 'PUBLISHED') {
+      console.warn(`[Razorpay:createOrder] Course not found or not published: ${courseId}`);
       return res.status(404).json({ success: false, error: { message: 'Course not found or not published' } });
     }
+
+    console.log(`[Razorpay:createOrder] Course loaded: "${course.title}", price: ₹${course.price}`);
 
     // Check if user is already enrolled
     const existingEnrollment = await prisma.enrollment.findUnique({
@@ -47,6 +52,7 @@ export const createOrder = async (req: Request, res: Response) => {
     });
 
     if (existingEnrollment && existingEnrollment.status === 'ACTIVE') {
+      console.warn(`[Razorpay:createOrder] User ${user.id} already enrolled in course ${course.id}`);
       return res.status(400).json({ success: false, error: { message: 'Already enrolled in this course' } });
     }
 
@@ -64,6 +70,8 @@ export const createOrder = async (req: Request, res: Response) => {
     // Generate unique local receipt / transaction reference
     const receipt = `RCP_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`;
 
+    console.log(`[Razorpay:createOrder] Calling Razorpay Orders API (amount: ${amountInPaise} paise, receipt: ${receipt})`);
+
     // Create Razorpay order on server
     const rzpOrder = await razorpayService.createOrder({
       amountInPaise,
@@ -76,6 +84,8 @@ export const createOrder = async (req: Request, res: Response) => {
         userEmail: user.email || '',
       },
     });
+
+    console.log(`[Razorpay:createOrder] Razorpay order created successfully: ${rzpOrder.id}`);
 
     // Store local Payment record with PENDING status and gateway RAZORPAY
     const paymentRecord = await prisma.payment.create({
@@ -90,6 +100,8 @@ export const createOrder = async (req: Request, res: Response) => {
         paymentResponse: JSON.stringify({ rzpOrderId: rzpOrder.id, receipt }),
       },
     });
+
+    console.log(`[Razorpay:createOrder] Local Payment record created: ${paymentRecord.id}`);
 
     // Fetch student info for prefill in checkout
     const dbUser = await prisma.user.findUnique({

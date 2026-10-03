@@ -42,28 +42,33 @@ export class RazorpayService {
   }
 
   public getKeyId(): string {
-    return this.keyId || process.env.RAZORPAY_KEY_ID || '';
+    return process.env.RAZORPAY_KEY_ID || this.keyId || '';
   }
 
   public isConfigured(): boolean {
-    return Boolean(this.keyId && this.keySecret);
+    const keyId = process.env.RAZORPAY_KEY_ID || this.keyId;
+    const keySecret = process.env.RAZORPAY_KEY_SECRET || this.keySecret;
+    return Boolean(keyId && keySecret);
   }
 
   private getClient(): Razorpay {
-    if (!this.client) {
-      // Re-read in case env vars were set after load
-      this.keyId = process.env.RAZORPAY_KEY_ID || '';
-      this.keySecret = process.env.RAZORPAY_KEY_SECRET || '';
-      this.webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET || '';
+    const keyId = process.env.RAZORPAY_KEY_ID || this.keyId || '';
+    const keySecret = process.env.RAZORPAY_KEY_SECRET || this.keySecret || '';
+    this.webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET || this.webhookSecret || '';
 
-      if (!this.keyId || !this.keySecret) {
-        throw new Error('Razorpay credentials (RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET) are not configured.');
-      }
+    if (!keyId || !keySecret) {
+      throw new Error('Razorpay credentials (RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET) are not configured.');
+    }
+
+    if (!this.client || this.keyId !== keyId || this.keySecret !== keySecret) {
+      this.keyId = keyId;
+      this.keySecret = keySecret;
       this.client = new Razorpay({
         key_id: this.keyId,
         key_secret: this.keySecret,
       });
     }
+
     return this.client;
   }
 
