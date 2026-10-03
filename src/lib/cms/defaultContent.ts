@@ -30,41 +30,66 @@ export const defaultCmsContent: Record<string, string> = {
   'site.footer.social.youtube': 'https://www.youtube.com/@JADMAAVarmakalai',
 
   // --- HOME PAGE ---
-  'home.hero.eyebrow': 'MASTER THE ANCIENT TAMIL MARTIAL SCIENCE',
-  'home.hero.title': 'Awaken Your Inner Warrior with Varmakalai',
-  'home.hero.subtitle': 'Learn the authentic Siddha science of vital pressure points. Train under Master Prasanna and master techniques for ultimate self-defense, healing, and spiritual discipline.',
-  'home.hero.primaryButton.label': 'Explore Courses',
-  'home.hero.primaryButton.link': '/courses',
-  'home.hero.secondaryButton.label': 'Watch Intro',
-  'home.hero.secondaryButton.link': '#',
+  'home.hero.eyebrow': '1000+ YEAR OLD MOTHER OF MARTIAL ART',
+  'home.hero.title': 'Learn the Ancient Science of <br class="hidden sm:inline" /> Varmakalai',
+  'home.hero.subtitle': 'Empower your body, sharpen your mind, and preserve a timeless martial tradition through professional Ancient Martial Art training.',
+  'home.hero.cta1': 'View Courses',
+  'home.hero.cta2': 'Contact Us',
   'home.hero.image': '/images/hero-kick-action-transparent.png',
   
+  'home.stats.tradition': 'Years of Tradition',
+  'home.stats.branches': 'Branches',
+  'home.stats.courses': 'Structured Courses',
+  'home.stats.experience': 'Years Guru Experience',
+
   // Home: About Teaser
-  'home.about.enabled': 'true',
-  'home.about.eyebrow': 'OUR LEGACY',
-  'home.about.title': 'Preserving the Siddha Tradition',
-  'home.about.description': 'JADMAA Varmakalai Academy is dedicated to resurrecting the purest forms of traditional Tamil martial arts. Passed down through generations of masters, our curriculum bridges ancient wisdom with modern training methodologies.',
-  'home.about.image': 'https://images.unsplash.com/photo-1555597673-b21d5c935865?auto=format&fit=crop&q=80',
-  'home.about.button.label': 'Read Our Full Story',
-  'home.about.button.link': '/about',
+  'home.about.eyebrow': 'ABOUT JADMAA',
+  'home.about.title': 'Ancient Power. Modern Training.',
+  'home.about.description': 'JADMAA (Jeyaraj Academy of Defence & Martial Arts Association) is dedicated to reviving and systematically teaching the 1000+ year old traditional science of Varmakalai. Formulated originally by Tamil Siddha masters, Varmakalai combines combat tactics with therapeutic pressure point rejuvenation.',
+  'home.about.cta': 'Learn More',
 
   // Home: Why Choose Us
-  'home.whyChoose.enabled': 'true',
-  'home.whyChoose.eyebrow': 'WHY JADMAA',
-  'home.whyChoose.title': 'Authentic Training, Real Results',
-  'home.whyChoose.description': 'Experience traditional martial arts taught the way it was meant to be—with discipline, focus, and respect for the lineage.',
-  'home.whyChoose.image': 'https://images.unsplash.com/photo-1525193612562-0ec53b0e5d7c?auto=format&fit=crop&q=80',
+  'home.why.eyebrow': 'EXCELLENCE & INTEGRITY',
+  'home.why.title': 'Why Choose JADMAA?',
+  'home.why.description': 'We bridge ancient Tamil martial traditions with modern structured pedagogy, ensuring safe, effective, and transformative training for all age groups.',
+  'home.why.cta': 'Learn More',
+  'home.why.box.title': 'Why Students Choose JADMAA',
+  'home.why.point1': 'Authentic Gurukulam Varma Training preserved free from commercial dilution.',
+  'home.why.point2': 'Experienced Instructors under Grandmaster A. Jeyaraj guidance.',
+  'home.why.point3': 'Dedicated branch centers in Thanjavur, Kumbakonam, and Ariyalur.',
+  'home.why.point4': 'Systematic level progression & recognized academy certifications.',
+
+  // Home: Wellness
+  'home.wellness.eyebrow': 'SIDDHA VARMA HEALING',
+  'home.wellness.title': 'Varma Wellness & Traditional Therapy',
+  'home.wellness.description': 'Holistic pressure point therapy to stimulate natural bio-energy flow, relieve musculoskeletal discomfort, and enhance vital organ health.',
+  'home.wellness.disclaimer': 'Disclaimer: Varma wellness sessions are intended to support general well-being and are not a substitute for professional medical diagnosis or emergency medical care.',
+
+  // Home: Training
+  'home.training.eyebrow': 'ACADEMY SYLLABUS',
+  'home.training.title': 'Training at JADMAA',
+  'home.training.subtitle': 'What we teach, who it is for, and what you gain from consistent practice.',
+
+  // Home: Growth & Leadership
+  'home.growth.eyebrow': 'GROWTH & LEADERSHIP',
+  'home.growth.title': 'Build Your Future Through Traditional Martial Art',
+  'home.growth.description': 'Unlock career pathways as a certified Varmakalai instructor, self-defence coach, or wellness practitioner under official JADMAA academy certification.',
+  'home.growth.cta': 'Enquire Instructor Path',
 
   // Home: Courses Section
-  'home.courses.enabled': 'true',
-  'home.courses.title': 'Featured Programs',
-  'home.courses.description': 'From foundational techniques to advanced combat applications, choose the path that suits your journey.',
-  'home.courses.cta': 'View All Courses',
+  'home.courses.eyebrow': 'STRUCTURED CURRICULUM',
+  'home.courses.title': 'Featured Courses',
+  'home.courses.subtitle': 'Online Recorded Courses • Offline Branch Training — explore our self-paced & guided programs.',
+  'home.courses.cta': 'View all courses',
   
   // Home: Branches Section
-  'home.branches.enabled': 'true',
-  'home.branches.title': 'Our Branches',
-  'home.branches.description': 'Find a JADMAA training center near you.',
+  'home.branches.eyebrow': 'BRANCH LOCATIONS',
+  'home.branches.title': 'Our Training Centers',
+  'home.branches.subtitle': 'Visit our academies across Tamil Nadu for in-person training.',
+
+  // Home: Testimonials
+  'home.testimonials.eyebrow': 'STUDENT REVIEWS',
+  'home.testimonials.title': 'What Our Students Say',
 
   // --- COURSES PAGE ---
   'courses.hero.eyebrow': 'Academy Curriculum',
@@ -74,24 +99,53 @@ export const defaultCmsContent: Record<string, string> = {
   'courses.empty.description': 'Try adjusting your category tabs or search query.',
   
   // --- ABOUT PAGE ---
-  'about.hero.eyebrow': 'OUR STORY',
-  'about.hero.title': 'The Legacy of Jadmaa',
-  'about.hero.description': 'Preserving and propagating the ancient Siddha science of Varmakalai for the modern world.',
-  'about.hero.image': 'https://images.unsplash.com/photo-1555597673-b21d5c935865?auto=format&fit=crop&q=80',
+  'about.banner.subtitle': 'Our Organization',
+  'about.banner.title': 'About JADMAA Varmakalai Academy',
+  'about.banner.desc': 'Preserving the ancient 1000+ year old Tamil martial art, vital point energy science, and Siddha therapeutic traditions.',
   
-  'about.mission.title': 'Our Mission',
-  'about.mission.description': 'To systematically teach, research, and globally promote Varmakalai—ensuring this ancient science empowers individuals with unparalleled self-defense capabilities and holistic health benefits.',
+  'about.history.subtitle': '1000+ Year Heritage',
+  'about.history.title': 'The Science of Varmakalai',
+  'about.history.p1': 'Varmakalai (Vital Points Art) is a legendary Tamil martial and medical science formulated by ancient Siddhar sages such as Agastya Siddhar. It centers on the precise knowledge of 108 vital nerve points across the human body (*Varma Pulligal*).',
+  'about.history.p2': 'JADMAA was founded to safeguard this priceless cultural heritage from dilution or distortion. We teach both defensive tactics (*Adimurai*) and therapeutic healing (*Varma Vaidhiyam*) in a structured, ethical, and accessible manner.',
   
   'about.vision.title': 'Our Vision',
-  'about.vision.description': 'To establish JADMAA as the definitive global authority and premier institution for authentic Tamil traditional martial arts and Siddha healing practices.',
+  'about.vision.desc': 'To become one of India’s most trusted Varmakalai schools by preserving this ancient martial tradition and making it accessible to future generations through quality education and disciplined training.',
+  
+  'about.mission.title': 'Our Mission',
+  'about.mission.desc': 'To inspire individuals to live healthier, stronger, and more confident lives by providing authentic Varmakalai education that develops physical fitness, self-defence ability, mental focus, discipline, and respect while protecting the cultural heritage of Tamil martial arts and traditional Varma treatment practices.',
+
+  'about.founder.eyebrow': 'Meet Our Founder',
+  'about.founder.name': 'Bojagarajan',
+  'about.founder.role': 'Founder & Chief Instructor',
+  'about.founder.bio': 'JADMAA Varmakalai was founded by Bojagarajan, a Varmakalai practitioner with over 15 years of experience in the art. He was trained in traditional Varmakalai under his master, Aasan R. Rajendran of Madurai, and carries that lineage forward today — personally training students and instructors across our Thanjavur, Kumbakonam, and Ariyalur branches.',
+
+  'about.curriculum.eyebrow': 'Your best choice for martial arts training',
+  'about.curriculum.intro': 'Based on this strong traditional foundation, JADMAA Varmakalai Academy was established. Our training system goes beyond self-defense. It is designed as a holistic program that develops:',
+  'about.curriculum.title': 'Learn from the best martial arts instructors around',
+  'about.curriculum.subtitle': 'Students are taught structured levels including:',
+  'about.curriculum.progression': 'Each student progresses from beginner to advanced stages, with opportunities to become professional instructors based on skill and discipline.',
+  'about.curriculum.welcome': 'JADMAA Varmakalai welcomes everyone — from beginners taking their first step into martial arts to dedicated practitioners seeking advanced Varmakalai knowledge. Join us and become part of a community committed to preserving tradition while building strength for the future.',
 
   // --- CONTACT PAGE ---
-  'contact.hero.eyebrow': 'GET IN TOUCH',
-  'contact.hero.title': 'Start Your Journey',
-  'contact.hero.description': 'Have questions about our programs or want to enroll in offline classes? We are here to help.',
+  'contact.banner.subtitle': 'Admissions & Enquiries',
+  'contact.banner.title': 'Get in Touch With JADMAA',
+  'contact.banner.desc': 'Book a free demo class, inquire about course admissions, or consult with our Varmakalai masters.',
   
-  'contact.info.address': '48, Carmel Nagar, Kaattuthottam, Thanjavur (HQ)',
-  'contact.info.hours': 'Mon-Sat: 6:00 AM - 8:00 PM\nSunday: Special Classes Only',
+  'contact.form.title': 'Send Us a Message',
+  'contact.form.subtitle': 'Fill out the form below to request a free trial class or course brochure.',
+  
+  'contact.info.title': 'Direct Contact Information',
+  'contact.info.description': 'Have urgent questions about class timings, registrations or therapeutic appointments? Reach out to our central team.',
+  'contact.phone1.label': 'Central Admissions Line',
+  'contact.phone1.number': '+91 93452 20020',
+  'contact.phone2.label': 'Secondary Support Line',
+  'contact.phone2.number': '+91 96554 57500',
+  'contact.email.label': 'Official Email',
+  'contact.email.value': 'info@jadmaa.com',
+  'contact.hours.title': 'Branch Operating Hours',
+  
+  'contact.branches.eyebrow': 'VISIT OUR ACADEMIES',
+  'contact.branches.title': 'Our Branches',
 };
 
 /**

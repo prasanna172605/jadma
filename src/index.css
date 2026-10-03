@@ -17,30 +17,48 @@
   html {
     scroll-behavior: smooth;
     font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   body {
     font-family: 'Work Sans', sans-serif;
-    font-size: 1.125rem;
+    font-size: 16px;
     font-weight: 400;
-    line-height: 1.65;
-    color: #5C5148;
+    line-height: 1.6;
+    color: #2B2521;
     background-color: #FAF6F0;
     margin: 0;
     padding: 0;
     overflow-x: clip;
+    letter-spacing: -0.01em;
   }
   p {
-    font-size: 1.125rem;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 16px;
     line-height: 1.65;
     font-weight: 400;
+    color: #5C5148;
     margin-bottom: 1rem;
+    letter-spacing: -0.01em;
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Bricolage Grotesque', sans-serif;
-    font-weight: 800;
     color: #2B2521;
     margin: 0;
-    line-height: 1.2;
+    line-height: 1.25;
+    letter-spacing: -0.025em;
+  }
+  h1 {
+    font-weight: 800;
+  }
+  h2 {
+    font-weight: 700;
+  }
+  h3 {
+    font-weight: 700;
+  }
+  h4, h5, h6 {
+    font-weight: 600;
   }
 }
 
