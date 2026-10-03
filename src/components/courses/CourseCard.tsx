@@ -71,18 +71,29 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, hidePrice = fals
         </p>
 
         {/* Instructor row */}
-        <div className="flex items-center gap-2.5 text-sm text-[#5C5148]">
-          <div className="w-7 h-7 rounded-full bg-[#B12B2B] flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
-            {course.instructor ? course.instructor.charAt(0).toUpperCase() : 'J'}
-          </div>
-          <span className="font-medium truncate">{course.instructor || 'JADMAA Instructor'}</span>
-          {course.studentsCount !== undefined && (
-            <span className="ml-auto flex items-center gap-1 text-xs text-[#5C5148]">
-              <Users className="w-3.5 h-3.5" />
-              {course.studentsCount}
-            </span>
-          )}
-        </div>
+        {(() => {
+          const instructorName = typeof course.instructor === 'object' && course.instructor !== null
+            ? (course.instructor as any).name || (course.instructor as any).displayName || 'JADMAA Master'
+            : (typeof course.instructor === 'string' && course.instructor)
+              ? course.instructor
+              : 'JADMAA Master';
+          const initial = instructorName.charAt(0).toUpperCase() || 'J';
+
+          return (
+            <div className="flex items-center gap-2.5 text-sm text-[#5C5148]">
+              <div className="w-7 h-7 rounded-full bg-[#B12B2B] flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
+                {initial}
+              </div>
+              <span className="font-medium truncate">{instructorName}</span>
+              {course.studentsCount !== undefined && (
+                <span className="ml-auto flex items-center gap-1 text-xs text-[#5C5148]">
+                  <Users className="w-3.5 h-3.5" />
+                  {course.studentsCount}
+                </span>
+              )}
+            </div>
+          );
+        })()}
 
         {/* Divider */}
         <div className="border-t border-[#E8DDD0]" />
