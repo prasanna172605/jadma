@@ -72,12 +72,15 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, hidePrice = fals
 
         {/* Instructor row */}
         {(() => {
-          const instructorName = typeof course.instructor === 'object' && course.instructor !== null
-            ? (course.instructor as any).name || (course.instructor as any).displayName || 'JADMAA Master'
+          const rawName = typeof course.instructor === 'object' && course.instructor !== null
+            ? (course.instructor as any).name || (course.instructor as any).displayName || 'Mr. Bojagarajan'
             : (typeof course.instructor === 'string' && course.instructor)
               ? course.instructor
-              : 'JADMAA Master';
-          const initial = instructorName.charAt(0).toUpperCase() || 'J';
+              : 'Mr. Bojagarajan';
+          const instructorName = rawName.toLowerCase().startsWith('aasan')
+            ? rawName
+            : `Aasan - ${rawName}`;
+          const initial = rawName.replace(/^(aasan\s*[-–—:]*\s*)/i, '').charAt(0).toUpperCase() || 'B';
 
           return (
             <div className="flex items-center gap-2.5 text-sm text-[#5C5148]">

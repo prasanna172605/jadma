@@ -50,28 +50,29 @@ export class RazorpayService {
   }
 
   public getKeyId(): string {
-    this.loadConfig();
-    return this.keyId;
+    return this.keyId || process.env.RAZORPAY_KEY_ID || '';
   }
 
   public isConfigured(): boolean {
-    this.loadConfig();
     return Boolean(this.keyId && this.keySecret);
   }
 
   private getClient(): Razorpay {
-    this.loadConfig();
-
-    if (!this.keyId || !this.keySecret) {
-      throw new Error('Razorpay credentials (RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET) are not configured.');
-    }
-
     if (!this.client) {
+      // Re-read in case env vars were set after load
+      this.keyId = process.env.RAZORPAY_KEY_ID || '';
+      this.keySecret = process.env.RAZORPAY_KEY_SECRET || '';
+      this.webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET || '';
+
+      if (!this.keyId || !this.keySecret) {
+        throw new Error('Razorpay credentials (RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET) are not configured.');
+      }
       this.client = new Razorpay({
         key_id: this.keyId,
         key_secret: this.keySecret,
       });
     }
+
     return this.client;
   }
 

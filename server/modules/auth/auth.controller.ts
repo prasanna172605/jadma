@@ -25,8 +25,9 @@ const generateTokens = (user: any) => {
 export const register = async (req: Request, res: Response) => {
   try {
     const validated = registerSchema.parse(req.body);
+    const email = validated.email.trim().toLowerCase();
     
-    const existing = await prisma.user.findUnique({ where: { email: validated.email } });
+    const existing = await prisma.user.findUnique({ where: { email } });
     if (existing) {
       return res.status(400).json({ success: false, error: { message: 'Email already exists' } });
     }
@@ -34,9 +35,9 @@ export const register = async (req: Request, res: Response) => {
     const passwordHash = await bcrypt.hash(validated.password, 10);
     const user = await prisma.user.create({
       data: {
-        name: validated.name,
-        email: validated.email,
-        phone: validated.phone,
+        name: validated.name.trim(),
+        email,
+        phone: validated.phone.trim(),
         passwordHash,
       }
     });
@@ -59,17 +60,25 @@ export const register = async (req: Request, res: Response) => {
 export const login = async (req: Request, res: Response) => {
   try {
     const validated = loginSchema.parse(req.body);
+    const email = validated.email.trim().toLowerCase();
     
-        const user = await prisma.user.findUnique({ 
-      where: { email: validated.email },
+    const user = await prisma.user.findUnique({ 
+      where: { email },
       include: { enrollments: { select: { courseId: true } } }
     });
-    if (!user || !user.isActive) {
+    if (!user) {
+      console.warn(`[Auth:Login] Login failed: User with email "${validated.email}" not found.`);
+      return res.status(401).json({ success: false, error: { message: 'Invalid credentials or inactive account' } });
+    }
+
+    if (!user.isActive) {
+      console.warn(`[Auth:Login] Login failed: User "${validated.email}" is marked inactive.`);
       return res.status(401).json({ success: false, error: { message: 'Invalid credentials or inactive account' } });
     }
 
     const isValid = await bcrypt.compare(validated.password, user.passwordHash);
     if (!isValid) {
+      console.warn(`[Auth:Login] Login failed: Password comparison failed for "${validated.email}". Hash format: ${user.passwordHash.substring(0, 4)}`);
       return res.status(401).json({ success: false, error: { message: 'Invalid credentials' } });
     }
 

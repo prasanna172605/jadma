@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { SEO } from '../components/common/SEO';
 import { CurriculumAccordion } from '../components/courses/CurriculumAccordion';
 import { CourseCard } from '../components/courses/CourseCard';
 import { 
-  Clock, Star, BookOpen, Award, CheckCircle2, Play 
+  Clock, Award, Play, ChevronRight, Share2, 
+  BarChart, Users, Phone, Check, Copy, CheckCheck
 } from 'lucide-react';
 import { courseApi } from '../lib/api/courseApi';
 import { paymentApi } from '../lib/api/paymentApi';
@@ -17,13 +18,14 @@ export const CourseDetails: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { user, isLoggedIn } = useAuth();
-  const [activeTab, setActiveTab] = useState<'overview' | 'curriculum' | 'instructor' | 'faq'>('overview');
   
   const [course, setCourse] = useState<Course | null>(null);
   const [relatedCourses, setRelatedCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [enrolling, setEnrolling] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchCourseData = async () => {
@@ -51,7 +53,6 @@ export const CourseDetails: React.FC = () => {
     
     if (!course) return;
     
-    // Check if already enrolled in the frontend state (we could also check via API)
     if (user?.enrolledCourses?.includes(course.id)) {
       navigate(`/learn/${course.id}`);
       return;
@@ -68,14 +69,12 @@ export const CourseDetails: React.FC = () => {
           alert(res.error?.message || 'Failed to enroll');
         }
       } else {
-        // Load Razorpay Checkout SDK
         const scriptLoaded = await loadRazorpayScript();
         if (!scriptLoaded) {
           alert('Failed to load Razorpay payment gateway. Please check your internet connection.');
           return;
         }
 
-        // Create order on backend (authoritative DB pricing)
         const orderRes = await paymentApi.createOrder(course.id);
         if (!orderRes.success || !orderRes.data) {
           alert(orderRes.error?.message || 'Failed to initiate Razorpay order');
@@ -84,14 +83,13 @@ export const CourseDetails: React.FC = () => {
 
         const { keyId, orderId, amount, currency, prefill } = orderRes.data;
 
-        // Initialize Razorpay Standard Checkout
         const options = {
           key: keyId,
           amount,
           currency: currency || 'INR',
           name: 'JADMAA Varmakalai',
           description: course.title,
-          image: 'https://jadmaa.com/wp-content/uploads/2026/07/logo-1.png',
+          image: '/logo.png',
           order_id: orderId,
           prefill: {
             name: prefill?.name || user?.name || '',
@@ -99,7 +97,7 @@ export const CourseDetails: React.FC = () => {
             contact: prefill?.contact || '',
           },
           theme: {
-            color: '#A020F0', // Brand accent or #991B1B jadmaa-red
+            color: '#B12B2B',
           },
           modal: {
             backdropclose: false,
@@ -115,7 +113,6 @@ export const CourseDetails: React.FC = () => {
           }) => {
             try {
               setEnrolling(true);
-              // Verify payment on backend
               const verifyRes = await paymentApi.verifyRazorpayPayment({
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
@@ -123,7 +120,6 @@ export const CourseDetails: React.FC = () => {
               });
 
               if (verifyRes.success) {
-                // Navigate to payment status confirmation page
                 navigate(`/payment/status/${response.razorpay_order_id}?status=success`);
               } else {
                 alert(verifyRes.error?.message || 'Payment verification failed.');
@@ -153,13 +149,30 @@ export const CourseDetails: React.FC = () => {
     }
   };
 
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center text-jadmaa-textMuted">Loading course details...</div>;
+    return <div className="min-h-screen flex items-center justify-center font-sans text-jadmaa-textMuted">Loading course details...</div>;
   }
 
   if (error || !course) {
-    return <div className="min-h-screen flex items-center justify-center text-red-500">Error loading course: {error || 'Not found'}</div>;
+    return <div className="min-h-screen flex items-center justify-center font-sans text-red-500">Error loading course: {error || 'Not found'}</div>;
   }
+
+  // Format clean title without trailing pipe tags if needed
+  const displayTitle = course.title.includes('|') 
+    ? course.title.split('|')[0].trim() 
+    : course.title;
+
+  const aasanDisplayName = course.instructor.name?.toLowerCase().startsWith('aasan')
+    ? course.instructor.name
+    : `Aasan - ${course.instructor.name}`;
+
+  const isEnrolled = !!(user?.enrolledCourses?.includes(course.id));
 
   return (
     <>
@@ -168,284 +181,435 @@ export const CourseDetails: React.FC = () => {
         description={course.description}
       />
 
-      {/* Course Hero Banner */}
-      <section className="bg-jadmaa-charcoal text-white py-12 border-b-4 border-jadmaa-red text-left">
-        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            
-            <div className="lg:col-span-8 space-y-4">
-              
-              <div className="flex flex-wrap items-center gap-2 text-xs">
-                <span className="px-2.5 py-1 rounded bg-jadmaa-red text-white font-bold">
-                  {course.category}
-                </span>
-                <span className="px-2.5 py-1 rounded bg-gray-800 text-gray-300 font-medium">
-                  {course.level}
-                </span>
-                <div className="flex items-center space-x-1 text-amber-400 font-bold ml-2">
-                  <Star className="w-4 h-4 fill-current" />
-                  <span>{course.rating?.toFixed(1) || '5.0'}</span>
-                  <span className="text-gray-400">({course.reviewCount || 0} reviews)</span>
-                </div>
-              </div>
-
-              <h1 className="font-heading font-bold text-3xl sm:text-4xl lg:text-5xl text-white leading-tight">
-                {course.title}
-              </h1>
-
-              <p className="text-gray-300 text-sm sm:text-base leading-relaxed max-w-3xl">
-                {course.subtitle || course.description}
-              </p>
-
-              <div className="flex flex-wrap items-center gap-6 text-xs text-gray-300 pt-2">
-                <div className="flex items-center space-x-1.5">
-                  <Clock className="w-4 h-4 text-jadmaa-red" />
-                  <span>Duration: <strong>{course.duration}</strong></span>
-                </div>
-                <div className="flex items-center space-x-1.5">
-                  <BookOpen className="w-4 h-4 text-jadmaa-red" />
-                  <span>Total Lessons: <strong>{course.totalLessons}</strong></span>
-                </div>
-                <div className="flex items-center space-x-1.5">
-                  <Award className="w-4 h-4 text-jadmaa-red" />
-                  <span>Certificate Included</span>
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-3 pt-4">
-                <img 
-                  src={course.instructor.avatar || '/images/logo-1.png'} 
-                  alt={course.instructor.name}
-                  className="w-10 h-10 rounded-full border-2 border-jadmaa-red object-cover bg-white" 
-                />
-                <div>
-                  <p className="text-xs text-gray-400">Instructor</p>
-                  <p className="text-sm font-bold text-white">{course.instructor.name}</p>
-                </div>
-              </div>
-
-            </div>
-
-            {/* Right Card / Enrollment Box */}
-            <div className="lg:col-span-4">
-              <div className="bg-white rounded-2xl p-6 text-jadmaa-charcoal shadow-2xl border border-jadmaa-border space-y-6">
-                
-                <div className="relative rounded-xl overflow-hidden aspect-[16/10] bg-gray-100 border border-gray-200 img-interactive-frame group cursor-pointer">
-                  <img 
-                    src={course.thumbnail} 
-                    alt={course.title} 
-                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-108"
-                  />
-                  <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                    <span className="w-12 h-12 rounded-full bg-jadmaa-red text-white flex items-center justify-center shadow-lg group-hover:scale-115 transition-transform">
-                      <Play className="w-5 h-5 fill-current ml-0.5" />
-                    </span>
-                  </div>
-                </div>
-
-                <div className="space-y-1">
-                  <p className="text-base md:text-lg text-jadmaa-textMuted">Includes full access & academy certificate</p>
-                </div>
-
-                <button
-                  onClick={handleEnrollClick}
-                  disabled={enrolling}
-                  className="w-full py-3.5 px-4 bg-jadmaa-red hover:bg-jadmaa-redDark text-white font-bold text-sm rounded-xl shadow-lg transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
-                >
-                  {enrolling ? (
-                    <span>Processing Payment...</span>
-                  ) : course.isFree ? (
-                    <span>Enroll for Free Now</span>
-                  ) : (
-                    <span>Pay with Razorpay • ₹{course.price}</span>
-                  )}
-                </button>
-
-                <div className="space-y-2 text-sm md:text-xl text-jadmaa-textMuted border-t border-gray-100 pt-4">
-                  <p className="flex items-center space-x-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                    <span>LMS Video & Curriculum Access</span>
-                  </p>
-                  <p className="flex items-center space-x-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                    <span>Digital Certificate upon completion</span>
-                  </p>
-                </div>
-
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* Main Tabbed Details Area */}
-      <section className="py-12 bg-white border-b border-jadmaa-border min-h-[600px] text-left">
-        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 space-y-8">
+      {/* Main Container mirroring jadmaa.com Tutor LMS single course layout */}
+      <div className="bg-[#FAF8F5] min-h-screen py-8 md:py-12 text-[#212327] font-sans">
+        <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8">
           
-          {/* Navigation Tabs */}
-          <div className="flex border-b border-jadmaa-border space-x-6 text-sm font-bold">
-            <button
-              onClick={() => setActiveTab('overview')}
-              className={`pb-3 transition-colors border-b-2 ${
-                activeTab === 'overview' ? 'border-jadmaa-red text-jadmaa-red' : 'border-transparent text-jadmaa-textMuted hover:text-jadmaa-charcoal'
-              }`}
-            >
-              Course Overview
-            </button>
-            <button
-              onClick={() => setActiveTab('curriculum')}
-              className={`pb-3 transition-colors border-b-2 ${
-                activeTab === 'curriculum' ? 'border-jadmaa-red text-jadmaa-red' : 'border-transparent text-jadmaa-textMuted hover:text-jadmaa-charcoal'
-              }`}
-            >
-              Curriculum ({course.modules.length} Modules)
-            </button>
-            <button
-              onClick={() => setActiveTab('instructor')}
-              className={`pb-3 transition-colors border-b-2 ${
-                activeTab === 'instructor' ? 'border-jadmaa-red text-jadmaa-red' : 'border-transparent text-jadmaa-textMuted hover:text-jadmaa-charcoal'
-              }`}
-            >
-              Instructor Profile
-            </button>
-          </div>
+          {/* Breadcrumb Trail */}
+          <nav aria-label="Breadcrumb" className="flex items-center space-x-2 text-xs md:text-sm text-[#706B65] mb-6">
+            <Link to="/" className="hover:text-jadmaa-red transition-colors">Home</Link>
+            <ChevronRight className="w-3.5 h-3.5 text-[#BDB9B4]" />
+            <Link to="/courses" className="hover:text-jadmaa-red transition-colors">Courses</Link>
+            <ChevronRight className="w-3.5 h-3.5 text-[#BDB9B4]" />
+            <span className="text-[#212327] font-medium truncate max-w-xs sm:max-w-md md:max-w-lg">
+              {displayTitle}
+            </span>
+          </nav>
 
-          {/* Tab 1: Overview */}
-          {activeTab === 'overview' && (
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+          {/* Course Details Header */}
+          <header className="mb-8 md:mb-10">
+            <h1 className="font-heading font-bold text-2xl sm:text-3xl lg:text-4xl text-[#111827] leading-tight mb-4">
+              {displayTitle}
+            </h1>
+
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-1 border-b border-[#E5E2DC] pb-6">
+              {/* Categories & Meta */}
+              <div className="flex flex-wrap items-center gap-3 text-sm text-[#5C5148]">
+                <span>
+                  <strong>Categories:</strong>{' '}
+                  <span className="text-jadmaa-red font-medium">{course.category}</span>
+                  {course.category !== 'Varmakalai' && (
+                    <span className="text-jadmaa-red font-medium">, Varmakalai</span>
+                  )}
+                </span>
+                <span className="text-[#D1CBC3]">•</span>
+                <span>
+                  <strong>Level:</strong> {course.level || 'Beginner'}
+                </span>
+              </div>
+
+              {/* Actions: Share & Copy */}
+              <div className="flex items-center space-x-3 text-xs md:text-sm">
+                <button 
+                  onClick={() => setIsShareModalOpen(true)}
+                  className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border border-[#D5D0C7] hover:border-jadmaa-red text-[#4A443D] hover:text-jadmaa-red bg-white transition-colors"
+                >
+                  <Share2 className="w-4 h-4" />
+                  <span className="font-medium">Share</span>
+                </button>
+              </div>
+            </div>
+          </header>
+
+          {/* Two-Column Grid: Main Content (8 cols) & Sticky Purchase Sidebar (4 cols) */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+            
+            {/* Left Column: Media & Editorial Content (8 cols) */}
+            <main className="lg:col-span-8 space-y-8">
               
-              <div className="lg:col-span-8 space-y-8">
+              {/* Course Featured Banner / Video Frame */}
+              <div className="relative rounded-xl overflow-hidden aspect-[16/9] bg-black shadow-md border border-[#E5E2DC] group">
+                <img 
+                  src={course.thumbnail || '/images/course-basic.jpg'} 
+                  alt={displayTitle}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-black/25 flex items-center justify-center">
+                  <button 
+                    onClick={handleEnrollClick}
+                    className="w-16 h-16 rounded-full bg-jadmaa-red/90 hover:bg-jadmaa-red text-white flex items-center justify-center shadow-xl transition-transform hover:scale-110"
+                    aria-label="Preview Course"
+                  >
+                    <Play className="w-7 h-7 fill-current ml-1" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Course Meta Banner (Matches jd-course-meta from jadmaa.com) */}
+              <div className="bg-[#FAF2EB] border-l-4 border-jadmaa-red p-4 rounded-r-xl text-sm md:text-base text-[#2D2823] leading-relaxed">
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                  <span><strong>Duration:</strong> {course.duration || '3 Months'}</span>
+                  <span className="text-[#C4BCB3]">•</span>
+                  <span><strong>Age:</strong> 10+</span>
+                  <span className="text-[#C4BCB3]">•</span>
+                  <span>
+                    <strong>Fee:</strong> {course.isFree ? 'Free' : `₹${course.price.toLocaleString('en-IN')}`}
+                  </span>
+                </div>
+              </div>
+
+              {/* Main Course Editorial Content */}
+              <article className="bg-white rounded-2xl p-6 sm:p-8 md:p-10 shadow-sm border border-[#E5E2DC] space-y-8 text-[#334155] leading-relaxed">
                 
-                {/* Description */}
-                <div className="space-y-3">
-                  <h3 className="font-heading font-extrabold text-[clamp(24px,4vw,40px)] text-jadmaa-charcoal">
-                    About This Course
-                  </h3>
-                  <p className="text-base md:text-lg text-jadmaa-textMuted leading-relaxed">
-                    {course.longDescription || course.description}
+                {/* Intro Overview */}
+                <div className="space-y-4">
+                  <p className="text-base sm:text-lg text-[#334155] leading-relaxed font-normal">
+                    {course.description || `${displayTitle} is where almost every JADMAA student begins. Over the course period you build the physical base, the movement vocabulary and the discipline that everything else in Varmakalai rests on. No prior martial arts experience is expected — most people who join this course have never trained in anything before.`}
                   </p>
                 </div>
 
-                {/* What You'll Learn Box */}
-                {course.whatYouWillLearn?.length > 0 && (
-                  <div className="bg-jadmaa-cream/70 p-6 rounded-2xl border border-jadmaa-border space-y-4">
-                    <h4 className="font-heading font-extrabold text-lg text-jadmaa-charcoal flex items-center space-x-2">
-                      <CheckCircle2 className="w-5 h-5 text-jadmaa-red" />
-                      <span>What You'll Learn</span>
-                    </h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {course.whatYouWillLearn.map((item, idx) => (
-                        <div key={idx} className="flex items-start space-x-2 text-sm md:text-lg text-jadmaa-charcoal">
-                          <span className="w-1.5 h-1.5 rounded-full bg-jadmaa-red mt-1.5 flex-shrink-0"></span>
-                          <span>{item}</span>
-                        </div>
-                      ))}
+                {/* Section: What Varmakalai actually is */}
+                <div className="space-y-4 pt-4 border-t border-[#EFECE6]">
+                  <h2 className="font-heading font-bold text-xl sm:text-2xl text-[#111827]">
+                    What Varmakalai actually is
+                  </h2>
+                  <p className="text-base sm:text-lg text-[#334155] leading-relaxed">
+                    Varmakalai is a Tamil martial and healing tradition built around the <em>varmam</em> — the vital points of the human body. The same knowledge that lets a trained hand disable an attacker is the knowledge that lets it relieve pain and restore function. That double nature is why Varmakalai was traditionally taught slowly, and why a student is never handed technique before they have earned the control to use it safely.
+                  </p>
+                  <p className="text-base sm:text-lg text-[#334155] leading-relaxed">
+                    This course teaches the foundation of that system. You will not be striking varmam points in your first three months, and you should be cautious of anyone who offers to teach you that on day one.
+                  </p>
+                </div>
+
+                {/* Section: What you will learn */}
+                <div className="space-y-4 pt-4 border-t border-[#EFECE6]">
+                  <h2 className="font-heading font-bold text-xl sm:text-2xl text-[#111827]">
+                    What you will learn
+                  </h2>
+                  <ul className="space-y-3.5 text-base sm:text-lg text-[#334155] pl-1">
+                    <li className="flex items-start space-x-3">
+                      <span className="w-2 h-2 rounded-full bg-jadmaa-red mt-2.5 flex-shrink-0" />
+                      <div>
+                        <strong>Body conditioning</strong> — the joint mobility, flexibility and core strength Varmakalai movement demands. This is the part most beginners underestimate.
+                      </div>
+                    </li>
+                    <li className="flex items-start space-x-3">
+                      <span className="w-2 h-2 rounded-full bg-jadmaa-red mt-2.5 flex-shrink-0" />
+                      <div>
+                        <strong>Basic stances and footwork</strong> — the positions from which every technique is delivered, and how to move between them without losing balance.
+                      </div>
+                    </li>
+                    <li className="flex items-start space-x-3">
+                      <span className="w-2 h-2 rounded-full bg-jadmaa-red mt-2.5 flex-shrink-0" />
+                      <div>
+                        <strong>Hand techniques</strong> — fundamental strikes and blocks, drilled slowly until form holds under pressure.
+                      </div>
+                    </li>
+                    <li className="flex items-start space-x-3">
+                      <span className="w-2 h-2 rounded-full bg-jadmaa-red mt-2.5 flex-shrink-0" />
+                      <div>
+                        <strong>Adavu fundamentals</strong> — the linked movement sequences that carry the tradition's technique from one generation to the next.
+                      </div>
+                    </li>
+                    <li className="flex items-start space-x-3">
+                      <span className="w-2 h-2 rounded-full bg-jadmaa-red mt-2.5 flex-shrink-0" />
+                      <div>
+                        <strong>Breathing and focus</strong> — how breath governs power and recovery, taught the traditional way.
+                      </div>
+                    </li>
+                    <li className="flex items-start space-x-3">
+                      <span className="w-2 h-2 rounded-full bg-jadmaa-red mt-2.5 flex-shrink-0" />
+                      <div>
+                        <strong>Training etiquette</strong> — how a student conducts themselves toward the Aasan, toward fellow students, and toward the art.
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Section: Who this course suits */}
+                <div className="space-y-4 pt-4 border-t border-[#EFECE6]">
+                  <h2 className="font-heading font-bold text-xl sm:text-2xl text-[#111827]">
+                    Who this course suits
+                  </h2>
+                  <p className="text-base sm:text-lg text-[#334155] leading-relaxed">
+                    Beginners of any fitness level from age 10 upward. School and college students, working adults, and parents training alongside their children. If you have a current injury or a medical condition, tell your instructor before you begin — the training is adapted, not cancelled.
+                  </p>
+                </div>
+
+                {/* Section: How the training runs */}
+                <div className="space-y-4 pt-4 border-t border-[#EFECE6]">
+                  <h2 className="font-heading font-bold text-xl sm:text-2xl text-[#111827]">
+                    How the training runs
+                  </h2>
+                  <p className="text-base sm:text-lg text-[#334155] leading-relaxed">
+                    Supervised sessions and structured curriculum, in small groups so that form is corrected individually. Progress is assessed continuously rather than by a single test, and students who complete the course receive a JADMAA certificate and become eligible for further training.
+                  </p>
+                </div>
+
+                {/* Section: Before you enroll */}
+                <div className="space-y-4 pt-4 border-t border-[#EFECE6]">
+                  <h2 className="font-heading font-bold text-xl sm:text-2xl text-[#111827]">
+                    Before you enroll
+                  </h2>
+                  <p className="text-base sm:text-lg text-[#334155] leading-relaxed">
+                    If you would like to understand what you are signing up for first, our{' '}
+                    <Link to="/courses/varmakalai-foundation-free-starter-course" className="text-jadmaa-red font-medium hover:underline">
+                      free Varma Foundation course
+                    </Link>{' '}
+                    covers the history, the code of conduct and the basic stances at no cost. Many students take that first and then join Basic Varma Training with a clearer idea of what the practice asks of them.
+                  </p>
+                  
+                  <div className="bg-[#FAF8F5] p-5 rounded-xl border border-[#E5E2DC] space-y-2 mt-4 text-sm md:text-base text-[#475569]">
+                    <p>
+                      <strong className="text-[#1E293B]">Branches:</strong> JADMAA centers in Thanjavur, Kumbakonam and Ariyalur.
+                    </p>
+                    <p className="flex items-center space-x-2">
+                      <strong className="text-[#1E293B]">Questions about batch timings or seats:</strong>
+                      <a href="tel:+919345220020" className="text-jadmaa-red font-semibold hover:underline inline-flex items-center space-x-1">
+                        <Phone className="w-3.5 h-3.5 mr-1 inline" />
+                        <span>+91 93452 20020</span>
+                      </a>
+                    </p>
+                  </div>
+                </div>
+
+              </article>
+
+              {/* Course Curriculum Modules & Lessons */}
+              {course.modules && course.modules.length > 0 && (
+                <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-[#E5E2DC] space-y-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-[#EFECE6]">
+                    <div>
+                      <h2 className="font-heading font-bold text-xl sm:text-2xl text-[#111827]">
+                        Curriculum & Video Lessons
+                      </h2>
+                      <p className="text-xs md:text-sm text-[#706B65] mt-1">
+                        {course.modules.length} modules • {course.totalLessons} lessons total
+                      </p>
                     </div>
+                    {isEnrolled && (
+                      <Link 
+                        to={`/learn/${course.id}`}
+                        className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs rounded-lg transition-colors inline-flex items-center space-x-1 self-start sm:self-auto"
+                      >
+                        <Play className="w-3.5 h-3.5 fill-current mr-1" />
+                        <span>Go to Classroom</span>
+                      </Link>
+                    )}
                   </div>
-                )}
 
-                {/* Requirements */}
-                {course.requirements?.length > 0 && (
-                  <div className="space-y-3">
-                    <h4 className="font-heading font-extrabold text-lg text-jadmaa-charcoal">
-                      Requirements & Prerequisites
-                    </h4>
-                    <ul className="space-y-2 text-sm md:text-xl text-jadmaa-textMuted list-disc pl-5">
-                      {course.requirements.map((req, idx) => (
-                        <li key={idx}>{req}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+                  <CurriculumAccordion modules={course.modules} />
+                </div>
+              )}
 
-                {/* Target Audience */}
-                {course.targetAudience?.length > 0 && (
-                  <div className="space-y-3">
-                    <h4 className="font-heading font-extrabold text-lg text-jadmaa-charcoal">
-                      Who This Course Is For
-                    </h4>
-                    <ul className="space-y-2 text-sm md:text-xl text-jadmaa-textMuted list-disc pl-5">
-                      {course.targetAudience.map((aud, idx) => (
-                        <li key={idx}>{aud}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-              </div>
-
-              {/* Sidebar Info */}
-              <div className="lg:col-span-4 space-y-6">
-                <div className="bg-jadmaa-cream/50 p-5 rounded-2xl border border-jadmaa-border space-y-4 text-xs">
-                  <h4 className="font-heading font-bold text-base md:text-lg text-jadmaa-charcoal">
-                    Certificate Information
-                  </h4>
-                  <div className="flex items-start space-x-3">
-                    <Award className="w-6 h-6 text-jadmaa-red flex-shrink-0" />
-                    <p className="text-jadmaa-textMuted leading-relaxed">
-                      Upon completing all modules, students receive an accredited <strong>JADMAA Varmakalai Academy</strong> digital certificate.
+              {/* Aasan Profile Section */}
+              <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-[#E5E2DC] space-y-6">
+                <h2 className="font-heading font-bold text-xl sm:text-2xl text-[#111827]">
+                  Aasan Profile
+                </h2>
+                
+                <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-5">
+                  <img 
+                    src={course.instructor.avatar || '/images/logo-1.png'} 
+                    alt={course.instructor.name}
+                    className="w-20 h-20 rounded-full border-2 border-jadmaa-red object-cover bg-white shadow-sm"
+                  />
+                  <div>
+                    <h3 className="font-heading font-bold text-lg sm:text-xl text-[#111827]">
+                      {aasanDisplayName}
+                    </h3>
+                    <p className="text-xs sm:text-sm font-semibold text-jadmaa-red mt-0.5">
+                      {course.instructor.title || 'Master & Founder, JADMAA Varmakalai'}
+                    </p>
+                    <p className="text-sm md:text-base text-[#475569] mt-2 leading-relaxed">
+                      {course.instructor.bio || 'Dedicated to preserving, practicing, and passing down the authentic martial and therapeutic traditions of Varmakalai across Tamil Nadu.'}
                     </p>
                   </div>
                 </div>
               </div>
 
-            </div>
-          )}
+            </main>
 
-          {/* Tab 2: Curriculum */}
-          {activeTab === 'curriculum' && (
-            <div className="max-w-4xl space-y-6">
-              <div className="flex items-center justify-between">
-                <h3 className="font-heading font-extrabold text-[clamp(24px,4vw,40px)] text-jadmaa-charcoal">
-                  Course Modules & Lessons
-                </h3>
-                <span className="text-sm md:text-xl text-jadmaa-textMuted">Click module headers to expand</span>
-              </div>
-              <CurriculumAccordion modules={course.modules} />
-            </div>
-          )}
-
-          {/* Tab 3: Instructor */}
-          {activeTab === 'instructor' && (
-            <div className="max-w-3xl bg-jadmaa-cream/60 p-6 rounded-2xl border border-jadmaa-border space-y-4">
-              <div className="flex items-center space-x-4">
-                <img 
-                  src={course.instructor.avatar || '/images/logo-1.png'} 
-                  alt={course.instructor.name}
-                  className="w-16 h-16 rounded-full border-2 border-jadmaa-red object-cover bg-white" 
-                />
-                <div>
-                  <h3 className="font-heading font-extrabold text-xl text-jadmaa-charcoal">
-                    {course.instructor.name}
-                  </h3>
-                  <p className="text-xs font-semibold text-jadmaa-red">
-                    {course.instructor.title}
-                  </p>
+            {/* Right Column: Sticky Purchase & Enrollment Sidebar (4 cols) */}
+            <aside className="lg:col-span-4 lg:sticky lg:top-24 space-y-6">
+              
+              <div className="bg-white rounded-2xl p-6 md:p-7 shadow-lg border border-[#E0DCD5] space-y-6">
+                
+                {/* Price Display */}
+                <div className="pb-4 border-b border-[#EFECE6]">
+                  <p className="text-xs uppercase tracking-wider font-semibold text-[#8C847A]">Course Fee</p>
+                  <div className="flex items-baseline space-x-2 mt-1">
+                    <span className="font-heading font-extrabold text-3xl sm:text-4xl text-[#111827]">
+                      {course.isFree ? 'Free' : `₹${course.price.toLocaleString('en-IN')}`}
+                    </span>
+                    {!course.isFree && (
+                      <span className="text-xs text-[#706B65] font-medium">One-time payment</span>
+                    )}
+                  </div>
                 </div>
+
+                {/* Primary CTA Button (Razorpay Checkout) */}
+                {isEnrolled ? (
+                  <button
+                    onClick={() => navigate(`/learn/${course.id}`)}
+                    className="w-full py-4 px-6 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-base rounded-xl shadow-md transition-all flex items-center justify-center space-x-2"
+                  >
+                    <Check className="w-5 h-5 mr-1" />
+                    <span>Already Enrolled — Go to Course</span>
+                  </button>
+                ) : (
+                  <div>
+                    <button
+                      onClick={handleEnrollClick}
+                      disabled={enrolling}
+                      className="w-full py-4 px-6 bg-[#B12B2B] hover:bg-[#961F1F] text-white font-bold text-base rounded-xl shadow-md hover:shadow-lg transition-all disabled:opacity-75 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                    >
+                      {enrolling ? (
+                        <span>Processing with Razorpay...</span>
+                      ) : course.isFree ? (
+                        <span>Enroll for Free Now</span>
+                      ) : (
+                        <span>Pay with Razorpay • ₹{course.price.toLocaleString('en-IN')}</span>
+                      )}
+                    </button>
+                    
+                    {!isLoggedIn && (
+                      <div className="text-center text-xs text-[#5C5148] mt-3 leading-relaxed">
+                        New student?{' '}
+                        <Link to="/register" className="text-[#B12B2B] font-semibold hover:underline">
+                          Create your free account
+                        </Link>{' '}
+                        — it only takes a minute.
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Course Quick Facts (Mirrors tutor-card-footer / Tutor LMS course highlights) */}
+                <div className="space-y-3.5 pt-2 border-t border-[#EFECE6] text-sm text-[#475569]">
+                  <div className="flex items-center justify-between">
+                    <span className="flex items-center space-x-2 text-[#706B65]">
+                      <BarChart className="w-4 h-4 text-jadmaa-red flex-shrink-0" />
+                      <span>Level</span>
+                    </span>
+                    <span className="font-semibold text-[#111827]">{course.level || 'Beginner'}</span>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="flex items-center space-x-2 text-[#706B65]">
+                      <Clock className="w-4 h-4 text-jadmaa-red flex-shrink-0" />
+                      <span>Duration</span>
+                    </span>
+                    <span className="font-semibold text-[#111827]">{course.duration || '3 Months'}</span>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="flex items-center space-x-2 text-[#706B65]">
+                      <Users className="w-4 h-4 text-jadmaa-red flex-shrink-0" />
+                      <span>Language</span>
+                    </span>
+                    <span className="font-semibold text-[#111827]">Tamil & English</span>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="flex items-center space-x-2 text-[#706B65]">
+                      <Award className="w-4 h-4 text-jadmaa-red flex-shrink-0" />
+                      <span>Certificate</span>
+                    </span>
+                    <span className="font-semibold text-[#111827]">Upon Completion</span>
+                  </div>
+                </div>
+
+                {/* Trust and Help Card */}
+                <div className="bg-[#FAF8F5] rounded-xl p-4 border border-[#E5E2DC] space-y-2 text-xs text-[#5C5148]">
+                  <p className="font-semibold text-[#1E293B]">Need batch timings or assistance?</p>
+                  <p>Speak directly to our academy coordinators:</p>
+                  <a 
+                    href="tel:+919345220020" 
+                    className="font-bold text-jadmaa-red text-sm flex items-center space-x-1.5 hover:underline pt-1"
+                  >
+                    <Phone className="w-4 h-4" />
+                    <span>+91 93452 20020</span>
+                  </a>
+                </div>
+
               </div>
-              <p className="text-sm md:text-xl text-jadmaa-textMuted leading-relaxed">
-                {course.instructor.bio}
-              </p>
+
+            </aside>
+
+          </div>
+
+          {/* Related Courses Section */}
+          <section className="mt-16 pt-12 border-t border-[#E5E2DC]">
+            <h2 className="font-heading font-bold text-2xl sm:text-3xl text-[#111827] mb-8">
+              Related Varmakalai Programs
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {relatedCourses
+                .filter(c => c.id !== course.id)
+                .slice(0, 3)
+                .map(related => (
+                  <CourseCard key={related.id} course={related} />
+                ))}
             </div>
-          )}
+          </section>
 
         </div>
-      </section>
+      </div>
 
-      {/* Related Courses */}
-      <section className="py-12 bg-jadmaa-cream border-b border-jadmaa-border text-left">
-        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 space-y-6">
-          <h3 className="font-heading font-extrabold text-[clamp(24px,4vw,40px)] text-jadmaa-charcoal">
-            Related Varmakalai Programs
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {relatedCourses.filter(c => c.id !== course.id).slice(0, 3).map(related => (
-              <CourseCard key={related.id} course={related} hidePrice />
-            ))}
+      {/* Share Modal */}
+      {isShareModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-gray-200 space-y-5 animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+              <h3 className="font-heading font-bold text-xl text-[#111827]">Share Course</h3>
+              <button 
+                onClick={() => setIsShareModalOpen(false)}
+                className="text-gray-400 hover:text-gray-600 text-xl font-bold w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-100"
+              >
+                &times;
+              </button>
+            </div>
+
+            <p className="text-sm text-gray-600">Copy the course page link below:</p>
+
+            <div className="flex items-center space-x-2">
+              <input 
+                type="text" 
+                readOnly 
+                value={window.location.href}
+                className="w-full text-xs font-mono bg-gray-50 border border-gray-300 rounded-lg p-2.5 text-gray-700 outline-none select-all"
+              />
+              <button 
+                onClick={handleCopyLink}
+                className="px-4 py-2.5 bg-jadmaa-red hover:bg-jadmaa-redDark text-white text-xs font-bold rounded-lg flex items-center space-x-1.5 transition-colors"
+              >
+                {copied ? <CheckCheck className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                <span>{copied ? 'Copied' : 'Copy'}</span>
+              </button>
+            </div>
+
+            <div className="pt-2 flex justify-end">
+              <button 
+                onClick={() => setIsShareModalOpen(false)}
+                className="px-4 py-2 text-xs font-semibold text-gray-600 hover:text-gray-900"
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
-      </section>
+      )}
     </>
   );
 };
