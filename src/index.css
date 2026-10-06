@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Roboto:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -42,7 +42,7 @@
     letter-spacing: -0.01em;
   }
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Bricolage Grotesque', sans-serif;
     color: #2B2521;
     margin: 0;
     line-height: 1.25;
@@ -67,7 +67,7 @@
 
 /* Explicit typography utilities */
 .font-heading {
-  font-family: 'Roboto', sans-serif !important;
+  font-family: 'Bricolage Grotesque', sans-serif !important;
 }
 
 .font-body {
@@ -501,4 +501,46 @@
   .section-md  { padding-top: 48px;  padding-bottom: 48px; }
   .section-lg  { padding-top: 64px;  padding-bottom: 64px; }
 }
+
+/* ==========================================
+   GROUNDED STANCE — Gentle Card Settle Motion
+   Calm, stable, disciplined entry for content cards.
+   Zero text revealing; entire card container gently settles.
+   ========================================== */
+.scroll-card-settle {
+  opacity: 0.7;
+  transform: translateY(14px);
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), 
+              transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.35s ease,
+              border-color 0.35s ease;
+  will-change: opacity, transform;
+}
+
+.scroll-card-settle.is-settled {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Subtle staggered delays within grid layouts */
+.scroll-card-settle:nth-child(1) { transition-delay: 0.00s; }
+.scroll-card-settle:nth-child(2) { transition-delay: 0.08s; }
+.scroll-card-settle:nth-child(3) { transition-delay: 0.16s; }
+.scroll-card-settle:nth-child(4) { transition-delay: 0.22s; }
+.scroll-card-settle:nth-child(5) { transition-delay: 0.28s; }
+.scroll-card-settle:nth-child(6) { transition-delay: 0.34s; }
+
+/* Keep hover translateY working seamlessly after settled */
+.jd-card.scroll-card-settle.is-settled:hover {
+  transform: translateY(-5px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-card-settle {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
 

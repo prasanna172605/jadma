@@ -25,6 +25,8 @@ app.use(cookieParser());
 app.use(cors());
 app.use(helmet({
   contentSecurityPolicy: false,
+  crossOriginOpenerPolicy: false,
+  crossOriginResourcePolicy: false,
 }));
 
 app.get('/api/health', (req, res) => {

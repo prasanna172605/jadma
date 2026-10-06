@@ -55,7 +55,7 @@ export const Blog: React.FC = () => {
           ) : blogs.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 reveal-stagger">
               {blogs.map(blog => (
-                <Link to={`/blog/${blog.slug}`} key={blog.id} className="group bg-jadmaa-cream/50 rounded-2xl border border-jadmaa-border overflow-hidden hover-lift flex flex-col reveal-child">
+                <Link to={`/blog/${blog.slug}`} key={blog.id} className="group bg-jadmaa-cream/50 rounded-2xl border border-jadmaa-border overflow-hidden hover-lift flex flex-col scroll-card-settle">
                   {blog.thumbnailUrl && (
                     <div className="h-48 w-full overflow-hidden">
                       <img 

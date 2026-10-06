@@ -1,6 +1,12 @@
 import React from 'react';
+import { useAuth } from '../../context/AuthContext';
 
 export const WhatsAppButton: React.FC = () => {
+  const { isLoggedIn } = useAuth();
+
+  if (isLoggedIn) {
+    return null;
+  }
   return (
     <a
       href="https://wa.me/919345220020?text=Hi%20JADMAA%20Varmakalai,%20I%20want%20to%20know%20more%20about%20your%20courses."

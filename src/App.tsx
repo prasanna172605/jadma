@@ -8,14 +8,19 @@ import { AuthProvider } from './context/AuthContext';
 import { SettingsProvider } from './context/SettingsContext';
 import { WhatsAppButton } from './components/common/WhatsAppButton';
 import { ScrollObserver } from './components/common/ScrollObserver';
+import { ScrollProgressBar } from './components/common/ScrollProgressBar';
 import { SEOManager } from './components/common/SEOManager';
+
+import { useAuth } from './context/AuthContext';
 
 const AppContent: React.FC = () => {
   const location = useLocation();
   const isLearnPlayer = location.pathname.startsWith('/learn/');
+  const { isLoggedIn } = useAuth();
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FAF6F0] text-[#2B2521]">
+      <ScrollProgressBar />
       <SEOManager />
       <ScrollObserver />
       {!isLearnPlayer && <Navbar />}
@@ -23,7 +28,7 @@ const AppContent: React.FC = () => {
         <AppRoutes />
       </main>
       {!isLearnPlayer && <Footer />}
-      <WhatsAppButton />
+      {!isLoggedIn && <WhatsAppButton />}
     </div>
   );
 };

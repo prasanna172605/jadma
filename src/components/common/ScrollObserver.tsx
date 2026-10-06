@@ -40,20 +40,21 @@ export const ScrollObserver: React.FC = () => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add('is-revealed');
+            entry.target.classList.add('is-settled');
           }
         });
       }, {
         root: null,
-        rootMargin: '0px 0px -50px 0px',
+        rootMargin: '0px 0px -40px 0px',
         threshold: 0.1,
       });
 
       const observeElements = () => {
         const revealElements = document.querySelectorAll(
-          '.reveal-on-scroll, .reveal-left, .reveal-right, .reveal-scale, .reveal-stagger, .jd-pop'
+          '.reveal-on-scroll, .reveal-left, .reveal-right, .reveal-scale, .reveal-stagger, .jd-pop, .scroll-card-settle'
         );
         revealElements.forEach((el) => {
-          if (!el.classList.contains('is-revealed')) {
+          if (!el.classList.contains('is-revealed') && !el.classList.contains('is-settled')) {
             observer.observe(el);
           }
         });

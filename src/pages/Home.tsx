@@ -281,7 +281,7 @@ export const Home: React.FC = () => {
                 {wellnessServices.map((service) => {
                   const Icon = service.icon;
                   return (
-                    <div key={service.title} className="p-4 bg-white rounded-xl border border-[#E8DDD0] space-y-2 hover-lift">
+                    <div key={service.title} className="p-4 bg-white rounded-xl border border-[#E8DDD0] space-y-2 hover-lift scroll-card-settle">
                       <h4 className="font-heading font-bold text-[16px] text-[#2B2521] flex items-center space-x-2">
                         <Icon className="w-4 h-4 text-[#B12B2B]" />
                         <span>{service.title}</span>
@@ -327,7 +327,7 @@ export const Home: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             
-            <div className="bg-[#FAF6F0] p-6 rounded-2xl border border-[#E8DDD0] space-y-4 hover-lift" data-aos="fade-up" data-aos-delay="50">
+            <div className="bg-[#FAF6F0] p-6 rounded-2xl border border-[#E8DDD0] space-y-4 hover-lift scroll-card-settle">
               <h3 className="font-heading font-bold text-[18px] text-[#2B2521] border-b border-[#E8DDD0] pb-2">What We Offer</h3>
               <ul className="space-y-2.5 text-[15px] text-[#5C5148] font-body">
                 <li className="flex items-center space-x-2"><CheckCircle2 className="w-4 h-4 text-[#B12B2B] flex-shrink-0" /><span>108 Vital Varma Point Science</span></li>
@@ -337,7 +337,7 @@ export const Home: React.FC = () => {
               </ul>
             </div>
 
-            <div className="bg-[#FAF6F0] p-6 rounded-2xl border border-[#E8DDD0] space-y-4 hover-lift" data-aos="fade-up" data-aos-delay="150">
+            <div className="bg-[#FAF6F0] p-6 rounded-2xl border border-[#E8DDD0] space-y-4 hover-lift scroll-card-settle">
               <h3 className="font-heading font-bold text-[18px] text-[#2B2521] border-b border-[#E8DDD0] pb-2">Who Can Join?</h3>
               <ul className="space-y-2.5 text-[15px] text-[#5C5148] font-body">
                 <li className="flex items-center space-x-2"><CheckCircle2 className="w-4 h-4 text-[#B12B2B] flex-shrink-0" /><span>Children (Ages 6+)</span></li>
@@ -347,7 +347,7 @@ export const Home: React.FC = () => {
               </ul>
             </div>
 
-            <div className="bg-[#FAF6F0] p-6 rounded-2xl border border-[#E8DDD0] space-y-4 hover-lift" data-aos="fade-up" data-aos-delay="250">
+            <div className="bg-[#FAF6F0] p-6 rounded-2xl border border-[#E8DDD0] space-y-4 hover-lift scroll-card-settle">
               <h3 className="font-heading font-bold text-[18px] text-[#2B2521] border-b border-[#E8DDD0] pb-2">Benefits of Training</h3>
               <ul className="space-y-2.5 text-[15px] text-[#5C5148] font-body">
                 <li className="flex items-center space-x-2"><CheckCircle2 className="w-4 h-4 text-[#B12B2B] flex-shrink-0" /><span>Self-Defence Confidence</span></li>
@@ -450,8 +450,8 @@ export const Home: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {mockBranches.map((branch, idx) => (
-              <div key={branch.id} className="bg-[#FAF6F0] rounded-lg border border-[#E8DDD0] p-5 space-y-3 hover-lift" data-aos="fade-up" data-aos-delay={idx * 100}>
+            {mockBranches.map((branch) => (
+              <div key={branch.id} className="bg-[#FAF6F0] rounded-lg border border-[#E8DDD0] p-5 space-y-3 hover-lift scroll-card-settle">
                 <div className="flex items-center space-x-2 text-[#B12B2B]">
                   <MapPin className="w-4 h-4" />
                   <span className="font-bold text-xs uppercase tracking-wider">{branch.city}</span>

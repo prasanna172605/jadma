@@ -89,9 +89,9 @@ export const CourseDetails: React.FC = () => {
           key: keyId,
           amount,
           currency: currency || 'INR',
-          name: 'JADMAA',
+          name: 'JADMAA Varmakalai',
           description: course.title,
-          image: '/logo.png',
+          image: 'https://jadmaa.com/wp-content/uploads/2026/07/logo-1.png',
           order_id: orderId,
           prefill: {
             name: prefill?.name || user?.name || '',
@@ -102,6 +102,8 @@ export const CourseDetails: React.FC = () => {
             color: '#A020F0', // Brand accent or #991B1B jadmaa-red
           },
           modal: {
+            backdropclose: false,
+            escape: true,
             ondismiss: () => {
               setEnrolling(false);
             },

@@ -10,7 +10,7 @@ interface CourseCardProps {
 
 export const CourseCard: React.FC<CourseCardProps> = ({ course, hidePrice = false }) => {
   return (
-    <div className="jd-card overflow-hidden flex flex-col group w-full">
+    <div className="jd-card scroll-card-settle overflow-hidden flex flex-col group w-full">
 
       {/* Thumbnail — 16:9 aspect ratio, cover, matches jadmaa.com */}
       <div className="relative w-full overflow-hidden" style={{ aspectRatio: '16/9' }}>

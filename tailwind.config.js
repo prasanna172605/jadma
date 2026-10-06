@@ -21,7 +21,7 @@ export default {
         }
       },
       fontFamily: {
-        heading: ["'Roboto'", "sans-serif"],
+        heading: ["'Bricolage Grotesque'", "sans-serif"],
         body: ["'Poppins'", "sans-serif"],
         sans: ["'Poppins'", "sans-serif"],
       },

@@ -1,5 +1,6 @@
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
+import dotenv from 'dotenv';
 
 export interface CreateRazorpayOrderParams {
   amountInPaise: number;
@@ -41,24 +42,31 @@ export class RazorpayService {
     return RazorpayService.instance;
   }
 
+  private loadConfig() {
+    dotenv.config();
+    this.keyId = process.env.RAZORPAY_KEY_ID || this.keyId || '';
+    this.keySecret = process.env.RAZORPAY_KEY_SECRET || this.keySecret || '';
+    this.webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET || this.webhookSecret || '';
+  }
+
   public getKeyId(): string {
-    return this.keyId || process.env.RAZORPAY_KEY_ID || '';
+    this.loadConfig();
+    return this.keyId;
   }
 
   public isConfigured(): boolean {
+    this.loadConfig();
     return Boolean(this.keyId && this.keySecret);
   }
 
   private getClient(): Razorpay {
-    if (!this.client) {
-      // Re-read in case env vars were set after load
-      this.keyId = process.env.RAZORPAY_KEY_ID || '';
-      this.keySecret = process.env.RAZORPAY_KEY_SECRET || '';
-      this.webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET || '';
+    this.loadConfig();
 
-      if (!this.keyId || !this.keySecret) {
-        throw new Error('Razorpay credentials (RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET) are not configured.');
-      }
+    if (!this.keyId || !this.keySecret) {
+      throw new Error('Razorpay credentials (RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET) are not configured.');
+    }
+
+    if (!this.client) {
       this.client = new Razorpay({
         key_id: this.keyId,
         key_secret: this.keySecret,
