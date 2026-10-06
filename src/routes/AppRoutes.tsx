@@ -57,10 +57,19 @@ export const AppRoutes: React.FC = () => {
         <Route path="/reset-password" element={<ResetPassword />} />
 
         {/* LMS Routes */}
-        <Route path="/dashboard" element={<Navigate to="/student" />} />
+        <Route path="/dashboard" element={<Navigate to="/student" replace />} />
         <Route path="/student" element={<StudentPanel />} />
         <Route path="/my-courses" element={<Navigate to="/student#my-courses" replace />} />
         <Route path="/profile" element={<Navigate to="/student#settings" replace />} />
+        <Route path="/my-profile" element={<Navigate to="/student#settings" replace />} />
+        <Route path="/settings" element={<Navigate to="/student#settings" replace />} />
+        <Route path="/student/profile" element={<Navigate to="/student#settings" replace />} />
+        <Route path="/student/settings" element={<Navigate to="/student#settings" replace />} />
+        <Route path="/student/courses" element={<Navigate to="/student#courses" replace />} />
+        <Route path="/student/my-courses" element={<Navigate to="/student#my-courses" replace />} />
+        <Route path="/dashboard/settings" element={<Navigate to="/student#settings" replace />} />
+        <Route path="/dashboard/my-courses" element={<Navigate to="/student#my-courses" replace />} />
+        <Route path="/dashboard/courses" element={<Navigate to="/student#courses" replace />} />
         <Route path="/learn/:courseId" element={<LearnCourse />} />
         <Route path="/certificates" element={<CertificatesPage />} />
         <Route path="/payment/status/:merchantOrderId" element={<PaymentStatus />} />

@@ -9,12 +9,12 @@ import { authApi } from '../../lib/api/authApi';
 export const StudentProfile: React.FC = () => {
   const { user, isLoggedIn } = useAuth();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<any>(() => user || null);
+  const [loading, setLoading] = useState(!user);
   
   // Profile update state
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
+  const [name, setName] = useState(() => user?.name || '');
+  const [phone, setPhone] = useState(() => (user as any)?.phone || '');
   const [updateLoading, setUpdateLoading] = useState(false);
   const [updateError, setUpdateError] = useState<string | null>(null);
   const [updateSuccess, setUpdateSuccess] = useState<string | null>(null);
@@ -61,7 +61,7 @@ export const StudentProfile: React.FC = () => {
       });
       if (res.success) {
         setUpdateSuccess("Profile updated successfully.");
-        setProfile({ ...profile, name: res.data.name, phone: res.data.phone });
+        setProfile({ ...(profile || user), name: res.data.name, phone: res.data.phone });
       } else {
         setUpdateError(res.error?.message || 'Failed to update profile');
       }
@@ -80,12 +80,13 @@ export const StudentProfile: React.FC = () => {
     const loadProfile = async () => {
       try {
         const res = await fetchApi('/auth/me');
-        if (res.success) {
+        if (res.success && res.data) {
           setProfile(res.data);
           setName(res.data.name || '');
           setPhone(res.data.phone || '');
         }
       } catch (err) {
+        console.warn('Could not fetch fresh profile:', err);
       } finally {
         setLoading(false);
       }
@@ -93,7 +94,7 @@ export const StudentProfile: React.FC = () => {
     loadProfile();
   }, [isLoggedIn, navigate]);
 
-  if (loading) return (
+  if (loading && !profile) return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
       <div className="animate-pulse h-8 w-8 bg-gray-200 rounded-full"></div>
     </div>
@@ -138,7 +139,7 @@ export const StudentProfile: React.FC = () => {
                    <CheckCircle className="w-3 h-3" /> Active Account
                  </span>
                  <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded flex items-center gap-1">
-                   <Clock className="w-3 h-3" /> Joined {new Date(profile?.createdAt).toLocaleDateString()}
+                   <Clock className="w-3 h-3" /> Joined {profile?.createdAt ? new Date(profile.createdAt).toLocaleDateString() : 'Active Member'}
                  </span>
               </div>
             </div>

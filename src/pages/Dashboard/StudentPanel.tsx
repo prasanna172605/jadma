@@ -5,11 +5,13 @@ import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { StudentDashboard } from './StudentDashboard';
 import { MyCourses } from './MyCourses';
 import { StudentProfile } from './StudentProfile';
+import { Courses } from '../Courses';
 
 type Tab = 'dashboard' | 'courses' | 'my-courses' | 'settings';
 
 export const StudentPanel: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
   const { user, isLoggedIn, loading } = useAuth();
 
@@ -39,8 +41,8 @@ export const StudentPanel: React.FC = () => {
     return <Navigate to="/login" />;
   }
 
-  // Only allow student
-  if (user?.role !== 'STUDENT') {
+  // Allow student, or admin/super_admin viewing the portal
+  if (user?.role !== 'STUDENT' && user?.role !== 'ADMIN' && user?.role !== 'SUPER_ADMIN') {
     return <Navigate to="/" />;
   }
 
@@ -50,6 +52,11 @@ export const StudentPanel: React.FC = () => {
     { id: 'my-courses', label: 'My Courses' },
     { id: 'settings', label: 'Settings' },
   ];
+
+  const handleTabClick = (tabId: Tab) => {
+    setActiveTab(tabId);
+    navigate(`/student#${tabId}`, { replace: true });
+  };
 
   return (
     <>
@@ -69,14 +76,7 @@ export const StudentPanel: React.FC = () => {
               return (
                 <button
                   key={tab.id}
-                  onClick={() => {
-                    if (tab.id === 'courses') {
-                      navigate('/courses');
-                    } else {
-                      setActiveTab(tab.id);
-                      window.history.replaceState(null, '', `#${tab.id}`);
-                    }
-                  }}
+                  onClick={() => handleTabClick(tab.id)}
                   className={`pb-3 px-2 text-sm font-semibold transition-all border-b-2 whitespace-nowrap cursor-pointer ${
                     isActive
                       ? 'border-jadmaa-red text-jadmaa-red font-bold'
@@ -93,6 +93,7 @@ export const StudentPanel: React.FC = () => {
       
       <div className="bg-gray-50 min-h-screen">
          {activeTab === 'dashboard' && <StudentDashboard />}
+         {activeTab === 'courses' && <Courses />}
          {activeTab === 'my-courses' && <MyCourses />}
          {activeTab === 'settings' && <StudentProfile />}
       </div>

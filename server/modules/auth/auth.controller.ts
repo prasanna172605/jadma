@@ -170,6 +170,7 @@ export const getMe = async (req: Request, res: Response) => {
       phone: user.phone,
       role: user.role,
       avatarUrl: user.avatarUrl,
+      createdAt: user.createdAt,
       enrolledCourses: user.enrollments ? user.enrollments.map((e: any) => e.courseId) : []
     };
 
