@@ -12,7 +12,7 @@ export const WhatsAppButton: React.FC = () => {
       href="https://wa.me/919345220020?text=Hi%20JADMAA%20Varmakalai,%20I%20want%20to%20know%20more%20about%20your%20courses."
       target="_blank"
       rel="noreferrer"
-      className="fixed bottom-5 right-5 z-50 w-12 h-12 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
+      className="fixed bottom-20 sm:bottom-22 right-5 z-50 w-12 h-12 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
       aria-label="Chat on WhatsApp"
     >
       <svg className="w-7 h-7 fill-current" viewBox="0 0 24 24">
