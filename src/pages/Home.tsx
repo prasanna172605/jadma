@@ -12,15 +12,20 @@ import { CountUp } from '../components/common/CountUp';
 import { EditableText } from '../components/common/EditableText';
 
 export const Home: React.FC = () => {
-  const [featuredCourses, setFeaturedCourses] = useState<Course[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [featuredCourses, setFeaturedCourses] = useState<Course[]>(() => {
+    const cached = courseApi.getCachedCourses();
+    return cached.slice(0, 3);
+  });
+  const [loading, setLoading] = useState(() => courseApi.getCachedCourses().length === 0);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(() => mockTestimonials as any);
 
   useEffect(() => {
     const fetchCourses = async () => {
       try {
         const data = await courseApi.getCourses();
-        setFeaturedCourses(data.slice(0, 3));
+        if (data && data.length > 0) {
+          setFeaturedCourses(data.slice(0, 3));
+        }
       } catch (err) {
         console.error('Failed to fetch courses', err);
       } finally {
@@ -33,12 +38,9 @@ export const Home: React.FC = () => {
         const data = await reviewsApi.getReviews();
         if (data && data.length > 0) {
           setTestimonials(data);
-        } else {
-          setTestimonials(mockTestimonials as any);
         }
       } catch (err) {
-        console.error('Failed to fetch testimonials', err);
-        setTestimonials(mockTestimonials as any);
+        console.warn('Failed to fetch dynamic testimonials, using default', err);
       }
     };
     fetchTestimonials();

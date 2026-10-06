@@ -15,6 +15,14 @@ if (dbUrl.includes('Jadmaa@2026')) {
   dbUrl = dbUrl.replace('Jadmaa@2026', 'Jadmaa%402026');
 }
 
-export const prisma = new PrismaClient({
-  datasourceUrl: dbUrl || undefined,
-});
+const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
+
+export const prisma =
+  globalForPrisma.prisma ||
+  new PrismaClient({
+    datasourceUrl: dbUrl || undefined,
+  });
+
+if (process.env.NODE_ENV !== 'production') {
+  globalForPrisma.prisma = prisma;
+}

@@ -62,8 +62,32 @@ export const StudentPanel: React.FC = () => {
           <h1 className="font-heading font-extrabold text-3xl text-jadmaa-charcoal">
             JADMAA Student Portal
           </h1>
-          <p className="text-xs text-jadmaa-textMuted pb-4">Manage your learning, courses, and profile.</p>
-          
+          <p className="text-xs text-jadmaa-textMuted pb-2">Manage your learning, courses, and profile.</p>
+          <div className="flex gap-4 border-t border-jadmaa-border/30 pt-3 overflow-x-auto no-scrollbar">
+            {tabs.map((tab) => {
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => {
+                    if (tab.id === 'courses') {
+                      navigate('/courses');
+                    } else {
+                      setActiveTab(tab.id);
+                      window.history.replaceState(null, '', `#${tab.id}`);
+                    }
+                  }}
+                  className={`pb-3 px-2 text-sm font-semibold transition-all border-b-2 whitespace-nowrap cursor-pointer ${
+                    isActive
+                      ? 'border-jadmaa-red text-jadmaa-red font-bold'
+                      : 'border-transparent text-gray-500 hover:text-gray-900'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </section>
       

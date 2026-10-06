@@ -8,8 +8,8 @@ import { useAuth } from '../../context/AuthContext';
 export const StudentDashboard: React.FC = () => {
   const { user, isLoggedIn } = useAuth();
   const navigate = useNavigate();
-  const [data, setData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<any>(() => progressApi.getCachedDashboard());
+  const [loading, setLoading] = useState(() => !progressApi.getCachedDashboard());
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {

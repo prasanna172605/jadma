@@ -4,7 +4,6 @@ import {
   verifyRazorpayPayment,
   razorpayWebhook,
   checkPaymentStatus,
-  paymentCallback,
 } from './payment.controller.js';
 import { authenticate } from '../../middleware/auth.middleware.js';
 
@@ -21,8 +20,5 @@ router.post('/razorpay/webhook', razorpayWebhook);
 
 // 4. Check payment status by order ID (for student polling & status view)
 router.get('/:merchantOrderId/status', authenticate, checkPaymentStatus);
-
-// 5. Preserved dormant legacy PhonePe callback
-router.post('/callback', paymentCallback);
 
 export default router;

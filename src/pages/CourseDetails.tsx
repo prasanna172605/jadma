@@ -5,7 +5,7 @@ import { CurriculumAccordion } from '../components/courses/CurriculumAccordion';
 import { CourseCard } from '../components/courses/CourseCard';
 import { 
   Clock, Award, Play, ChevronRight, Share2, 
-  BarChart, Users, Phone, Check, Copy, CheckCheck
+  BarChart, Users, Phone, Check, Copy, CheckCheck, Loader2
 } from 'lucide-react';
 import { courseApi } from '../lib/api/courseApi';
 import { paymentApi } from '../lib/api/paymentApi';
@@ -14,36 +14,83 @@ import { loadRazorpayScript } from '../lib/razorpay';
 import { useAuth } from '../context/AuthContext';
 import type { Course } from '../types';
 
+type PaymentStep = 'IDLE' | 'CREATING' | 'CHECKOUT_OPEN' | 'VERIFYING' | 'SUCCESS' | 'FAILED' | 'CANCELLED';
+
 export const CourseDetails: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { user, isLoggedIn } = useAuth();
   
-  const [course, setCourse] = useState<Course | null>(null);
-  const [relatedCourses, setRelatedCourses] = useState<Course[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [course, setCourse] = useState<Course | null>(() => {
+    if (!slug) return null;
+    const cached = courseApi.getCachedCourses();
+    return cached.find(c => c.slug === slug || c.id === slug) || null;
+  });
+  const [relatedCourses, setRelatedCourses] = useState<Course[]>(() => courseApi.getCachedCourses());
+  const [loading, setLoading] = useState<boolean>(() => {
+    if (!slug) return true;
+    const cached = courseApi.getCachedCourses();
+    return !cached.some(c => c.slug === slug || c.id === slug);
+  });
   const [error, setError] = useState('');
-  const [enrolling, setEnrolling] = useState(false);
+  const [paymentStep, setPaymentStep] = useState<PaymentStep>('IDLE');
   const [copied, setCopied] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+
 
   useEffect(() => {
     const fetchCourseData = async () => {
       try {
         if (slug) {
           const courseData = await courseApi.getCourseBySlug(slug);
-          setCourse(courseData);
+          if (courseData) {
+            setCourse(courseData);
+          }
         }
         const allCourses = await courseApi.getCourses();
-        setRelatedCourses(allCourses);
+        if (allCourses && allCourses.length > 0) {
+          setRelatedCourses(allCourses);
+        }
       } catch (err: any) {
-        setError(err.message);
+        if (!course) {
+          setError(err.message);
+        }
       } finally {
         setLoading(false);
       }
     };
     fetchCourseData();
   }, [slug]);
+
+  const isMobileDevice = (): boolean => {
+    if (typeof window === 'undefined' || typeof navigator === 'undefined') return false;
+    return (
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+      window.innerWidth < 768
+    );
+  };
+
+  const getButtonText = () => {
+    if (!course) return '';
+    if (course.isFree) return 'Enroll for Free Now';
+    switch (paymentStep) {
+      case 'CREATING':
+        return 'Preparing secure payment...';
+      case 'CHECKOUT_OPEN':
+        return 'Complete payment securely';
+      case 'VERIFYING':
+        return 'Verifying payment...';
+      case 'SUCCESS':
+        return 'Payment successful';
+      case 'FAILED':
+        return 'Payment failed — Try Again';
+      case 'CANCELLED':
+        return 'Payment cancelled — Pay Again';
+      case 'IDLE':
+      default:
+        return `Pay ₹${course.price.toLocaleString('en-IN')}`;
+    }
+  };
 
   const handleEnrollClick = async () => {
     if (!isLoggedIn) {
@@ -58,94 +105,173 @@ export const CourseDetails: React.FC = () => {
       return;
     }
 
+    let pollTimer: any = null;
+    const stopPolling = () => {
+      if (pollTimer) {
+        clearInterval(pollTimer);
+        pollTimer = null;
+      }
+    };
+
     try {
-      setEnrolling(true);
+      setPaymentStep('CREATING');
       if (course.isFree) {
         const res = await enrollmentApi.enrollFree(course.id);
         if (res.success) {
-          alert('Enrolled successfully!');
+          setPaymentStep('SUCCESS');
           navigate(`/learn/${course.id}`);
         } else {
+          setPaymentStep('FAILED');
           alert(res.error?.message || 'Failed to enroll');
         }
-      } else {
-        const scriptLoaded = await loadRazorpayScript();
-        if (!scriptLoaded) {
-          alert('Failed to load Razorpay payment gateway. Please check your internet connection.');
-          return;
-        }
+        return;
+      }
 
-        const orderRes = await paymentApi.createOrder(course.id);
-        if (!orderRes.success || !orderRes.data) {
-          alert(orderRes.error?.message || 'Failed to initiate Razorpay order');
-          return;
-        }
+      const scriptLoaded = await loadRazorpayScript();
+      if (!scriptLoaded) {
+        setPaymentStep('FAILED');
+        alert('Failed to load Razorpay payment gateway. Please check your internet connection.');
+        return;
+      }
 
-        const { keyId, orderId, amount, currency, prefill } = orderRes.data;
+      // 1. Create order on backend (authoritative course price from DB)
+      const orderRes = await paymentApi.createOrder(course.id);
+      if (!orderRes.success || !orderRes.data) {
+        setPaymentStep('FAILED');
+        const errorMsg = (orderRes as any).error?.message || 'Failed to initiate Razorpay order';
+        alert(errorMsg);
+        return;
+      }
 
-        const options = {
-          key: keyId,
-          amount,
-          currency: currency || 'INR',
-          name: 'JADMAA Varmakalai',
-          description: course.title,
-          image: '/logo.png',
-          order_id: orderId,
-          prefill: {
-            name: prefill?.name || user?.name || '',
-            email: prefill?.email || user?.email || '',
-            contact: prefill?.contact || '',
-          },
-          theme: {
-            color: '#B12B2B',
-          },
-          modal: {
-            backdropclose: false,
-            escape: true,
-            ondismiss: () => {
-              setEnrolling(false);
+      const { keyId, orderId, amount, currency, prefill } = orderRes.data;
+      const isMobile = isMobileDevice();
+
+      // 2. Configure Razorpay Standard Checkout
+      // Prioritizes UPI Intent on Mobile, and dynamic UPI QR on Desktop
+      const options = {
+        key: keyId,
+        amount,
+        currency: currency || 'INR',
+        name: 'JADMAA Varmakalai',
+        description: course.title,
+        ...(typeof window !== 'undefined' && window.location.protocol === 'https:'
+          ? { image: `${window.location.origin}/logo.png` }
+          : {}),
+        order_id: orderId,
+        prefill: {
+          name: prefill?.name || user?.name || '',
+          email: prefill?.email || user?.email || '',
+          contact: prefill?.contact || '',
+          method: 'upi',
+        },
+        config: {
+          display: {
+            blocks: {
+              upi: {
+                name: isMobile ? 'Pay via UPI Apps (GPay, PhonePe, Paytm)' : 'Scan & Pay via UPI QR',
+                instruments: [
+                  {
+                    method: 'upi',
+                    flows: isMobile ? ['intent', 'qr', 'collect'] : ['qr', 'collect', 'intent'],
+                  },
+                ],
+              },
+              other: {
+                name: 'Cards & Netbanking',
+                instruments: [
+                  { method: 'card' },
+                  { method: 'netbanking' },
+                  { method: 'wallet' },
+                ],
+              },
+            },
+            sequence: ['block.upi', 'block.other'],
+            preferences: {
+              show_default_blocks: true,
             },
           },
-          handler: async (response: {
-            razorpay_payment_id: string;
-            razorpay_order_id: string;
-            razorpay_signature: string;
-          }) => {
-            try {
-              setEnrolling(true);
-              const verifyRes = await paymentApi.verifyRazorpayPayment({
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-              });
-
-              if (verifyRes.success) {
-                navigate(`/payment/status/${response.razorpay_order_id}?status=success`);
-              } else {
-                alert(verifyRes.error?.message || 'Payment verification failed.');
-                navigate(`/payment/status/${response.razorpay_order_id}?status=failed`);
-              }
-            } catch (err: any) {
-              console.error('Verification error:', err);
-              navigate(`/payment/status/${response.razorpay_order_id}?status=failed`);
-            } finally {
-              setEnrolling(false);
-            }
+        },
+        theme: {
+          color: '#B12B2B',
+          backdrop_color: 'rgba(0, 0, 0, 0.65)',
+        },
+        modal: {
+          backdropclose: false,
+          escape: true,
+          ondismiss: () => {
+            stopPolling();
+            setPaymentStep('CANCELLED');
           },
-        };
+        },
+        handler: async (response: {
+          razorpay_payment_id: string;
+          razorpay_order_id: string;
+          razorpay_signature: string;
+        }) => {
+          stopPolling();
+          try {
+            setPaymentStep('VERIFYING');
+            const verifyRes = await paymentApi.verifyRazorpayPayment({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            });
 
-        const rzp = new (window as any).Razorpay(options);
-        rzp.on('payment.failed', (failResponse: any) => {
-          console.error('Payment failed:', failResponse.error);
-          alert(`Payment Failed: ${failResponse.error?.description || 'Transaction unsuccessful'}`);
-          setEnrolling(false);
-        });
-        rzp.open();
-      }
+            if (verifyRes.success) {
+              setPaymentStep('SUCCESS');
+              navigate(`/payment/status/${response.razorpay_order_id}?status=success`);
+            } else {
+              setPaymentStep('FAILED');
+              alert(verifyRes.error?.message || 'Payment verification failed.');
+              navigate(`/payment/status/${response.razorpay_order_id}?status=failed`);
+            }
+          } catch (err: any) {
+            console.error('Verification error:', err);
+            setPaymentStep('FAILED');
+            navigate(`/payment/status/${response.razorpay_order_id}?status=failed`);
+          }
+        },
+      };
+
+      // 3. Start background polling (for desktop QR scanning or if user pays in external app)
+      const startTime = Date.now();
+      pollTimer = setInterval(async () => {
+        // Stop polling after 5 minutes
+        if (Date.now() - startTime > 5 * 60 * 1000) {
+          stopPolling();
+          return;
+        }
+        try {
+          const statusRes = await paymentApi.checkStatus(orderId);
+          if (statusRes.success && statusRes.data?.status === 'SUCCESS') {
+            stopPolling();
+            setPaymentStep('SUCCESS');
+            navigate(`/payment/status/${orderId}?status=success`);
+          } else if (
+            statusRes.success &&
+            (statusRes.data?.status === 'FAILED' || statusRes.data?.status === 'CANCELLED')
+          ) {
+            stopPolling();
+            setPaymentStep('FAILED');
+          }
+        } catch (_) {}
+      }, 2500);
+
+      const rzp = new (window as any).Razorpay(options);
+      rzp.on('payment.failed', (failResponse: any) => {
+        stopPolling();
+        console.error('Payment failed:', failResponse.error);
+        setPaymentStep('FAILED');
+        alert(`Payment Failed: ${failResponse.error?.description || 'Transaction unsuccessful'}`);
+      });
+
+      setPaymentStep('CHECKOUT_OPEN');
+      rzp.open();
     } catch (err: any) {
-      alert('An error occurred during checkout');
-    } finally {
-      setEnrolling(false);
+      stopPolling();
+      console.error('Checkout error:', err);
+      setPaymentStep('FAILED');
+      alert(err?.message || 'An error occurred during checkout');
     }
   };
 
@@ -471,16 +597,24 @@ export const CourseDetails: React.FC = () => {
                   <div>
                     <button
                       onClick={handleEnrollClick}
-                      disabled={enrolling}
-                      className="w-full py-4 px-6 bg-[#B12B2B] hover:bg-[#961F1F] text-white font-bold text-base rounded-xl shadow-md hover:shadow-lg transition-all disabled:opacity-75 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                      disabled={paymentStep === 'CREATING' || paymentStep === 'CHECKOUT_OPEN' || paymentStep === 'VERIFYING' || paymentStep === 'SUCCESS'}
+                      className={`w-full py-4 px-6 text-white font-bold text-base rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center space-x-2 cursor-pointer ${
+                        paymentStep === 'SUCCESS'
+                          ? 'bg-emerald-600 hover:bg-emerald-700'
+                          : paymentStep === 'FAILED'
+                          ? 'bg-amber-700 hover:bg-amber-800'
+                          : paymentStep === 'CANCELLED'
+                          ? 'bg-[#B12B2B] hover:bg-[#961F1F]'
+                          : 'bg-[#B12B2B] hover:bg-[#961F1F]'
+                      } disabled:opacity-85 disabled:cursor-wait`}
                     >
-                      {enrolling ? (
-                        <span>Processing with Razorpay...</span>
-                      ) : course.isFree ? (
-                        <span>Enroll for Free Now</span>
-                      ) : (
-                        <span>Pay with Razorpay • ₹{course.price.toLocaleString('en-IN')}</span>
+                      {(paymentStep === 'CREATING' || paymentStep === 'VERIFYING') && (
+                        <Loader2 className="w-5 h-5 animate-spin mr-2 flex-shrink-0" />
                       )}
+                      {paymentStep === 'SUCCESS' && (
+                        <Check className="w-5 h-5 mr-2 flex-shrink-0" />
+                      )}
+                      <span>{getButtonText()}</span>
                     </button>
                     
                     {!isLoggedIn && (

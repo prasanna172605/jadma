@@ -9,8 +9,16 @@ import ReactMarkdown from 'react-markdown';
 
 export const BlogPostDetail: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
-  const [blog, setBlog] = useState<BlogPost | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [blog, setBlog] = useState<BlogPost | null>(() => {
+    if (!slug) return null;
+    const cached = blogApi.getCachedBlogs();
+    return cached.find(b => b.slug === slug || b.id === slug) || null;
+  });
+  const [loading, setLoading] = useState<boolean>(() => {
+    if (!slug) return true;
+    const cached = blogApi.getCachedBlogs();
+    return !cached.some(b => b.slug === slug || b.id === slug);
+  });
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -18,9 +26,13 @@ export const BlogPostDetail: React.FC = () => {
       try {
         if (!slug) return;
         const data = await blogApi.getBlogBySlug(slug);
-        setBlog(data);
+        if (data) {
+          setBlog(data);
+        }
       } catch (err: any) {
-        setError(err.message || 'Article not found');
+        if (!blog) {
+          setError(err.message || 'Article not found');
+        }
       } finally {
         setLoading(false);
       }

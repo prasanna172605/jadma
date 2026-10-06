@@ -35,11 +35,27 @@ app.get('/api/health', (req, res) => {
 
 import { prisma } from './db.js';
 
+let settingsCache: any = null;
+let settingsCacheTime = 0;
+const SETTINGS_CACHE_TTL = 1000 * 60 * 10; // 10 minutes
+
 app.get('/api/v1/settings', async (req, res) => {
   try {
+    // Edge & browser cache: 60s browser, 5m CDN, stale-while-revalidate 10m
+    res.setHeader('Cache-Control', 'public, max-age=60, s-maxage=300, stale-while-revalidate=600');
+    
+    if (settingsCache && Date.now() - settingsCacheTime < SETTINGS_CACHE_TTL) {
+      return res.json({ success: true, data: settingsCache });
+    }
+
     const settings = await prisma.systemSetting.findMany();
+    settingsCache = settings;
+    settingsCacheTime = Date.now();
     res.json({ success: true, data: settings });
   } catch (err) {
+    if (settingsCache) {
+      return res.json({ success: true, data: settingsCache });
+    }
     res.status(500).json({ success: false, error: { message: 'Server error' } });
   }
 });

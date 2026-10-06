@@ -17,9 +17,21 @@ const SettingsContext = createContext<SettingsContextType>({
   updateSetting: async () => {}
 });
 
+const getInitialSettings = (): Record<string, string> => {
+  const map: Record<string, string> = { ...defaultCmsContent };
+  try {
+    const cached = localStorage.getItem('jadmaa_cms_settings');
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      Object.assign(map, parsed);
+    }
+  } catch (_) {}
+  return map;
+};
+
 export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [settings, setSettings] = useState<Record<string, string>>({});
-  const [loading, setLoading] = useState(true);
+  const [settings, setSettings] = useState<Record<string, string>>(getInitialSettings);
+  const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
@@ -37,9 +49,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const loadSettings = async () => {
     try {
       const res = await fetchApi('/settings');
-      const map: Record<string, string> = {};
-      // Merge with defaults so we never have empty values for missing DB entries
-      Object.assign(map, defaultCmsContent);
+      const map: Record<string, string> = { ...defaultCmsContent };
 
       if (res.data) {
         res.data.forEach((s: any) => {
@@ -49,10 +59,11 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         });
       }
       setSettings(map);
+      try {
+        localStorage.setItem('jadmaa_cms_settings', JSON.stringify(map));
+      } catch (_) {}
     } catch (err) {
-      console.error('Failed to load settings', err);
-      // Fallback to defaults entirely
-      setSettings({ ...defaultCmsContent });
+      console.warn('Background settings load failed, using cache/defaults', err);
     } finally {
       setLoading(false);
     }

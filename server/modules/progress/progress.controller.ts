@@ -1,33 +1,77 @@
 import { Request, Response } from 'express';
 import { prisma } from '../../db.js';
 
+// In-memory progress and enrollments cache (30s TTL)
+const userEnrollmentsCache = new Map<string, { data: any; expiresAt: number }>();
+const userDashboardCache = new Map<string, { data: any; expiresAt: number }>();
+
+export const invalidateProgressCache = (userId?: string) => {
+  if (userId) {
+    userEnrollmentsCache.delete(userId);
+    userDashboardCache.delete(userId);
+  } else {
+    userEnrollmentsCache.clear();
+    userDashboardCache.clear();
+  }
+};
+
 export const getMyEnrollments = async (req: Request, res: Response) => {
   try {
     const user = (req as any).user;
+    if (!user?.id) {
+      return res.status(401).json({ success: false, error: { message: 'Unauthorized' } });
+    }
+
+    // Fast in-memory cache check (0ms)
+    const cached = userEnrollmentsCache.get(user.id);
+    if (cached && Date.now() < cached.expiresAt) {
+      return res.json({ success: true, data: cached.data });
+    }
     
-    const enrollments = await prisma.enrollment.findMany({
-      where: { userId: user.id }, // Can be ACTIVE or COMPLETED
-      include: {
-        course: {
-          include: {
-            modules: {
-              include: { lessons: true }
+    // Batch fetch enrollments and completed progress in parallel (1 round-trip)
+    const [enrollments, completedProgresses] = await Promise.all([
+      prisma.enrollment.findMany({
+        where: { userId: user.id },
+        include: {
+          course: {
+            select: {
+              id: true,
+              title: true,
+              slug: true,
+              subtitle: true,
+              thumbnailUrl: true,
+              category: true,
+              level: true,
+              duration: true,
+              instructor: { select: { displayName: true, avatarUrl: true } },
+              modules: {
+                select: {
+                  _count: { select: { lessons: true } }
+                }
+              }
             }
           }
-        }
-      }
-    });
+        },
+        orderBy: { updatedAt: 'desc' }
+      }),
+      prisma.lessonProgress.findMany({
+        where: { userId: user.id, completed: true },
+        select: { courseId: true }
+      })
+    ]);
 
-    const enrichedEnrollments = await Promise.all(enrollments.map(async (e) => {
-      const progressCount = await prisma.lessonProgress.count({
-        where: { userId: user.id, courseId: e.courseId, completed: true }
-      });
-      
+    // Aggregate completed lessons per course in memory (0ms)
+    const completedCountMap = new Map<string, number>();
+    for (const p of completedProgresses) {
+      completedCountMap.set(p.courseId, (completedCountMap.get(p.courseId) || 0) + 1);
+    }
+
+    const enrichedEnrollments = enrollments.map((e) => {
       let totalLessons = 0;
-      (e.course as any).modules.forEach((m: any) => {
-        totalLessons += m.lessons.length;
+      e.course?.modules?.forEach((m: any) => {
+        totalLessons += m._count?.lessons || 0;
       });
-      
+      const progressCount = completedCountMap.get(e.courseId) || 0;
       const percentage = totalLessons > 0 ? Math.round((progressCount / totalLessons) * 100) : 0;
       
       return {
@@ -35,7 +79,9 @@ export const getMyEnrollments = async (req: Request, res: Response) => {
         course: e.course,
         progress: percentage
       };
-    }));
+    });
+
+    userEnrollmentsCache.set(user.id, { data: enrichedEnrollments, expiresAt: Date.now() + 30_000 });
 
     res.json({ success: true, data: enrichedEnrollments });
   } catch (err) {
@@ -187,6 +233,8 @@ export const updateLessonProgress = async (req: Request, res: Response) => {
       }
     }
 
+    invalidateProgressCache(user.id);
+
     res.json({ success: true, data: progress });
   } catch (err) {
     console.error('updateLessonProgress error:', err);
@@ -196,50 +244,70 @@ export const updateLessonProgress = async (req: Request, res: Response) => {
 export const getDashboard = async (req: Request, res: Response) => {
   try {
     const user = (req as any).user;
-    
-    // Get full user for profile basic info
-    const fullUser = await prisma.user.findUnique({
-      where: { id: user.id },
-      select: { name: true, avatarUrl: true }
-    });
 
-    const enrollments = await prisma.enrollment.findMany({
-      where: { userId: user.id },
-      include: {
-        course: {
-          include: {
-            instructor: { select: { displayName: true } },
-            modules: { include: { lessons: true } }
-          }
-        }
-      },
-      orderBy: { updatedAt: 'desc' }
-    });
+    // Fast in-memory cache check (0ms)
+    const cached = userDashboardCache.get(user.id);
+    if (cached && Date.now() < cached.expiresAt) {
+      return res.json({ success: true, data: cached.data });
+    }
     
-    const certificates = await prisma.certificate.findMany({
-      where: { userId: user.id },
-      include: { course: { select: { title: true } } },
-      orderBy: { issuedAt: 'desc' },
-      take: 5
-    });
+    // Fetch user, enrollments, certificates, lastWatched, and completedProgresses in ONE parallel batch
+    const [fullUser, enrollments, certificates, lastWatched, completedProgresses] = await Promise.all([
+      prisma.user.findUnique({
+        where: { id: user.id },
+        select: { name: true, avatarUrl: true }
+      }),
+      prisma.enrollment.findMany({
+        where: { userId: user.id },
+        include: {
+          course: {
+            select: {
+              id: true,
+              title: true,
+              thumbnailUrl: true,
+              slug: true,
+              instructor: { select: { displayName: true } },
+              modules: {
+                select: {
+                  _count: { select: { lessons: true } }
+                }
+              }
+            }
+          }
+        },
+        orderBy: { updatedAt: 'desc' }
+      }),
+      prisma.certificate.findMany({
+        where: { userId: user.id },
+        include: { course: { select: { title: true } } },
+        orderBy: { issuedAt: 'desc' },
+        take: 5
+      }),
+      prisma.lessonProgress.findFirst({
+        where: { userId: user.id },
+        orderBy: { lastWatchedAt: 'desc' },
+        include: { lesson: { include: { module: true } }, course: true }
+      }),
+      prisma.lessonProgress.findMany({
+        where: { userId: user.id, completed: true },
+        select: { courseId: true }
+      })
+    ]);
+
+    // Aggregate completed lessons per course in memory (0ms)
+    const completedCountMap = new Map<string, number>();
+    for (const p of completedProgresses) {
+      completedCountMap.set(p.courseId, (completedCountMap.get(p.courseId) || 0) + 1);
+    }
 
     let completedCourses = 0;
     let totalProgressSum = 0;
     let continueLearning: any = null;
-    
-    // Get last watched lesson info if any
-    const lastWatched = await prisma.lessonProgress.findFirst({
-      where: { userId: user.id },
-      orderBy: { lastWatchedAt: 'desc' },
-      include: { lesson: { include: { module: true } }, course: true }
-    });
 
-    const enrichedEnrollments = await Promise.all(enrollments.map(async (e) => {
-      const progressCount = await prisma.lessonProgress.count({
-        where: { userId: user.id, courseId: e.courseId, completed: true }
-      });
+    const enrichedEnrollments = enrollments.map((e) => {
       let totalLessons = 0;
-      (e.course as any).modules.forEach((m: any) => totalLessons += m.lessons.length);
+      e.course?.modules?.forEach((m: any) => totalLessons += (m._count?.lessons || 0));
+      const progressCount = completedCountMap.get(e.courseId) || 0;
       const percentage = totalLessons > 0 ? Math.round((progressCount / totalLessons) * 100) : 0;
       
       if (e.status === 'COMPLETED') completedCourses++;
@@ -267,14 +335,14 @@ export const getDashboard = async (req: Request, res: Response) => {
       } else if (!continueLearning && e.status !== 'COMPLETED') {
          continueLearning = {
            course: formatted,
-           lessonId: (e.course as any).modules[0]?.lessons[0]?.id || null,
+           lessonId: null,
            lessonTitle: "Start Course",
            moduleTitle: ""
          };
       }
 
       return formatted;
-    }));
+    });
 
     const stats = {
       enrolledCourses: enrollments.length,
@@ -283,16 +351,20 @@ export const getDashboard = async (req: Request, res: Response) => {
       averageProgress: enrollments.length > 0 ? Math.round(totalProgressSum / enrollments.length) : 0
     };
 
+    const dashboardData = {
+      student: fullUser,
+      stats,
+      continueLearning,
+      recentCourses: enrichedEnrollments.slice(0, 4),
+      certificates: certificates,
+      recentActivity: [] // Optional
+    };
+
+    userDashboardCache.set(user.id, { data: dashboardData, expiresAt: Date.now() + 30_000 });
+
     res.json({
       success: true,
-      data: {
-        student: fullUser,
-        stats,
-        continueLearning,
-        recentCourses: enrichedEnrollments.slice(0, 4),
-        certificates: certificates,
-        recentActivity: [] // Optional
-      }
+      data: dashboardData
     });
   } catch (err) {
     console.error('getDashboard error:', err);

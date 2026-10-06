@@ -59,8 +59,8 @@ export const AppRoutes: React.FC = () => {
         {/* LMS Routes */}
         <Route path="/dashboard" element={<Navigate to="/student" />} />
         <Route path="/student" element={<StudentPanel />} />
-        <Route path="/my-courses" element={<Navigate to="/student" />} />
-        <Route path="/profile" element={<Navigate to="/student" />} />
+        <Route path="/my-courses" element={<Navigate to="/student#my-courses" replace />} />
+        <Route path="/profile" element={<Navigate to="/student#settings" replace />} />
         <Route path="/learn/:courseId" element={<LearnCourse />} />
         <Route path="/certificates" element={<CertificatesPage />} />
         <Route path="/payment/status/:merchantOrderId" element={<PaymentStatus />} />

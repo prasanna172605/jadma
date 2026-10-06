@@ -7,8 +7,8 @@ import { EditableText } from '../components/common/EditableText';
 import type { Course } from '../types';
 
 export const Courses: React.FC = () => {
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [courses, setCourses] = useState<Course[]>(() => courseApi.getCachedCourses());
+  const [loading, setLoading] = useState(() => courseApi.getCachedCourses().length === 0);
   const [error, setError] = useState('');
   
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
@@ -19,9 +19,13 @@ export const Courses: React.FC = () => {
     const fetchCourses = async () => {
       try {
         const data = await courseApi.getCourses();
-        setCourses(data);
+        if (data && data.length > 0) {
+          setCourses(data);
+        }
       } catch (err: any) {
-        setError(err.message);
+        if (courses.length === 0) {
+          setError(err.message);
+        }
       } finally {
         setLoading(false);
       }

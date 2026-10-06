@@ -8,8 +8,8 @@ import { useAuth } from '../../context/AuthContext';
 export const MyCourses: React.FC = () => {
   const { isLoggedIn } = useAuth();
   const navigate = useNavigate();
-  const [enrolledList, setEnrolledList] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [enrolledList, setEnrolledList] = useState<any[]>(() => progressApi.getCachedEnrollments());
+  const [loading, setLoading] = useState(() => progressApi.getCachedEnrollments().length === 0);
   const [search, setSearch] = useState('');
   const [activeTab, setActiveTab] = useState<'ALL' | 'IN_PROGRESS' | 'NOT_STARTED' | 'COMPLETED'>('ALL');
 

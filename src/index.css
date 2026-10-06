@@ -103,7 +103,7 @@
 }
 
 .btn-jadmaa-primary:active {
-  transform: translateY(0);
+  transform: translateY(0) scale(0.985);
 }
 
 .btn-jadmaa-outline {
@@ -131,7 +131,7 @@
 }
 
 .btn-jadmaa-outline:active {
-  transform: translateY(0);
+  transform: translateY(0) scale(0.985);
 }
 
 /* ==========================================
@@ -202,110 +202,110 @@
    SITE-WIDE SCROLL ANIMATIONS
    ========================================== */
 
-/* 1. Default Scroll Reveal (Fade & Rise) */
-.reveal-on-scroll {
-  opacity: 0;
-  transform: translateY(40px);
-  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity, transform;
+/* ==========================================
+   SCROLL REVEAL ANIMATIONS REMOVED
+   Elements render immediately without awkward lag/revealing transitions.
+   Interactive hover effects are fully preserved.
+   ========================================== */
+.reveal-on-scroll,
+.reveal-left,
+.reveal-right,
+.reveal-scale,
+.reveal-stagger,
+.reveal-stagger .reveal-child,
+.jd-pop,
+.scroll-card-settle,
+.page-enter,
+[data-aos] {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
 }
-
-.reveal-on-scroll.is-revealed {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* 2. Slide from Left */
-.reveal-left {
-  opacity: 0;
-  transform: translateX(-50px);
-  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity, transform;
-}
-
-.reveal-left.is-revealed {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-/* 3. Slide from Right */
-.reveal-right {
-  opacity: 0;
-  transform: translateX(50px);
-  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity, transform;
-}
-
-.reveal-right.is-revealed {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-/* 4. Scale & Fade */
-.reveal-scale {
-  opacity: 0;
-  transform: scale(0.90);
-  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity, transform;
-}
-
-.reveal-scale.is-revealed {
-  opacity: 1;
-  transform: scale(1);
-}
-
-/* 5. Staggered Grid Container */
-.reveal-stagger {
-  opacity: 1;
-}
-
-.reveal-stagger .reveal-child {
-  opacity: 0;
-  transform: translateY(35px);
-  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity, transform;
-}
-
-.reveal-stagger.is-revealed .reveal-child {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.reveal-stagger.is-revealed .reveal-child:nth-child(1) { transition-delay: 0.05s; }
-.reveal-stagger.is-revealed .reveal-child:nth-child(2) { transition-delay: 0.15s; }
-.reveal-stagger.is-revealed .reveal-child:nth-child(3) { transition-delay: 0.25s; }
-.reveal-stagger.is-revealed .reveal-child:nth-child(4) { transition-delay: 0.35s; }
-.reveal-stagger.is-revealed .reveal-child:nth-child(5) { transition-delay: 0.45s; }
-.reveal-stagger.is-revealed .reveal-child:nth-child(6) { transition-delay: 0.55s; }
-.reveal-stagger.is-revealed .reveal-child:nth-child(7) { transition-delay: 0.65s; }
-.reveal-stagger.is-revealed .reveal-child:nth-child(8) { transition-delay: 0.75s; }
 
 /* ==========================================
-   SMOOTH PAGE & COMPONENT TRANSITIONS
+   SUBTLE, MINIMAL & FEEL-GOOD ANIMATION SYSTEM
    ========================================== */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
+
+/* 1. Smooth Native In-Page Scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* 2. Silky Page Route Cross-Dissolve */
+@keyframes routeCrossFade {
+  0% {
+    opacity: 0.88;
+    transform: translateY(3px);
   }
-  to {
+  100% {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-.page-enter {
-  animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+.route-fade {
+  animation: routeCrossFade 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* Interactive micro-effects */
+/* 3. Tactile Card Hover & Smooth Elevation */
+.jd-card {
+  background: #ffffff;
+  border: 1px solid #E8DDD0;
+  border-radius: 1rem;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.28s ease;
+}
+
+.jd-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(177, 43, 43, 0.28);
+  box-shadow: 0 16px 32px -8px rgba(43, 37, 33, 0.1), 0 4px 12px -2px rgba(177, 43, 43, 0.04);
+}
+
 .hover-lift {
-  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s ease;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.28s ease;
 }
 
 .hover-lift:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(43, 37, 33, 0.08);
+  box-shadow: 0 12px 26px -6px rgba(43, 37, 33, 0.09);
+}
+
+/* 4. Tactile Touch / Click Feedback */
+button:active:not(:disabled),
+a[role="button"]:active {
+  transform: scale(0.985);
+  transition: transform 0.1s ease;
+}
+
+/* 5. Ambient "Prana" Life — Subtle Breathing Glow on Primary Action Buttons */
+@keyframes ambientGlowPulse {
+  0%, 100% {
+    box-shadow: 0 4px 14px rgba(177, 43, 43, 0.22);
+  }
+  50% {
+    box-shadow: 0 6px 22px rgba(177, 43, 43, 0.4), 0 0 12px rgba(212, 175, 55, 0.25);
+  }
+}
+
+.btn-pulse-glow {
+  animation: ambientGlowPulse 3.8s ease-in-out infinite;
+}
+
+/* 6. Subtle Micro Card Settle for Initial Render */
+@keyframes microSettleFade {
+  0% {
+    opacity: 0.94;
+    transform: translateY(3px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card-settle {
+  animation: microSettleFade 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 /* ==========================================
@@ -449,27 +449,10 @@
    JD-POP — jadmaa.com exact scroll pop
    cubic-bezier(0.22, 0.61, 0.36, 1) spring
    ========================================== */
-@keyframes jdPop {
-  0%   { opacity: 0; transform: translateY(32px) scale(0.97); }
-  60%  { opacity: 1; transform: translateY(-4px) scale(1.01); }
-  100% { opacity: 1; transform: translateY(0) scale(1); }
-}
-
 .jd-pop {
-  opacity: 0;
+  opacity: 1 !important;
+  transform: none !important;
 }
-
-.jd-pop.is-revealed {
-  animation: jdPop 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) both;
-}
-
-/* Stagger helpers for jd-pop children */
-.jd-pop.is-revealed:nth-child(1) { animation-delay: 0.00s; }
-.jd-pop.is-revealed:nth-child(2) { animation-delay: 0.08s; }
-.jd-pop.is-revealed:nth-child(3) { animation-delay: 0.16s; }
-.jd-pop.is-revealed:nth-child(4) { animation-delay: 0.24s; }
-.jd-pop.is-revealed:nth-child(5) { animation-delay: 0.32s; }
-.jd-pop.is-revealed:nth-child(6) { animation-delay: 0.40s; }
 
 /* ==========================================
    RESPONSIVE TYPOGRAPHY ADJUSTMENTS

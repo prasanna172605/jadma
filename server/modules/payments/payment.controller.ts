@@ -2,7 +2,8 @@ import { Request, Response } from 'express';
 import { prisma } from '../../db.js';
 import crypto from 'crypto';
 import { razorpayService } from './razorpay.service.js';
-import { phonePeService } from './phonepe.service.js';
+import { invalidateUserCache } from '../../middleware/auth.middleware.js';
+import { invalidateProgressCache } from '../progress/progress.controller.js';
 
 /**
  * 1. CREATE ORDER (Razorpay is the PRIMARY & ONLY customer-facing gateway)
@@ -218,21 +219,40 @@ export const verifyRazorpayPayment = async (req: Request, res: Response) => {
       if (rzpPayment.order_id !== razorpay_order_id) {
         return res.status(400).json({
           success: false,
-          error: { message: 'Payment does not correspond to the order.' },
+          error: { message: 'Payment does not correspond to the specified order.' },
         });
       }
 
-      // Check amount matching (Razorpay amount in paise vs stored INR)
+      // Exact amount validation: course price in DB must match payment and Razorpay amount exactly
       const expectedPaise = Math.round(payment.amount * 100);
-      if (Number(rzpPayment.amount) < expectedPaise) {
+      const expectedCoursePaise = Math.round(payment.course.price * 100);
+
+      if (expectedPaise !== expectedCoursePaise || Number(rzpPayment.amount) !== expectedPaise) {
+        console.error(`[Razorpay:verify] Amount mismatch! Rzp: ${rzpPayment.amount}, DB Payment: ${expectedPaise}, Course: ${expectedCoursePaise}`);
         return res.status(400).json({
           success: false,
-          error: { message: 'Payment amount mismatch detected.' },
+          error: { message: 'Payment amount mismatch detected. Transaction rejected.' },
+        });
+      }
+
+      // Currency check
+      if (rzpPayment.currency !== 'INR') {
+        return res.status(400).json({
+          success: false,
+          error: { message: 'Invalid transaction currency. Expected INR.' },
+        });
+      }
+
+      // Status check: must be captured or authorized
+      if (rzpPayment.status !== 'captured' && rzpPayment.status !== 'authorized') {
+        return res.status(400).json({
+          success: false,
+          error: { message: `Payment is not in a completed state (status: ${rzpPayment.status}).` },
         });
       }
     } catch (apiErr: any) {
-      console.warn('Could not fetch payment directly from Razorpay API:', apiErr.message);
-      // Signature was already verified cryptographically
+      console.warn('[Razorpay:verify] Razorpay API verification check:', apiErr.message);
+      // Cryptographic signature is authoritative fallback if API check errors
     }
 
     // 5. Transactional state update & active enrollment creation
@@ -275,6 +295,9 @@ export const verifyRazorpayPayment = async (req: Request, res: Response) => {
 
       return p;
     });
+
+    invalidateUserCache(payment.userId);
+    invalidateProgressCache(payment.userId);
 
     return res.status(200).json({
       success: true,
@@ -325,6 +348,7 @@ export const razorpayWebhook = async (req: Request, res: Response) => {
       const paymentId = paymentEntity?.id;
 
       if (orderId) {
+        let activatedUserId: string | null = null;
         await prisma.$transaction(async (tx) => {
           const payment = await tx.payment.findUnique({
             where: { merchantOrderId: orderId },
@@ -334,6 +358,8 @@ export const razorpayWebhook = async (req: Request, res: Response) => {
             console.warn(`Webhook order not found in DB: ${orderId}`);
             return;
           }
+
+          activatedUserId = payment.userId;
 
           if (payment.status !== 'SUCCESS') {
             await tx.payment.update({
@@ -368,6 +394,11 @@ export const razorpayWebhook = async (req: Request, res: Response) => {
             });
           }
         });
+
+        if (activatedUserId) {
+          invalidateUserCache(activatedUserId);
+          invalidateProgressCache(activatedUserId);
+        }
       }
     } else if (eventType === 'payment.failed') {
       const paymentEntity = event.payload?.payment?.entity;
@@ -434,71 +465,5 @@ export const checkPaymentStatus = async (req: Request, res: Response) => {
   } catch (err: any) {
     console.error('checkPaymentStatus error:', err);
     return res.status(500).json({ success: false, error: { message: 'Server error' } });
-  }
-};
-
-/**
- * Historical/Dormant PhonePe Callback handler (Preserved for backward compatibility)
- */
-export const paymentCallback = async (req: Request, res: Response) => {
-  try {
-    const { response } = req.body;
-    if (!response) {
-      return res.status(400).send('No response');
-    }
-
-    const checksum = req.headers['x-verify'] as string;
-    if (!phonePeService.verifyChecksum(response, checksum)) {
-      return res.status(400).send('Invalid checksum');
-    }
-
-    const decodedResponse = Buffer.from(response, 'base64').toString('utf-8');
-    const parsedResponse = JSON.parse(decodedResponse);
-
-    const merchantTransactionId = parsedResponse?.data?.merchantTransactionId;
-    const transactionId = parsedResponse?.data?.transactionId;
-    const isSuccess = parsedResponse?.code === 'PAYMENT_SUCCESS';
-
-    if (merchantTransactionId) {
-      await prisma.$transaction(async (tx) => {
-        const payment = await tx.payment.findUnique({
-          where: { merchantOrderId: merchantTransactionId },
-        });
-        if (!payment || payment.status === 'SUCCESS') return;
-
-        await tx.payment.update({
-          where: { id: payment.id },
-          data: {
-            status: isSuccess ? 'SUCCESS' : 'FAILED',
-            gatewayTransactionId: transactionId,
-            paymentResponse: decodedResponse,
-            paidAt: isSuccess ? new Date() : null,
-          },
-        });
-
-        if (isSuccess) {
-          await tx.enrollment.upsert({
-            where: {
-              userId_courseId: {
-                userId: payment.userId,
-                courseId: payment.courseId,
-              },
-            },
-            update: { status: 'ACTIVE', paymentId: payment.id },
-            create: {
-              userId: payment.userId,
-              courseId: payment.courseId,
-              paymentId: payment.id,
-              status: 'ACTIVE',
-            },
-          });
-        }
-      });
-    }
-
-    return res.send('OK');
-  } catch (err) {
-    console.error('Legacy phonePe paymentCallback error:', err);
-    return res.status(500).send('Error');
   }
 };

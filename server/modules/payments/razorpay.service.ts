@@ -2,6 +2,8 @@ import Razorpay from 'razorpay';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
 
+dotenv.config();
+
 export interface CreateRazorpayOrderParams {
   amountInPaise: number;
   currency?: string;
@@ -15,24 +17,20 @@ export interface VerifyRazorpaySignatureParams {
   signature: string;
 }
 
+const cleanEnv = (val?: string): string => {
+  if (!val) return '';
+  return val.trim().replace(/^["']|["']$/g, '');
+};
+
 export class RazorpayService {
   private static instance: RazorpayService;
   private client: Razorpay | null = null;
-  private keyId: string;
-  private keySecret: string;
-  private webhookSecret: string;
+  private keyId: string = '';
+  private keySecret: string = '';
+  private webhookSecret: string = '';
 
   private constructor() {
-    this.keyId = process.env.RAZORPAY_KEY_ID || '';
-    this.keySecret = process.env.RAZORPAY_KEY_SECRET || '';
-    this.webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET || '';
-
-    if (this.keyId && this.keySecret) {
-      this.client = new Razorpay({
-        key_id: this.keyId,
-        key_secret: this.keySecret,
-      });
-    }
+    this.refreshCredentials();
   }
 
   public static getInstance(): RazorpayService {
@@ -42,35 +40,46 @@ export class RazorpayService {
     return RazorpayService.instance;
   }
 
-  private loadConfig() {
+  private refreshCredentials(): void {
     dotenv.config();
-    this.keyId = process.env.RAZORPAY_KEY_ID || this.keyId || '';
-    this.keySecret = process.env.RAZORPAY_KEY_SECRET || this.keySecret || '';
-    this.webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET || this.webhookSecret || '';
-  }
+    this.keyId = cleanEnv(process.env.RAZORPAY_KEY_ID);
+    this.keySecret = cleanEnv(process.env.RAZORPAY_KEY_SECRET);
+    this.webhookSecret = cleanEnv(process.env.RAZORPAY_WEBHOOK_SECRET);
 
-  public getKeyId(): string {
-    return this.keyId || process.env.RAZORPAY_KEY_ID || '';
-  }
-
-  public isConfigured(): boolean {
-    return Boolean(this.keyId && this.keySecret);
-  }
-
-  private getClient(): Razorpay {
-    if (!this.client) {
-      // Re-read in case env vars were set after load
-      this.keyId = process.env.RAZORPAY_KEY_ID || '';
-      this.keySecret = process.env.RAZORPAY_KEY_SECRET || '';
-      this.webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET || '';
-
-      if (!this.keyId || !this.keySecret) {
-        throw new Error('Razorpay credentials (RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET) are not configured.');
-      }
+    if (this.keyId && this.keySecret) {
       this.client = new Razorpay({
         key_id: this.keyId,
         key_secret: this.keySecret,
       });
+      const isTest = this.keyId.startsWith('rzp_test_');
+      console.log(`[RazorpayService] Initialized with Key ID: ${this.keyId.substring(0, 8)}... (${isTest ? 'TEST MODE' : 'PRODUCTION'})`);
+    } else {
+      this.client = null;
+      console.warn('[RazorpayService] Missing RAZORPAY_KEY_ID or RAZORPAY_KEY_SECRET in environment.');
+    }
+  }
+
+  public getKeyId(): string {
+    const raw = cleanEnv(process.env.RAZORPAY_KEY_ID) || this.keyId;
+    return raw;
+  }
+
+  public isConfigured(): boolean {
+    const kid = cleanEnv(process.env.RAZORPAY_KEY_ID) || this.keyId;
+    const ksec = cleanEnv(process.env.RAZORPAY_KEY_SECRET) || this.keySecret;
+    return Boolean(kid && ksec);
+  }
+
+  private getClient(): Razorpay {
+    const currentKeyId = cleanEnv(process.env.RAZORPAY_KEY_ID);
+    const currentKeySecret = cleanEnv(process.env.RAZORPAY_KEY_SECRET);
+
+    if (!this.client || currentKeyId !== this.keyId || currentKeySecret !== this.keySecret) {
+      this.refreshCredentials();
+    }
+
+    if (!this.client) {
+      throw new Error('Razorpay credentials (RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET) are missing or invalid.');
     }
 
     return this.client;
@@ -88,8 +97,14 @@ export class RazorpayService {
       notes: params.notes || {},
     };
 
-    const order = await rzp.orders.create(options);
-    return order;
+    try {
+      const order = await rzp.orders.create(options);
+      return order;
+    } catch (err: any) {
+      console.error('[RazorpayService:createOrder:Failed]', err?.error || err);
+      const detail = err?.error?.description || err?.message || 'Razorpay order creation failed';
+      throw new Error(`Razorpay error: ${detail}`);
+    }
   }
 
   /**
@@ -113,23 +128,25 @@ export class RazorpayService {
    * HMAC_SHA256(order_id + "|" + razorpay_payment_id, secret)
    */
   public verifyPaymentSignature(params: VerifyRazorpaySignatureParams): boolean {
-    if (!this.keySecret) {
-      this.keySecret = process.env.RAZORPAY_KEY_SECRET || '';
-    }
-    if (!this.keySecret) {
+    const secret = cleanEnv(process.env.RAZORPAY_KEY_SECRET) || this.keySecret;
+    if (!secret) {
       throw new Error('RAZORPAY_KEY_SECRET is not configured for signature verification');
     }
 
     const payload = `${params.orderId}|${params.paymentId}`;
     const generatedSignature = crypto
-      .createHmac('sha256', this.keySecret)
+      .createHmac('sha256', secret)
       .update(payload)
       .digest('hex');
 
-    return crypto.timingSafeEqual(
-      Buffer.from(generatedSignature, 'utf-8'),
-      Buffer.from(params.signature, 'utf-8')
-    );
+    const genBuf = Buffer.from(generatedSignature, 'utf-8');
+    const sigBuf = Buffer.from(params.signature, 'utf-8');
+
+    if (genBuf.length !== sigBuf.length) {
+      return false;
+    }
+
+    return crypto.timingSafeEqual(genBuf, sigBuf);
   }
 
   /**
@@ -137,7 +154,7 @@ export class RazorpayService {
    * HMAC_SHA256(raw_body, webhook_secret)
    */
   public verifyWebhookSignature(rawBody: string, signature: string): boolean {
-    const secret = this.webhookSecret || process.env.RAZORPAY_WEBHOOK_SECRET || '';
+    const secret = cleanEnv(process.env.RAZORPAY_WEBHOOK_SECRET) || this.webhookSecret;
     if (!secret) {
       throw new Error('RAZORPAY_WEBHOOK_SECRET is not configured for webhook verification');
     }
@@ -147,10 +164,14 @@ export class RazorpayService {
       .update(rawBody)
       .digest('hex');
 
-    return crypto.timingSafeEqual(
-      Buffer.from(generatedSignature, 'utf-8'),
-      Buffer.from(signature, 'utf-8')
-    );
+    const genBuf = Buffer.from(generatedSignature, 'utf-8');
+    const sigBuf = Buffer.from(signature, 'utf-8');
+
+    if (genBuf.length !== sigBuf.length) {
+      return false;
+    }
+
+    return crypto.timingSafeEqual(genBuf, sigBuf);
   }
 }
 

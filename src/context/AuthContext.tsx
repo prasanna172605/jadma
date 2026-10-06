@@ -13,9 +13,25 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const getInitialUser = (): User | null => {
+  try {
+    const token = localStorage.getItem('jadmaa_token');
+    const raw = localStorage.getItem('jadmaa_user');
+    if (token && raw) {
+      return JSON.parse(raw);
+    }
+  } catch (_) {}
+  return null;
+};
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(getInitialUser);
+  const [loading, setLoading] = useState<boolean>(() => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('jadmaa_token') : null;
+    const initial = getInitialUser();
+    // Only show blocking loading if token exists but user object is not yet cached
+    return Boolean(token && !initial);
+  });
 
   useEffect(() => {
     const initAuth = async () => {
@@ -25,11 +41,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           const res = await authApi.getMe();
           if (res.data) {
             setUser(res.data);
+            try {
+              localStorage.setItem('jadmaa_user', JSON.stringify(res.data));
+            } catch (_) {}
           }
         } catch (err: any) {
           console.warn('Auth session expired or invalid', err.message);
           localStorage.removeItem('jadmaa_token');
+          localStorage.removeItem('jadmaa_user');
+          setUser(null);
         }
+      } else {
+        localStorage.removeItem('jadmaa_user');
+        setUser(null);
       }
       setLoading(false);
     };
@@ -42,6 +66,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (res.success && res.data) {
         localStorage.setItem('jadmaa_token', res.data.token);
         const loggedInUser = res.data.user;
+        try {
+          localStorage.setItem('jadmaa_user', JSON.stringify(loggedInUser));
+        } catch (_) {}
         setUser(loggedInUser);
         return loggedInUser;
       } else {
@@ -74,6 +101,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } finally {
       setUser(null);
       localStorage.removeItem('jadmaa_token');
+      localStorage.removeItem('jadmaa_user');
+      try {
+        sessionStorage.removeItem('jadmaa_enrollments_cache');
+        sessionStorage.removeItem('jadmaa_dashboard_cache');
+      } catch (_) {}
     }
   };
 

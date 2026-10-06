@@ -6,6 +6,8 @@ const CACHE_TTL = 1000 * 60 * 5; // 5 minutes
 
 export const getCourses = async (req: Request, res: Response) => {
   try {
+    res.setHeader('Cache-Control', 'public, max-age=60, s-maxage=300, stale-while-revalidate=600');
+
     if (coursesCache && Date.now() - lastCacheTime < CACHE_TTL) {
       return res.json({ success: true, data: coursesCache });
     }
@@ -61,15 +63,15 @@ export const getCourses = async (req: Request, res: Response) => {
       }))
     }));
 
-
     coursesCache = formatted;
     lastCacheTime = Date.now();
 
     res.json({ success: true, data: formatted });
-
-
   } catch (err: any) {
     console.warn('getCourses error:', err);
+    if (coursesCache) {
+      return res.json({ success: true, data: coursesCache });
+    }
     res.status(500).json({ success: false, error: { message: 'Server error fetching courses' } });
   }
 };
@@ -79,12 +81,14 @@ const slugCache: Record<string, {data: any, time: number}> = {};
 
 export const getCourseBySlug = async (req: Request, res: Response) => {
   try {
+    res.setHeader('Cache-Control', 'public, max-age=60, s-maxage=300, stale-while-revalidate=600');
+
     const slug = req.params.slug as string;
     if (slugCache[slug] && Date.now() - slugCache[slug].time < CACHE_TTL) {
       return res.json({ success: true, data: slugCache[slug].data });
     }
 
-        const isUUID = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(slug);
+    const isUUID = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(slug);
     const course = await prisma.course.findUnique({
       where: isUUID ? { id: slug } : { slug: slug },
       include: {

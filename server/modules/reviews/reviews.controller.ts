@@ -1,12 +1,21 @@
 import { Request, Response } from 'express';
 
+let reviewsCache: any = null;
+let reviewsCacheTime = 0;
+const REVIEWS_CACHE_TTL = 1000 * 60 * 30; // 30 minutes
+
 export const getReviews = async (req: Request, res: Response) => {
   try {
+    res.setHeader('Cache-Control', 'public, max-age=300, s-maxage=600, stale-while-revalidate=1200');
+
+    if (reviewsCache && Date.now() - reviewsCacheTime < REVIEWS_CACHE_TTL) {
+      return res.json({ success: true, data: reviewsCache });
+    }
+
     const apiKey = process.env.GOOGLE_MAPS_API_KEY;
     const placeId = 'ChIJjTIYIgC5qjsRcL6Q-fCDunM'; // Thanjavur branch
 
     if (!apiKey) {
-      console.warn('GOOGLE_MAPS_API_KEY not found in env, falling back to mock data.');
       return res.json({ success: true, data: [] });
     }
 

@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { prisma } from '../../db.js';
 import { registerSchema, loginSchema } from './auth.validation.js';
 import { BrevoService } from '../../services/email/brevo.service.js';
+import { invalidateUserCache } from '../../middleware/auth.middleware.js';
 
 const generateTokens = (user: any) => {
   const accessToken = jwt.sign(
@@ -157,30 +158,20 @@ export const logout = async (req: Request, res: Response) => {
 
 export const getMe = async (req: Request, res: Response) => {
   try {
-    const user = await prisma.user.findUnique({ 
-      where: { id: (req as any).user.id },
-      select: { 
-        id: true, 
-        name: true, 
-        email: true, 
-        phone: true,
-        role: true, 
-        avatarUrl: true,
-        enrollments: {
-          select: { courseId: true }
-        }
-      }
-    });
-
+    const user = (req as any).user;
     if (!user) {
       return res.status(404).json({ success: false, error: { message: 'User not found' } });
     }
 
     const formattedUser = {
-      ...user,
-      enrolledCourses: user.enrollments.map(e => e.courseId)
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      role: user.role,
+      avatarUrl: user.avatarUrl,
+      enrolledCourses: user.enrollments ? user.enrollments.map((e: any) => e.courseId) : []
     };
-    delete (formattedUser as any).enrollments;
 
     res.json({ success: true, data: formattedUser });
   } catch (err) {
@@ -201,6 +192,8 @@ export const updateProfile = async (req: Request, res: Response) => {
       where: { id: userId },
       data: { name, phone }
     });
+
+    invalidateUserCache(userId);
 
     res.json({ success: true, data: { name: user.name, phone: user.phone } });
   } catch (err) {

@@ -1,20 +1,34 @@
-// Helper to dynamically load the Razorpay checkout script
+// Helper to dynamically load the Razorpay checkout script safely
 export const loadRazorpayScript = (): Promise<boolean> => {
   return new Promise((resolve) => {
     if (typeof window === 'undefined') {
-      resolve(false);
-      return;
+      return resolve(false);
     }
 
     if ((window as any).Razorpay) {
-      resolve(true);
-      return;
+      return resolve(true);
     }
 
-    const existingScript = document.getElementById('razorpay-checkout-script');
+    const existingScript = document.getElementById('razorpay-checkout-script') as HTMLScriptElement;
     if (existingScript) {
-      existingScript.addEventListener('load', () => resolve(true));
-      existingScript.addEventListener('error', () => resolve(false));
+      if ((window as any).Razorpay) {
+        return resolve(true);
+      }
+      existingScript.addEventListener('load', () => resolve(Boolean((window as any).Razorpay)), { once: true });
+      existingScript.addEventListener('error', () => resolve(false), { once: true });
+
+      // Fallback check if script finished loading before event listener attached
+      let checkCount = 0;
+      const poll = setInterval(() => {
+        checkCount++;
+        if ((window as any).Razorpay) {
+          clearInterval(poll);
+          resolve(true);
+        } else if (checkCount >= 40) {
+          clearInterval(poll);
+          resolve(false);
+        }
+      }, 50);
       return;
     }
 
@@ -22,8 +36,11 @@ export const loadRazorpayScript = (): Promise<boolean> => {
     script.id = 'razorpay-checkout-script';
     script.src = 'https://checkout.razorpay.com/v1/checkout.js';
     script.async = true;
-    script.onload = () => resolve(true);
-    script.onerror = () => resolve(false);
+    script.onload = () => resolve(Boolean((window as any).Razorpay));
+    script.onerror = () => {
+      script.remove();
+      resolve(false);
+    };
     document.body.appendChild(script);
   });
 };

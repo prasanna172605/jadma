@@ -7,17 +7,21 @@ import { Calendar, User, ArrowRight } from 'lucide-react';
 import { format } from 'date-fns';
 
 export const Blog: React.FC = () => {
-  const [blogs, setBlogs] = useState<BlogPost[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [blogs, setBlogs] = useState<BlogPost[]>(() => blogApi.getCachedBlogs());
+  const [loading, setLoading] = useState(() => blogApi.getCachedBlogs().length === 0);
   const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
         const data = await blogApi.getBlogs();
-        setBlogs(data);
+        if (data && data.length > 0) {
+          setBlogs(data);
+        }
       } catch (err: any) {
-        setError(err.message || 'Failed to load blogs');
+        if (blogs.length === 0) {
+          setError(err.message || 'Failed to load blogs');
+        }
       } finally {
         setLoading(false);
       }
