@@ -163,6 +163,7 @@ export const CourseDetails: React.FC = () => {
           name: prefill?.name || user?.name || '',
           email: prefill?.email || user?.email || '',
           contact: (prefill?.contact || '').replace(/[^0-9+]/g, ''),
+          method: 'upi',
         },
         // We use manual blocks to force UPI QR/Intent to render, bypassing SDK defaults
         config: {
