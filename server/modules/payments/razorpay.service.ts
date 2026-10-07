@@ -90,14 +90,11 @@ export class RazorpayService {
    */
   public async createOrder(params: CreateRazorpayOrderParams) {
     const rzp = this.getClient();
-    const options: any = {
+    const options = {
       amount: Math.round(params.amountInPaise),
       currency: params.currency || 'INR',
       receipt: params.receipt,
       notes: params.notes || {},
-      // Enforce the specific payment configuration created in the Dashboard
-      // This MUST be applied server-side during order creation.
-      checkout_config_id: 'config_TkzeThxteaJycd',
     };
 
     try {
@@ -105,20 +102,6 @@ export class RazorpayService {
       return order;
     } catch (err: any) {
       console.error('[RazorpayService:createOrder:Failed]', err?.error || err);
-      
-      // If Razorpay rejects the configuration ID, we log it and retry without it so the site isn't broken
-      if (err?.error?.description?.includes('id provided does not exist') && options.checkout_config_id) {
-        console.warn(`[Razorpay] Configuration ID ${options.checkout_config_id} was REJECTED by Razorpay Orders API. Reason: ${err?.error?.description}`);
-        console.warn(`[Razorpay] Retrying order creation WITHOUT the configuration ID...`);
-        delete options.checkout_config_id;
-        try {
-          const fallbackOrder = await rzp.orders.create(options);
-          return fallbackOrder;
-        } catch (fallbackErr: any) {
-          throw new Error(`Razorpay fallback error: ${fallbackErr?.error?.description || fallbackErr?.message}`);
-        }
-      }
-
       const detail = err?.error?.description || err?.message || 'Razorpay order creation failed';
       throw new Error(`Razorpay error: ${detail}`);
     }

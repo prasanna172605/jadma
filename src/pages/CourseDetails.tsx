@@ -164,36 +164,6 @@ export const CourseDetails: React.FC = () => {
           email: prefill?.email || user?.email || '',
           contact: (prefill?.contact || '').replace(/[^0-9+]/g, ''),
         },
-        // We use manual blocks to force UPI QR/Intent to render, bypassing SDK defaults
-        config: {
-          display: {
-            blocks: {
-              upi: {
-                name: 'UPI',
-                instruments: [
-                  {
-                    method: 'upi'
-                  }
-                ]
-              },
-              other: {
-                name: 'Cards, Netbanking & Wallets',
-                instruments: [
-                  { method: 'card' },
-                  { method: 'netbanking' },
-                  { method: 'wallet' }
-                ]
-              }
-            },
-            sequence: [
-              'block.upi',
-              'block.other'
-            ],
-            preferences: {
-              show_default_blocks: false
-            }
-          }
-        },
         theme: {
           color: '#B12B2B',
           backdrop_color: 'rgba(0, 0, 0, 0.65)',

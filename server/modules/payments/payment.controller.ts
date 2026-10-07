@@ -71,10 +71,15 @@ export const createOrder = async (req: Request, res: Response) => {
     // Generate unique local receipt / transaction reference
     const receipt = `RCP_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`;
 
+    const keyId = process.env.RAZORPAY_KEY_ID || '';
+    const isTestMode = keyId.startsWith('rzp_test_');
+    const maskedKey = keyId.length > 9 ? keyId.substring(0, 13) + '...' : 'MISSING';
+    
     console.log(`[Razorpay] Creating order`);
+    console.log(`[Razorpay] Mode: ${isTestMode ? 'TEST' : 'LIVE'}`);
+    console.log(`[Razorpay] Key ID prefix: ${maskedKey}`);
     console.log(`[Razorpay] amount: ${amountInPaise}`);
     console.log(`[Razorpay] currency: INR`);
-    console.log(`[Razorpay] configuration: config_TkzeThxteaJycd`);
 
     // Create Razorpay order on server
     const rzpOrder = await razorpayService.createOrder({
