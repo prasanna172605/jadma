@@ -147,7 +147,6 @@ export const CourseDetails: React.FC = () => {
       const isMobile = isMobileDevice();
 
       // 2. Configure Razorpay Standard Checkout
-      // We use config.display.blocks to explicitly enforce the rendering of the UPI block.
       const options = {
         key: keyId,
         amount,
