@@ -172,7 +172,8 @@ export const CourseDetails: React.FC = () => {
                 name: 'Pay by any UPI App',
                 instruments: [
                   {
-                    method: 'upi'
+                    method: 'upi',
+                    flows: ['qr', 'intent']
                   }
                 ]
               },
