@@ -158,14 +158,40 @@ export const CourseDetails: React.FC = () => {
           ? { image: `${window.location.origin}/logo.png` }
           : {}),
         order_id: orderId,
-        // Prefill contact info only — do NOT set prefill.method as it hides other payment methods
+        // Clean the contact number by removing spaces. Razorpay SDK can drop UPI if contact is malformed.
         prefill: {
           name: prefill?.name || user?.name || '',
           email: prefill?.email || user?.email || '',
-          contact: prefill?.contact || '',
+          contact: (prefill?.contact || '').replace(/[^0-9+]/g, ''),
         },
-        // Use the exact custom Payment Configuration created in the Razorpay Dashboard
-        config_id: 'config_TkzeThxteaJycd',
+        // We use manual blocks to force UPI QR/Intent to render, bypassing SDK defaults
+        config: {
+          display: {
+            blocks: {
+              upi: {
+                name: 'Pay by any UPI App',
+                instruments: [
+                  {
+                    method: 'upi',
+                    flows: ['qr', 'intent']
+                  }
+                ]
+              },
+              other: {
+                name: 'Cards, Netbanking & Wallets',
+                instruments: [
+                  { method: 'card' },
+                  { method: 'netbanking' },
+                  { method: 'wallet' }
+                ]
+              }
+            },
+            sequence: ['block.upi', 'block.other'],
+            preferences: {
+              show_default_blocks: false,
+            },
+          },
+        },
         theme: {
           color: '#B12B2B',
           backdrop_color: 'rgba(0, 0, 0, 0.65)',
