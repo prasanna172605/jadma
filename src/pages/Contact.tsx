@@ -1,37 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
 import { SEO } from '../components/common/SEO';
-import { mockBranches } from '../data/branches';
-import { Phone, Mail, Send, CheckCircle2, Clock, ExternalLink } from 'lucide-react';
+import { Phone, Mail, CheckCircle2 } from 'lucide-react';
 import { EditableText } from '../components/common/EditableText';
 
 export const Contact: React.FC = () => {
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const initialCourse = queryParams.get('course') || 'Varma Foundation';
-  const initialBranch = queryParams.get('branch') || 'Thanjavur';
-
   const [formData, setFormData] = useState({
     name: '',
+    mobile: '',
     email: '',
-    phone: '',
-    branch: initialBranch,
-    courseInterest: initialCourse,
+    branch: 'Thanjavur',
+    course: 'Basic Varmakalai Training',
     message: ''
   });
   const [submitted, setSubmitted] = useState(false);
 
-  useEffect(() => {
-    const pCourse = queryParams.get('course');
-    const pBranch = queryParams.get('branch');
-    if (pCourse) setFormData(prev => ({ ...prev, courseInterest: pCourse }));
-    if (pBranch) setFormData(prev => ({ ...prev, branch: pBranch }));
-  }, [location.search]);
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name.trim() || !formData.phone.trim()) {
-      alert("Please fill in your name and contact phone number.");
+    if (!formData.name.trim() || !formData.mobile.trim()) {
+      alert('Please fill in your name and mobile number.');
       return;
     }
     setSubmitted(true);
@@ -40,301 +26,285 @@ export const Contact: React.FC = () => {
   return (
     <>
       <SEO 
-        title="Contact JADMAA Varmakalai Academy | Admissions & Enquiries"
-        description="Get in touch with JADMAA Varmakalai Academy for course admissions, free demo classes, and branch locations in Thanjavur, Kumbakonam and Ariyalur."
+        title="Contact JADMAA Varmakalai | We'd Love to Hear From You"
+        description="Contact JADMAA Varmakalai for admissions, trial classes, or Varma treatment across our Thanjavur, Kumbakonam, and Ariyalur branches."
       />
 
-      <section className="bg-jadmaa-cream py-12 border-b border-jadmaa-border text-left">
-        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 space-y-3 reveal-on-scroll">
-          <span className="text-base md:text-lg font-bold text-jadmaa-red uppercase tracking-wider">
-            <EditableText settingKey="contact.banner.subtitle" defaultText="Admissions & Enquiries" />
-          </span>
-          <h1 className="font-heading font-bold text-3xl sm:text-4xl lg:text-5xl text-jadmaa-charcoal">
-            <EditableText settingKey="contact.banner.title" defaultText="Get in Touch With JADMAA" />
-          </h1>
-          <p className="text-base md:text-lg text-jadmaa-textMuted max-w-2xl">
-            <EditableText settingKey="contact.banner.desc" defaultText="Book a free demo class, inquire about course admissions, or consult with our Varmakalai masters." multiline />
-          </p>
-        </div>
-      </section>
+      <div className="bg-[#FAF6F0] min-h-screen font-body text-[#2B2521] text-left">
+        
+        {/* Banner Section */}
+        <section className="py-8 sm:py-12 bg-[#FAF6F0] border-b border-[#E8DDD0]">
+          <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-2">
+            <h1 className="font-heading font-bold text-3xl sm:text-4xl lg:text-[42px] text-[#2B2521] leading-[1.15]">
+              <EditableText settingKey="contact.title" defaultText="Contact JADMAA Varmakalai" />
+            </h1>
+            <p className="font-heading font-bold text-[18px] sm:text-[20px] text-[#2B2521] leading-[1.3]">
+              <EditableText settingKey="contact.subtitle" defaultText="We'd Love to Hear From You" />
+            </p>
+            <p className="font-body text-[16px] text-[#5C5148] leading-[1.6] max-w-2xl mx-auto pt-1">
+              Whether you're interested in joining our Varmakalai (Varma Kalai) martial arts training programs, booking a trial class, asking about Varma treatment, or becoming part of our instructor network, our team is here to help.
+            </p>
+          </div>
+        </section>
 
-      <section className="py-16 bg-white border-b border-jadmaa-border text-left">
-        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 space-y-12">
-          
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-            
-            {/* Left Contact Form */}
-            <div className="lg:col-span-7 bg-jadmaa-cream/60 p-8 rounded-3xl border border-jadmaa-border shadow-sm reveal-left">
+        {/* Contact Info + Enquiry Form Grid */}
+        <section className="py-8 sm:py-12 bg-[#FAF6F0] border-b border-[#E8DDD0]">
+          <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
               
-              {submitted ? (
-                <div className="py-12 text-center space-y-4">
-                  <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
-                    <CheckCircle2 className="w-10 h-10" />
-                  </div>
-                  <h3 className="font-heading font-extrabold text-[clamp(24px,4vw,40px)] text-jadmaa-charcoal">
-                    Enquiry Submitted Successfully!
-                  </h3>
-                  <p className="text-sm md:text-xl text-jadmaa-textMuted max-w-md mx-auto leading-relaxed">
-                    Thank you, <strong>{formData.name}</strong>. Our admissions team at the <strong>{formData.branch}</strong> branch will call you back on <strong>{formData.phone}</strong> shortly to schedule your session.
-                  </p>
-                  <button
-                    onClick={() => { setSubmitted(false); setFormData({ name: '', email: '', phone: '', branch: 'Thanjavur', courseInterest: 'Varma Foundation', message: '' }); }}
-                    className="px-6 py-2.5 bg-jadmaa-red text-white font-bold text-xs rounded-xl shadow hover:bg-jadmaa-redDark transition-colors"
-                  >
-                    Submit Another Enquiry
-                  </button>
+              {/* Left Column: Phone, Email, Connect */}
+              <div className="lg:col-span-5 space-y-6">
+                
+                {/* Phone Card */}
+                <div className="bg-white p-6 rounded-[14px] border border-[#E8DDD0] space-y-3">
+                  <h4 className="font-heading font-semibold text-[18px] text-[#2B2521] leading-[1.2]">
+                    Phone
+                  </h4>
+                  <ul className="space-y-2 text-[15px] font-body text-[#2B2521]">
+                    <li>
+                      <a href="tel:+919345220020" className="inline-flex items-center space-x-2.5 text-[#2B2521] hover:text-[#B12B2B] transition-colors">
+                        <Phone className="w-4 h-4 text-[#B12B2B]" />
+                        <span>+91 93452 20020</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="tel:+919655457500" className="inline-flex items-center space-x-2.5 text-[#2B2521] hover:text-[#B12B2B] transition-colors">
+                        <Phone className="w-4 h-4 text-[#B12B2B]" />
+                        <span>+91 96554 57500</span>
+                      </a>
+                    </li>
+                  </ul>
                 </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-5">
-                  <div>
-                    <h3 className="font-heading font-extrabold text-[clamp(24px,4vw,40px)] text-jadmaa-charcoal">
-                      <EditableText settingKey="contact.form.title" defaultText="Send Us a Message" />
-                    </h3>
-                    <p className="text-sm md:text-xl text-jadmaa-textMuted">
-                      <EditableText settingKey="contact.form.subtitle" defaultText="Fill out the form below to request a free trial class or course brochure." />
-                    </p>
-                  </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <label className="text-sm font-bold text-jadmaa-charcoal">Full Name *</label>
+                {/* Email Card */}
+                <div className="bg-white p-6 rounded-[14px] border border-[#E8DDD0] space-y-3">
+                  <h4 className="font-heading font-semibold text-[18px] text-[#2B2521] leading-[1.2]">
+                    Email
+                  </h4>
+                  <ul className="text-[15px] font-body text-[#2B2521]">
+                    <li>
+                      <a href="mailto:info@jadmaa.com" className="inline-flex items-center space-x-2.5 text-[#2B2521] hover:text-[#B12B2B] transition-colors">
+                        <Mail className="w-4 h-4 text-[#B12B2B]" />
+                        <span>info@jadmaa.com</span>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Connect With Us Card */}
+                <div className="bg-white p-6 rounded-[14px] border border-[#E8DDD0] space-y-3">
+                  <h4 className="font-heading font-semibold text-[18px] text-[#2B2521] leading-[1.2]">
+                    Connect With Us
+                  </h4>
+                  <p className="font-body text-[15px] text-[#5C5148] leading-[1.6]">
+                    Stay connected with JADMAA Varmakalai for training updates, workshops, self-defence tips, and student success stories.
+                  </p>
+                  <div className="pt-1">
+                    <a 
+                      href="https://chat.whatsapp.com/BOdavYeDSMJ0xREnzyelJh"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block bg-[#B12B2B] hover:bg-[#8F2020] text-white font-semibold text-[15px] px-6 py-2.5 rounded-[8px] transition-colors"
+                    >
+                      Join Our WhatsApp Community
+                    </a>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Right Column: Enquiry Form */}
+              <div className="lg:col-span-7 bg-white p-6 sm:p-8 rounded-[14px] border border-[#E8DDD0] space-y-4">
+                <div>
+                  <h3 className="font-heading font-semibold text-[22px] text-[#2B2521] leading-[1.2]">
+                    Send Us an Enquiry
+                  </h3>
+                  <p className="font-body text-[15px] text-[#5C5148] leading-[1.6] mt-1">
+                    Fill out the form below and our team will get back to you as soon as possible.
+                  </p>
+                </div>
+
+                {submitted ? (
+                  <div className="p-6 bg-[#FAF6F0] rounded-[10px] border border-[#E8DDD0] text-center space-y-3">
+                    <CheckCircle2 className="w-10 h-10 text-[#B12B2B] mx-auto" />
+                    <h4 className="font-heading font-bold text-[18px] text-[#2B2521]">Thank you for your enquiry!</h4>
+                    <p className="font-body text-[14px] text-[#5C5148]">
+                      Our team will reach out to you at <strong>{formData.mobile}</strong> shortly.
+                    </p>
+                    <button
+                      onClick={() => setSubmitted(false)}
+                      className="text-[13px] font-semibold text-[#B12B2B] hover:underline"
+                    >
+                      Submit another enquiry
+                    </button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleSubmit} className="space-y-3.5">
+                    <div>
                       <input 
-                        type="text" 
+                        type="text"
                         required
-                        placeholder="e.g. Senthil Kumar"
+                        placeholder="Full Name"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-jadmaa-border bg-white text-sm md:text-lg text-jadmaa-charcoal focus:border-jadmaa-red outline-none"
+                        className="w-full px-4 py-2.5 rounded-[8px] border border-[#E8DDD0] bg-white text-[15px] text-[#2B2521] placeholder-[#5C5148]/60 focus:border-[#B12B2B] outline-none"
                       />
                     </div>
 
-                    <div className="space-y-1">
-                      <label className="text-sm font-bold text-jadmaa-charcoal">Phone Number *</label>
+                    <div>
                       <input 
-                        type="tel" 
+                        type="tel"
                         required
-                        placeholder="+91 98765 43210"
-                        value={formData.phone}
-                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-jadmaa-border bg-white text-sm md:text-lg text-jadmaa-charcoal focus:border-jadmaa-red outline-none"
+                        placeholder="Mobile Number"
+                        value={formData.mobile}
+                        onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
+                        className="w-full px-4 py-2.5 rounded-[8px] border border-[#E8DDD0] bg-white text-[15px] text-[#2B2521] placeholder-[#5C5148]/60 focus:border-[#B12B2B] outline-none"
                       />
                     </div>
-                  </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <label className="text-sm font-bold text-jadmaa-charcoal">Email Address</label>
+                    <div>
                       <input 
-                        type="email" 
-                        placeholder="senthil@example.com"
+                        type="email"
+                        placeholder="Email Address"
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-jadmaa-border bg-white text-sm md:text-lg text-jadmaa-charcoal focus:border-jadmaa-red outline-none"
+                        className="w-full px-4 py-2.5 rounded-[8px] border border-[#E8DDD0] bg-white text-[15px] text-[#2B2521] placeholder-[#5C5148]/60 focus:border-[#B12B2B] outline-none"
                       />
                     </div>
 
-                    <div className="space-y-1">
-                      <label className="text-sm font-bold text-jadmaa-charcoal">Preferred Branch</label>
-                      <select 
+                    <div>
+                      <select
                         value={formData.branch}
                         onChange={(e) => setFormData({ ...formData, branch: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-jadmaa-border bg-white text-sm md:text-lg text-jadmaa-charcoal focus:border-jadmaa-red outline-none"
+                        className="w-full px-4 py-2.5 rounded-[8px] border border-[#E8DDD0] bg-white text-[15px] text-[#2B2521] focus:border-[#B12B2B] outline-none"
                       >
-                        <option value="Thanjavur">Thanjavur (HQ)</option>
+                        <option value="Thanjavur">Thanjavur</option>
                         <option value="Kumbakonam">Kumbakonam</option>
                         <option value="Ariyalur">Ariyalur</option>
                       </select>
                     </div>
-                  </div>
 
-                  <div className="space-y-1">
-                    <label className="text-sm font-bold text-jadmaa-charcoal">Course / Program Interest</label>
-                    <select 
-                      value={formData.courseInterest}
-                      onChange={(e) => setFormData({ ...formData, courseInterest: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-jadmaa-border bg-white text-sm md:text-lg text-jadmaa-charcoal focus:border-jadmaa-red outline-none"
-                    >
-                      <option value="Varma Foundation">Varma Foundation & Vital Points</option>
-                      <option value="Intermediate Varma">Intermediate Varma Combat</option>
-                      <option value="Kids Varmakalai">Kids Varmakalai & Fitness</option>
-                      <option value="Womens Self Defence">Women's Tactical Self Defence</option>
-                      <option value="Varma Wellness">Varma Healing & Wellness Therapy</option>
-                      <option value="Complete Master Program">Complete Master Program</option>
-                      <option value="Instructor Pathway">Certified Instructor Pathway</option>
-                    </select>
-                  </div>
-
-                  <div className="space-y-1">
-                    <label className="text-sm font-bold text-jadmaa-charcoal">Your Message or Preferred Timings</label>
-                    <textarea 
-                      rows={4}
-                      placeholder="Please let us know your preferred training time or any questions..."
-                      value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-jadmaa-border bg-white text-sm md:text-lg text-jadmaa-charcoal focus:border-jadmaa-red outline-none"
-                    ></textarea>
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="w-full py-3.5 px-6 bg-jadmaa-red hover:bg-jadmaa-redDark text-white font-bold text-sm rounded-xl shadow-lg transition-all flex items-center justify-center space-x-2"
-                  >
-                    <Send className="w-4 h-4" />
-                    <span>Submit Free Demo Class Request</span>
-                  </button>
-
-                </form>
-              )}
-
-            </div>
-
-            {/* Right Contact Info */}
-            <div className="lg:col-span-5 space-y-8 reveal-right">
-              
-              <div className="space-y-4">
-                <h3 className="font-heading font-extrabold text-[clamp(24px,4vw,40px)] text-jadmaa-charcoal">
-                  <EditableText settingKey="contact.info.title" defaultText="Direct Contact Information" />
-                </h3>
-                <p className="text-sm md:text-xl text-jadmaa-textMuted leading-relaxed">
-                  <EditableText settingKey="contact.info.description" defaultText="Have urgent questions about class timings, registrations or therapeutic appointments? Reach out to our central team." multiline />
-                </p>
-
-                <div className="space-y-3 pt-2">
-                  <a 
-                    href="tel:+919345220020"
-                    className="p-4 bg-jadmaa-cream rounded-2xl border border-jadmaa-border flex items-start space-x-3 hover:border-jadmaa-red transition-all group"
-                  >
-                    <Phone className="w-5 h-5 text-jadmaa-red flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
                     <div>
-                      <p className="text-sm text-gray-500 uppercase font-bold text-left">
-                        <EditableText settingKey="contact.phone1.label" defaultText="Central Admissions Line" />
-                      </p>
-                      <p className="font-bold text-base md:text-lg text-jadmaa-charcoal text-left">
-                        <EditableText settingKey="contact.phone1.number" defaultText="+91 93452 20020" />
-                      </p>
+                      <select
+                        value={formData.course}
+                        onChange={(e) => setFormData({ ...formData, course: e.target.value })}
+                        className="w-full px-4 py-2.5 rounded-[8px] border border-[#E8DDD0] bg-white text-[15px] text-[#2B2521] focus:border-[#B12B2B] outline-none"
+                      >
+                        <option value="Basic Varmakalai Training">Basic Varmakalai Training</option>
+                        <option value="Intermediate Varmakalai Training">Intermediate Varmakalai Training</option>
+                        <option value="Advanced Varmakalai Training">Advanced Varmakalai Training</option>
+                        <option value="Kids Self-Defence Training">Kids Self-Defence Training</option>
+                        <option value="Self-Defence Training for ALL">Self-Defence Training for ALL</option>
+                        <option value="Women's Self-Defence Program">Women's Self-Defence Program</option>
+                        <option value="Weight Loss Training">Weight Loss Training</option>
+                      </select>
                     </div>
-                  </a>
 
-                  <a 
-                    href="tel:+919655457500"
-                    className="p-4 bg-jadmaa-cream rounded-2xl border border-jadmaa-border flex items-start space-x-3 hover:border-jadmaa-red transition-all group"
-                  >
-                    <Phone className="w-5 h-5 text-jadmaa-red flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
                     <div>
-                      <p className="text-sm text-gray-500 uppercase font-bold text-left">
-                        <EditableText settingKey="contact.phone2.label" defaultText="Secondary Support Line" />
-                      </p>
-                      <p className="font-bold text-base md:text-lg text-jadmaa-charcoal text-left">
-                        <EditableText settingKey="contact.phone2.number" defaultText="+91 96554 57500" />
-                      </p>
+                      <textarea
+                        rows={4}
+                        placeholder="Message"
+                        value={formData.message}
+                        onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                        className="w-full px-4 py-2.5 rounded-[8px] border border-[#E8DDD0] bg-white text-[15px] text-[#2B2521] placeholder-[#5C5148]/60 focus:border-[#B12B2B] outline-none resize-none"
+                      ></textarea>
                     </div>
-                  </a>
 
-                  <a 
-                    href="mailto:info@jadmaa.com"
-                    className="p-4 bg-jadmaa-cream rounded-2xl border border-jadmaa-border flex items-start space-x-3 hover:border-jadmaa-red transition-all group"
-                  >
-                    <Mail className="w-5 h-5 text-jadmaa-red flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
                     <div>
-                      <p className="text-sm text-gray-500 uppercase font-bold text-left">
-                        <EditableText settingKey="contact.email.label" defaultText="Official Email" />
-                      </p>
-                      <p className="font-bold text-base md:text-lg text-jadmaa-charcoal text-left">
-                        <EditableText settingKey="contact.email.value" defaultText="info@jadmaa.com" />
-                      </p>
+                      <input 
+                        type="submit" 
+                        value="Submit Enquiry"
+                        className="bg-[#B12B2B] hover:bg-[#8F2020] text-white font-semibold text-[15px] px-7 py-3 rounded-[8px] transition-colors cursor-pointer w-full sm:w-auto"
+                      />
                     </div>
-                  </a>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <h4 className="font-heading font-bold text-lg text-jadmaa-charcoal text-left">
-                  <EditableText settingKey="contact.hours.title" defaultText="Branch Operating Hours" />
-                </h4>
-                <div className="space-y-3 reveal-stagger">
-                  {mockBranches.map(b => (
-                    <div key={b.id} className="reveal-child p-4 bg-white rounded-xl border border-jadmaa-border text-xs space-y-1.5 shadow-sm hover:border-jadmaa-red transition-all text-left">
-                      <div className="flex items-center justify-between">
-                        <p className="font-bold text-jadmaa-charcoal text-sm">{b.city} Branch</p>
-                        <span className="text-xs font-semibold uppercase px-2 py-0.5 rounded bg-jadmaa-red/10 text-jadmaa-red">
-                          Active
-                        </span>
-                      </div>
-                      <div className="flex items-center space-x-1.5 text-jadmaa-textMuted pt-0.5">
-                        <Clock className="w-3.5 h-3.5 text-jadmaa-red flex-shrink-0" />
-                        <span className="text-xs leading-relaxed">{b.hours}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                  </form>
+                )}
               </div>
 
             </div>
-
           </div>
+        </section>
 
-        </div>
-      </section>
-
-      {/* Majestic "Our Branches" section with live location maps */}
-      <section className="bg-jadmaa-cream/40 py-16 border-b border-jadmaa-border text-center">
-        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 space-y-10">
-          <div className="text-center max-w-2xl mx-auto space-y-2">
-            <span className="text-sm md:text-base font-bold text-jadmaa-red uppercase tracking-wider">
-              <EditableText settingKey="contact.branches.eyebrow" defaultText="VISIT OUR ACADEMIES" />
-            </span>
-            <h2 className="font-heading font-extrabold text-4xl text-[#2B2521]">
-              <EditableText settingKey="contact.branches.title" defaultText="Our Branches" />
+        {/* Our Branches Section */}
+        <section className="py-8 sm:py-12 bg-[#FAF6F0] border-b border-[#E8DDD0]">
+          <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+            <h2 className="font-heading font-bold text-2xl sm:text-3xl lg:text-[34px] text-[#2B2521] leading-[1.15]">
+              Our Branches
             </h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {mockBranches.map((branch) => {
-              // Custom map link query for direct opening in google maps
-              const mapQueryUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                branch.id === 'ariyalur' 
-                  ? "Mr. Perfect Gym, Ariyalur, Tamil Nadu" 
-                  : branch.name + " " + branch.city
-              )}`;
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               
-              return (
-                <div key={branch.id} className="bg-white rounded-3xl border border-jadmaa-border shadow-md p-6 text-left space-y-5 flex flex-col justify-between hover-lift">
-                  <div className="space-y-3">
-                    <h3 className="font-heading font-extrabold text-xl text-jadmaa-charcoal flex items-center space-x-2">
-                      <span role="img" aria-label="pin" className="text-jadmaa-red">📍</span>
-                      <span>{branch.id === 'thanjavur' ? 'Thanjavur Branch' : branch.id === 'kumbakonam' ? 'Kumbakonam Branch' : 'Ariyalur Branch'}</span>
-                    </h3>
-                    <p className="text-[#5C5148] text-sm md:text-base leading-relaxed h-[4.5rem] overflow-hidden">
-                      {branch.address}
-                    </p>
-                  </div>
-                  
-                  {/* Interactive Map Block */}
-                  <div className="relative rounded-2xl overflow-hidden border border-gray-100 shadow-inner h-[220px] w-full group/map">
-                    <iframe
-                      src={branch.mapEmbedUrl}
-                      className="w-full h-full border-0"
-                      allowFullScreen={false}
-                      loading="lazy"
-                      referrerPolicy="no-referrer-when-downgrade"
-                      title={branch.name}
-                    />
-                    {/* Open in Maps Overlay Button */}
-                    <a
-                      href={mapQueryUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="absolute top-4 left-4 bg-white border border-gray-200 rounded-xl px-3.5 py-1.5 shadow-sm text-xs font-bold text-[#1a73e8] hover:bg-gray-50 flex items-center space-x-1.5 transition-all"
-                    >
-                      <span>Open in Maps</span>
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </a>
-                  </div>
+              {/* Branch 1: Thanjavur */}
+              <div className="bg-white p-5 sm:p-6 rounded-[14px] border border-[#E8DDD0] space-y-4 flex flex-col justify-between">
+                <div className="space-y-2">
+                  <h4 className="font-heading font-semibold text-[18px] text-[#2B2521] leading-[1.2]">
+                    📍 Thanjavur Branch
+                  </h4>
+                  <p className="font-body text-[15px] text-[#5C5148] leading-[1.6]">
+                    48, Carmel Nagar, Kaattuthottam,<br />
+                    Near Mariamman Kovil Park,<br />
+                    Thanjavur, Tamil Nadu.
+                  </p>
                 </div>
-              );
-            })}
+                <div className="w-full h-[220px] rounded-[10px] overflow-hidden border border-[#E8DDD0]">
+                  <iframe 
+                    src="https://maps.google.com/maps?q=JADMAA%20Varmakalai%2C%20Thanjavur%20-%20Nagapattinam%20Rd%2C%20Mariamman%20Kovil%2C%20Pulianthoppu%2C%20Thanjavur%2C%20Tamil%20Nadu%20613501&t=m&z=17&output=embed&iwloc=near"
+                    title="JADMAA Varmakalai, Thanjavur"
+                    className="w-full h-full border-0"
+                    loading="lazy"
+                  ></iframe>
+                </div>
+              </div>
+
+              {/* Branch 2: Kumbakonam */}
+              <div className="bg-white p-5 sm:p-6 rounded-[14px] border border-[#E8DDD0] space-y-4 flex flex-col justify-between">
+                <div className="space-y-2">
+                  <h4 className="font-heading font-semibold text-[18px] text-[#2B2521] leading-[1.2]">
+                    📍 Kumbakonam Branch
+                  </h4>
+                  <p className="font-body text-[15px] text-[#5C5148] leading-[1.6]">
+                    SVS Trader,<br />
+                    Melakkaveri GH Back Side,<br />
+                    Swamimalai Main Road,<br />
+                    Kumbakonam, Tamil Nadu.
+                  </p>
+                </div>
+                <div className="w-full h-[220px] rounded-[10px] overflow-hidden border border-[#E8DDD0]">
+                  <iframe 
+                    src="https://maps.google.com/maps?q=JADMAA%20Varmakalai%2C%20Jadma%20Varmakalai%20GH%20backside%2C%20Swamimalai%20Rd%2C%20Melacavery%2C%20Kumbakonam%2C%20Tamil%20Nadu%20612001&t=m&z=17&output=embed&iwloc=near"
+                    title="JADMAA Varmakalai, Kumbakonam"
+                    className="w-full h-full border-0"
+                    loading="lazy"
+                  ></iframe>
+                </div>
+              </div>
+
+              {/* Branch 3: Ariyalur */}
+              <div className="bg-white p-5 sm:p-6 rounded-[14px] border border-[#E8DDD0] space-y-4 flex flex-col justify-between">
+                <div className="space-y-2">
+                  <h4 className="font-heading font-semibold text-[18px] text-[#2B2521] leading-[1.2]">
+                    📍 Ariyalur Branch
+                  </h4>
+                  <p className="font-body text-[15px] text-[#5C5148] leading-[1.6]">
+                    Mr. Perfect Gym,<br />
+                    Ariyalur, Tamil Nadu.
+                  </p>
+                </div>
+                <div className="w-full h-[220px] rounded-[10px] overflow-hidden border border-[#E8DDD0]">
+                  <iframe 
+                    src="https://maps.google.com/maps?q=JADMAA%20Varmakalai%2C%20Mr.%20Perfect%20Gym%2C%20Ariyalur%2C%20Tamil%20Nadu&t=m&z=15&output=embed&iwloc=near"
+                    title="JADMAA Varmakalai, Ariyalur"
+                    className="w-full h-full border-0"
+                    loading="lazy"
+                  ></iframe>
+                </div>
+              </div>
+
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+
+      </div>
     </>
   );
 };

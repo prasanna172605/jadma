@@ -1,235 +1,250 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { Link } from 'react-router-dom';
 import { SEO } from '../components/common/SEO';
-import { ArrowRight, CheckCircle2, ChevronDown, User, Star, Award, BookOpen, Send } from 'lucide-react';
+import { EditableText } from '../components/common/EditableText';
 
 const careerSteps = [
   {
-    title: "Step 1 – Basic Level",
-    description: "Start your journey by mastering the foundational stances, blocks, and basic strikes of Varmakalai.",
-    icon: <User className="w-5 h-5" />
+    step: 'Step 1 – Basic Level',
+    bullets: [
+      'Learn Varmakalai fundamentals and training etiquette.',
+      'Build physical fitness, flexibility, coordination, and discipline.',
+      'Develop confidence through practical self-defence techniques.'
+    ]
   },
   {
-    title: "Step 2 – Intermediate Level",
-    description: "Progress into advanced combinations, weapon defense, and understanding fundamental Varma points.",
-    icon: <BookOpen className="w-5 h-5" />
+    step: 'Step 2 – Intermediate Level',
+    bullets: [
+      'Enhance technical skills with advanced movements and applications.',
+      'Improve speed, precision, endurance, and situational awareness.',
+      'Participate in workshops, demonstrations, and events.'
+    ]
   },
   {
-    title: "Step 3 – Advanced Level",
-    description: "Deepen your expertise with complex pressure point applications, therapeutic healing, and advanced Adimurai.",
-    icon: <Star className="w-5 h-5" />
+    step: 'Step 3 – Advanced Level',
+    bullets: [
+      'Master advanced Varmakalai techniques and practical applications.',
+      'Learn leadership, mentoring, and training methodologies.',
+      'Prepare for instructor development and higher responsibilities.'
+    ]
   },
   {
-    title: "Step 4 – Assistant Instructor",
-    description: "Begin assisting senior masters in training sessions to develop your teaching, leadership, and communication skills.",
-    icon: <Award className="w-5 h-5" />
+    step: 'Step 4 – Assistant Instructor',
+    paragraph: 'Outstanding students may be invited to assist senior instructors during classes. This stage helps develop teaching ability, communication skills, classroom management, and practical coaching experience.'
   },
   {
-    title: "Step 5 – Certified Instructor",
-    description: "Pass the official JADMAA certification exams to become a recognized instructor capable of leading full batches.",
-    icon: <CheckCircle2 className="w-5 h-5" />
+    step: 'Step 5 – Certified Instructor',
+    paragraph: "After meeting JADMAA's training standards and assessment requirements, eligible candidates may become certified instructors and teach under JADMAA Varmakalai."
   },
   {
-    title: "Step 6 – Branch Trainer",
-    description: "Take on the responsibility of managing and leading training at one of our dedicated branch locations.",
-    icon: <Award className="w-5 h-5" />
+    step: 'Step 6 – Branch Trainer',
+    paragraph: 'Experienced instructors may be offered opportunities to lead training programs, conduct workshops, and support the growth of existing or new branches.'
   }
 ];
 
+const opportunities = [
+  'Varmakalai Instructor',
+  "Women's Self-Defence Trainer",
+  "Children's Martial Arts Coach",
+  'Fitness & Conditioning Trainer',
+  'Workshop & Seminar Trainer',
+  'School & College Program Instructor',
+  'Corporate Self-Defence Trainer',
+  'Branch Training Coordinator',
+  'Varma Treatment Specialist'
+];
+
 export const Careers: React.FC = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    experience: '',
-    message: ''
-  });
-  const [submitted, setSubmitted] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formData.name.trim() || !formData.phone.trim()) {
-      alert("Please fill in your name and phone number.");
-      return;
-    }
-    setSubmitted(true);
-  };
-
   return (
     <>
       <SEO 
-        title="Careers & Instructor Path | JADMAA Varmakalai"
-        description="Build your future through Varmakalai. Learn how to progress from a student to a certified Branch Trainer at JADMAA Academy."
+        title="Build Your Future Through Varmakalai (Varma Kalai) Martial Arts | JADMAA"
+        description="From student to branch trainer. Explore career pathways as certified Varmakalai instructors, coaches, and trainers at JADMAA."
       />
-      
-      {/* Banner */}
-      <section className="bg-jadmaa-cream py-12 md:py-16 border-b border-jadmaa-border text-left">
-        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 space-y-4 reveal-on-scroll">
-          <span className="text-base md:text-lg font-bold text-jadmaa-red uppercase tracking-wider">
-            Career Opportunities
-          </span>
-          <h1 className="font-heading font-extrabold text-3xl sm:text-5xl text-jadmaa-charcoal">
-            Build Your Future Through <span className="text-jadmaa-red">Varmakalai</span>
-          </h1>
-          <p className="text-base md:text-lg text-jadmaa-textMuted max-w-2xl leading-relaxed">
-            Train. Lead. Inspire. Preserve the Legacy. Join the JADMAA family and turn your passion for traditional martial arts into a fulfilling career path.
-          </p>
-        </div>
-      </section>
 
-      {/* From Student to Branch Trainer */}
-      <section className="py-16 bg-white border-b border-jadmaa-border text-left">
-        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12">
-          <div className="text-center max-w-3xl mx-auto space-y-4 mb-12 reveal-on-scroll">
-            <h2 className="font-heading font-extrabold text-[clamp(40px,6vw,60px)] text-jadmaa-charcoal">
-              From Student to Branch Trainer
-            </h2>
-            <p className="text-base md:text-lg text-jadmaa-textMuted">
-              Our structured progression ensures you receive the highest quality of martial and pedagogical training before you step onto the mat as a leader.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 reveal-stagger">
-            {careerSteps.map((step, idx) => (
-              <div key={idx} className="bg-jadmaa-cream/50 rounded-2xl border border-jadmaa-border p-6 hover-lift reveal-child flex flex-col h-full">
-                <div className="w-12 h-12 rounded-full bg-jadmaa-red/10 text-jadmaa-red flex items-center justify-center mb-4">
-                  {step.icon}
+      <div className="bg-[#FAF6F0] min-h-screen font-body text-[#2B2521] text-left">
+        
+        {/* Banner Section */}
+        <section className="py-8 sm:py-12 bg-[#FAF6F0] border-b border-[#E8DDD0]">
+          <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+              
+              <div className="lg:col-span-7 space-y-3">
+                <div className="text-[12px] font-bold tracking-[.08em] uppercase text-[#B12B2B]">
+                  Growth &amp; Leadership
                 </div>
-                <h3 className="font-heading font-extrabold text-lg text-jadmaa-charcoal mb-2">
-                  {step.title}
-                </h3>
-                <p className="text-base md:text-lg text-jadmaa-textMuted leading-relaxed flex-grow">
-                  {step.description}
-                </p>
+                <h1 className="font-heading font-bold text-2xl sm:text-3xl lg:text-[40px] text-[#2B2521] leading-[1.15]">
+                  <EditableText 
+                    settingKey="careers.title" 
+                    defaultText="Build Your Future Through Varmakalai (Varma Kalai) Martial Arts" 
+                  />
+                </h1>
+                <div className="text-[#5C5148] text-[15.5px] leading-[1.7] pt-2">
+                  At JADMAA Varmakalai, learning doesn't end with earning a certificate. We provide a structured pathway that enables dedicated students to develop their skills, gain teaching experience, and pursue rewarding opportunities in the field of martial arts.
+                </div>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* Who Can Apply & Form */}
-      <section className="py-16 bg-jadmaa-cream border-b border-jadmaa-border text-left">
-        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+              <div className="lg:col-span-5 flex justify-center">
+                <div className="w-full max-w-[480px] overflow-hidden rounded-[14px]">
+                  <img 
+                    src="https://jadmaa.com/wp-content/uploads/2026/08/file_000000008884820b9a3c789a8c0be531.png"
+                    alt="Varmakalai martial arts training session at JADMAA"
+                    className="w-full h-auto object-cover rounded-[14px] hover:scale-105 transition-transform duration-500 ease-out"
+                  />
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        {/* The Pathway: From Student to Branch Trainer */}
+        <section className="py-8 sm:py-12 bg-[#FAF6F0] border-b border-[#E8DDD0]">
+          <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
             
-            <div className="lg:col-span-5 space-y-6 reveal-on-scroll">
-              <span className="text-base md:text-lg font-bold text-jadmaa-red uppercase tracking-wider">
-                Who Can Apply?
-              </span>
-              <h2 className="font-heading font-extrabold text-[clamp(40px,6vw,60px)] text-jadmaa-charcoal">
-                Join the Instructor Program
+            <div className="text-center space-y-2">
+              <div className="text-[12px] font-bold tracking-[.08em] uppercase text-[#B12B2B]">
+                The pathway
+              </div>
+              <h2 className="font-heading font-bold text-2xl sm:text-3xl lg:text-[34px] text-[#2B2521] leading-[1.15]">
+                From Student to Branch Trainer
               </h2>
-              <p className="text-base md:text-lg text-jadmaa-textMuted leading-relaxed">
-                Whether you are already an advanced martial artist or a dedicated beginner aiming for the long term, we have a pathway for you. Candidates must demonstrate high moral character, physical discipline, and a deep respect for the art of Varmakalai.
-              </p>
-              <ul className="space-y-3 pt-2">
-                <li className="flex items-start space-x-3 text-base md:text-lg text-jadmaa-textMuted">
-                  <CheckCircle2 className="w-5 h-5 text-jadmaa-red flex-shrink-0" />
-                  <span>Passionate about teaching and mentoring others.</span>
-                </li>
-                <li className="flex items-start space-x-3 text-base md:text-lg text-jadmaa-textMuted">
-                  <CheckCircle2 className="w-5 h-5 text-jadmaa-red flex-shrink-0" />
-                  <span>Willing to undergo rigorous technical and pedagogical training.</span>
-                </li>
-                <li className="flex items-start space-x-3 text-base md:text-lg text-jadmaa-textMuted">
-                  <CheckCircle2 className="w-5 h-5 text-jadmaa-red flex-shrink-0" />
-                  <span>Committed to preserving the authenticity of JADMAA Varmakalai.</span>
-                </li>
-              </ul>
             </div>
 
-            <div className="lg:col-span-7 reveal-on-scroll" style={{ transitionDelay: '100ms' }}>
-              <div className="bg-white rounded-2xl shadow-sm border border-jadmaa-border p-6 md:p-8">
-                <h3 className="font-heading font-extrabold text-[clamp(24px,4vw,40px)] text-jadmaa-charcoal mb-6">
-                  Apply for the Instructor Program
-                </h3>
-                
-                {submitted ? (
-                  <div className="bg-green-50 border border-green-200 rounded-xl p-8 text-center space-y-4">
-                    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto text-green-600">
-                      <CheckCircle2 className="w-8 h-8" />
-                    </div>
-                    <h4 className="font-heading font-bold text-xl text-green-900">Application Received</h4>
-                    <p className="text-sm text-green-700">Thank you for your interest in becoming a JADMAA Instructor. Our team will review your details and contact you shortly.</p>
-                  </div>
-                ) : (
-                  <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="space-y-1.5">
-                        <label className="text-sm font-bold text-jadmaa-charcoal">Full Name <span className="text-jadmaa-red">*</span></label>
-                        <input 
-                          type="text"
-                          required
-                          value={formData.name}
-                          onChange={(e) => setFormData({...formData, name: e.target.value})}
-                          className="w-full bg-jadmaa-cream/50 border border-jadmaa-border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-jadmaa-red focus:ring-1 focus:ring-jadmaa-red transition-colors"
-                          placeholder="John Doe"
-                        />
-                      </div>
-                      <div className="space-y-1.5">
-                        <label className="text-sm font-bold text-jadmaa-charcoal">Phone Number <span className="text-jadmaa-red">*</span></label>
-                        <input 
-                          type="tel"
-                          required
-                          value={formData.phone}
-                          onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                          className="w-full bg-jadmaa-cream/50 border border-jadmaa-border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-jadmaa-red focus:ring-1 focus:ring-jadmaa-red transition-colors"
-                          placeholder="+91 98765 43210"
-                        />
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-1.5">
-                      <label className="text-sm font-bold text-jadmaa-charcoal">Email Address</label>
-                      <input 
-                        type="email"
-                        value={formData.email}
-                        onChange={(e) => setFormData({...formData, email: e.target.value})}
-                        className="w-full bg-jadmaa-cream/50 border border-jadmaa-border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-jadmaa-red focus:ring-1 focus:ring-jadmaa-red transition-colors"
-                        placeholder="john@example.com"
-                      />
-                    </div>
-                    
-                    <div className="space-y-1.5">
-                      <label className="text-sm font-bold text-jadmaa-charcoal">Prior Martial Arts Experience</label>
-                      <select
-                        value={formData.experience}
-                        onChange={(e) => setFormData({...formData, experience: e.target.value})}
-                        className="w-full bg-jadmaa-cream/50 border border-jadmaa-border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-jadmaa-red focus:ring-1 focus:ring-jadmaa-red transition-colors"
-                      >
-                        <option value="">Select your experience level...</option>
-                        <option value="none">No prior experience</option>
-                        <option value="beginner">Beginner (Less than 1 year)</option>
-                        <option value="intermediate">Intermediate (1-3 years)</option>
-                        <option value="advanced">Advanced (3+ years)</option>
-                        <option value="instructor">Existing Instructor in another art</option>
-                      </select>
-                    </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {careerSteps.map((stepItem) => (
+                <div 
+                  key={stepItem.step} 
+                  className="bg-white p-5 sm:p-6 rounded-[14px] border border-[#E8DDD0] space-y-3 flex flex-col justify-start"
+                >
+                  <h5 className="font-heading font-semibold text-[17px] sm:text-[18px] text-[#2B2521] leading-[1.2]">
+                    {stepItem.step}
+                  </h5>
 
-                    <div className="space-y-1.5">
-                      <label className="text-sm font-bold text-jadmaa-charcoal">Why do you want to become a JADMAA Instructor?</label>
-                      <textarea 
-                        rows={4}
-                        value={formData.message}
-                        onChange={(e) => setFormData({...formData, message: e.target.value})}
-                        className="w-full bg-jadmaa-cream/50 border border-jadmaa-border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-jadmaa-red focus:ring-1 focus:ring-jadmaa-red transition-colors resize-none"
-                        placeholder="Tell us a bit about your goals..."
-                      ></textarea>
+                  {stepItem.bullets ? (
+                    <div className="space-y-1.5 text-[14px] text-[#2B2521]">
+                      {stepItem.bullets.map((b) => (
+                        <div key={b} className="flex items-start gap-2">
+                          <span className="text-[#B12B2B] font-bold">✓</span>
+                          <span className="leading-[1.5]">{b}</span>
+                        </div>
+                      ))}
                     </div>
+                  ) : (
+                    <div className="text-[#5C5148] text-[14px] leading-[1.7]">
+                      {stepItem.paragraph}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
 
-                    <button 
-                      type="submit"
-                      className="w-full btn-jadmaa-primary flex items-center justify-center space-x-2"
-                    >
-                      <span>Submit Application</span>
-                      <Send className="w-4 h-4" />
-                    </button>
-                  </form>
-                )}
+          </div>
+        </section>
+
+        {/* Where it can lead: Career Opportunities */}
+        <section className="py-8 sm:py-12 bg-[#FAF6F0] border-b border-[#E8DDD0]">
+          <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+            
+            <div className="text-center space-y-2 max-w-2xl mx-auto">
+              <div className="text-[12px] font-bold tracking-[.08em] uppercase text-[#B12B2B]">
+                Where it can lead
               </div>
+              <h2 className="font-heading font-bold text-2xl sm:text-3xl lg:text-[34px] text-[#2B2521] leading-[1.15]">
+                Career Opportunities
+              </h2>
+              <p className="text-[#5C5148] text-[15.5px] leading-[1.7]">
+                Graduates with the required qualifications and experience may explore opportunities such as:
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {opportunities.map((opp) => (
+                <div 
+                  key={opp} 
+                  className="bg-white p-4 rounded-[12px] border border-[#E8DDD0] flex items-center gap-3"
+                >
+                  <div className="w-[22px] h-[22px] rounded-full bg-[#B12B2B] text-white text-[12px] font-bold flex items-center justify-center flex-shrink-0">
+                    ✓
+                  </div>
+                  <div className="text-[14px] font-semibold text-[#2B2521]">
+                    {opp}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+          </div>
+        </section>
+
+        {/* Join the path & Grow with JADMAA */}
+        <section className="py-8 sm:py-12 bg-[#FAF6F0] border-b border-[#E8DDD0]">
+          <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              
+              {/* Who Can Apply? */}
+              <div className="bg-white p-6 sm:p-8 rounded-[14px] border border-[#E8DDD0] space-y-3">
+                <div className="text-[12px] font-bold tracking-[.08em] uppercase text-[#B12B2B]">
+                  Join the path
+                </div>
+                <h2 className="font-heading font-bold text-2xl sm:text-3xl text-[#2B2521] leading-[1.15]">
+                  Who Can Apply?
+                </h2>
+                <p className="text-[#5C5148] text-[15.5px] leading-[1.7]">
+                  We welcome passionate individuals who:
+                </p>
+                <div className="space-y-1.5 text-[14.5px] text-[#2B2521] pt-1">
+                  <div className="flex items-start gap-2">
+                    <span className="text-[#B12B2B] font-bold">✓</span>
+                    <span>Are committed to continuous learning.</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-[#B12B2B] font-bold">✓</span>
+                    <span>Demonstrate discipline, integrity, and leadership.</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-[#B12B2B] font-bold">✓</span>
+                    <span>Enjoy teaching and mentoring others.</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <span className="text-[#B12B2B] font-bold">✓</span>
+                    <span>Wish to preserve and promote the heritage of Varmakalai.</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Grow with JADMAA */}
+              <div className="bg-white p-6 sm:p-8 rounded-[14px] border border-[#E8DDD0] space-y-3 flex flex-col justify-center">
+                <div className="text-[12px] font-bold tracking-[.08em] uppercase text-[#B12B2B]">
+                  Grow with JADMAA
+                </div>
+                <div className="text-[#5C5148] text-[15.5px] leading-[1.7]">
+                  Your journey at JADMAA is more than martial arts training—it is an opportunity to build confidence, develop leadership, preserve an ancient tradition, and create a meaningful career by inspiring others.
+                </div>
+              </div>
+
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+
+        {/* Final CTA Section */}
+        <section className="py-12 sm:py-16 bg-[#FAF6F0]">
+          <div className="max-w-[900px] mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-5">
+            <h2 className="font-heading font-bold text-2xl sm:text-3xl lg:text-[34px] text-[#2B2521] leading-[1.15]">
+              Train. Lead. Inspire. Preserve the Legacy.
+            </h2>
+            <div>
+              <Link 
+                to="/contact" 
+                className="inline-block bg-[#B12B2B] hover:bg-[#8F2020] text-white font-semibold text-[15px] px-8 py-3.5 rounded-[8px] transition-colors"
+              >
+                Enquire About the Instructor Path
+              </Link>
+            </div>
+          </div>
+        </section>
+
+      </div>
     </>
   );
 };

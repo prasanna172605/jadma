@@ -161,34 +161,49 @@ export const Home: React.FC = () => {
       </section>
 
       {/* 2. ABOUT JADMAA TEASER SECTION */}
-      <section className="py-16 bg-white border-b border-[#E8DDD0] text-left overflow-hidden">
-        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-stretch">
+      <section className="py-12 lg:py-16 bg-[#FAF6F0] border-b border-[#E8DDD0] text-left overflow-hidden">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             
-            <div className="lg:col-span-7 space-y-4" data-aos="fade-up">
-              <span className="text-[12px] md:text-[13px] font-bold text-[#B12B2B] uppercase tracking-[1.2px] font-body block">
-                <EditableText settingKey="home.about.eyebrow" defaultText="ABOUT JADMAA" />
+            <div className="lg:col-span-8 space-y-4" data-aos="fade-up">
+              <span className="text-[12px] font-bold text-[#B12B2B] uppercase tracking-[1.2px] font-body block">
+                <EditableText settingKey="home.about.eyebrow" defaultText="About JADMAA" />
               </span>
-              <h2 className="font-heading font-bold text-2xl sm:text-3xl lg:text-[34px] text-[#2B2521] leading-[1.2]">
+              <h2 className="font-heading font-bold text-2xl sm:text-3xl lg:text-[34px] text-[#2B2521] leading-[1.15]">
                 <EditableText settingKey="home.about.title" defaultText="Ancient Power. Modern Training." />
               </h2>
-              <p className="font-body text-[16px] text-[#5C5148] leading-[1.65]">
-                <EditableText settingKey="home.about.description" defaultText="JADMAA (Jeyaraj Academy of Defence & Martial Arts Association) is dedicated to reviving and systematically teaching the 1000+ year old traditional science of Varmakalai. Formulated originally by Tamil Siddha masters, Varmakalai combines combat tactics with therapeutic pressure point rejuvenation." multiline={true} />
-              </p>
+              <div className="space-y-4 font-body text-[16px] text-[#5C5148] leading-[1.6]">
+                <p>
+                  <EditableText 
+                    settingKey="home.about.description" 
+                    defaultText="JADMAA is dedicated to preserving and promoting the ancient Tamil martial art of Varmakalai (Varma Kalai / Varmakkalai) through structured, professional, and practical training. Our mission is to empower people of all ages with self-defence skills, physical fitness, discipline, confidence, and mental strength while preserving the rich cultural heritage passed down through generations." 
+                    multiline={true} 
+                  />
+                </p>
+                <p>
+                  <EditableText 
+                    settingKey="home.about.description_p2" 
+                    defaultText="Our training programs are carefully designed for children, teenagers, women, and adults, combining traditional Varma techniques with modern teaching methods in a safe and supportive learning environment." 
+                    multiline={true} 
+                  />
+                </p>
+              </div>
               <div className="pt-2">
-                <Link to="/about" className="inline-flex items-center space-x-1.5 font-semibold text-[15px] text-[#B12B2B] hover:text-[#8F2020] group font-body">
-                  <span><EditableText settingKey="home.about.cta" defaultText="Learn More" /></span>
-                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                <Link 
+                  to="/about" 
+                  className="inline-flex items-center space-x-1.5 font-semibold text-[15px] text-[#B12B2B] hover:text-[#8F2020] transition-colors group font-body"
+                >
+                  <span><EditableText settingKey="home.about.cta" defaultText="Learn More →" /></span>
                 </Link>
               </div>
             </div>
 
-            <div className="lg:col-span-5 flex justify-center" data-aos="zoom-in" data-aos-delay="150">
-              <div className="img-interactive-frame border border-[#E8DDD0] shadow-md bg-white">
+            <div className="lg:col-span-4 flex justify-center" data-aos="zoom-in" data-aos-delay="150">
+              <div className="w-full max-w-[360px] overflow-hidden rounded-[14px]">
                 <img 
-                  src="/images/pose-dab-red-e1785095608624-653x1024.jpg" 
-                  alt="Traditional Stance" 
-                  className="max-h-[420px] w-auto object-contain"
+                  src="https://jadmaa.com/wp-content/uploads/2026/07/pose-dab-red-e1785095608624-653x1024.jpg" 
+                  alt="Varmakalai practitioner demonstrating a traditional stance" 
+                  className="w-full h-auto object-cover rounded-[14px] hover:scale-105 transition-transform duration-500 ease-out"
                 />
               </div>
             </div>
@@ -251,58 +266,62 @@ export const Home: React.FC = () => {
       </section>
 
       {/* 4. VARMA WELLNESS & TRADITIONAL THERAPY SECTION */}
-      <section className="py-16 bg-[#FAF6F0] border-b border-[#E8DDD0] text-left overflow-hidden">
-        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 space-y-8">
+      <section className="py-8 sm:py-12 bg-[#FAF6F0] border-b border-[#E8DDD0] text-left overflow-hidden">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
           
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+          <h2 className="font-heading font-bold text-2xl sm:text-3xl lg:text-[34px] text-[#2B2521] leading-[1.15]" data-aos="fade-up">
+            <EditableText settingKey="home.wellness.title" defaultText="Varma Treatment & Traditional Wellness" />
+          </h2>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
             
+            {/* Left Image */}
             <div className="lg:col-span-5 flex justify-center" data-aos="fade-right">
-              <div className="img-interactive-frame border border-[#E8DDD0] shadow-md bg-white overflow-hidden">
+              <div className="w-full max-w-[480px] overflow-hidden rounded-[14px]">
                 <img 
-                  src="/images/wellness-682x1024.jpg" 
-                  alt="Varma Wellness Consultation" 
-                  className="max-h-[420px] w-auto object-contain"
+                  src="https://jadmaa.com/wp-content/uploads/2026/07/wellness-682x1024.jpg" 
+                  alt="Traditional Varma therapy session at JADMAA Varmakalai" 
+                  className="w-full h-auto object-cover rounded-[14px] hover:scale-105 transition-transform duration-500 ease-out"
                 />
               </div>
             </div>
 
-            <div className="lg:col-span-7 space-y-6 flex flex-col" data-aos="fade-left" data-aos-delay="100">
-              <div>
-                <span className="text-[12px] md:text-[13px] font-bold text-[#B12B2B] uppercase tracking-[1.2px] font-body block">
-                  <EditableText settingKey="home.wellness.eyebrow" defaultText="SIDDHA VARMA HEALING" />
-                </span>
-                <h2 className="font-heading font-bold text-2xl sm:text-3xl lg:text-[34px] text-[#2B2521] mt-1 leading-[1.2]">
-                  <EditableText settingKey="home.wellness.title" defaultText="Varma Wellness & Traditional Therapy" />
-                </h2>
-                <p className="text-[16px] text-[#5C5148] mt-2 leading-[1.65] font-body">
-                  <EditableText settingKey="home.wellness.description" defaultText="Holistic pressure point therapy to stimulate natural bio-energy flow, relieve musculoskeletal discomfort, and enhance vital organ health." multiline={true} />
-                </p>
-              </div>
+            {/* Right Content */}
+            <div className="lg:col-span-7 space-y-5 flex flex-col" data-aos="fade-left" data-aos-delay="100">
+              <p className="font-body text-[16px] text-[#5C5148] leading-[1.6]">
+                <EditableText 
+                  settingKey="home.wellness.description" 
+                  defaultText="JADMAA also offers traditional Varma treatment and wellness sessions focused on improving mobility, relaxation, and overall well-being. Treatment is provided according to practitioner assessment and individual needs." 
+                  multiline={true} 
+                />
+              </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {wellnessServices.map((service) => {
-                  const Icon = service.icon;
-                  return (
-                    <div key={service.title} className="p-4 bg-white rounded-xl border border-[#E8DDD0] space-y-2 hover-lift scroll-card-settle">
-                      <h4 className="font-heading font-bold text-[16px] text-[#2B2521] flex items-center space-x-2">
-                        <Icon className="w-4 h-4 text-[#B12B2B]" />
-                        <span>{service.title}</span>
-                      </h4>
-                      <ul className="space-y-1 text-[14px] text-[#5C5148] font-body">
-                        {service.items.map((item) => (
-                          <li key={item} className="flex items-start space-x-2">
-                            <span className="text-[#B12B2B] font-bold">•</span>
-                            <span>{item}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  );
-                })}
+                {wellnessServices.map((service) => (
+                  <div 
+                    key={service.title} 
+                    className="p-5 sm:p-6 bg-white rounded-[14px] border border-[#E8DDD0] space-y-3"
+                  >
+                    <h4 className="font-heading font-semibold text-[18px] text-[#2B2521] leading-[1.2]">
+                      {service.title}
+                    </h4>
+                    <ul className="space-y-1.5 text-[15px] text-[#2B2521] font-body">
+                      {service.items.map((item) => (
+                        <li key={item} className="flex items-start">
+                          <span className="text-[#5C5148] leading-[1.5]">{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
               </div>
 
-              <p className="text-[14px] text-[#5C5148] italic border-t border-[#E8DDD0] pt-3 font-body">
-                <EditableText settingKey="home.wellness.disclaimer" defaultText="Disclaimer: Varma wellness sessions are intended to support general well-being and are not a substitute for professional medical diagnosis or emergency medical care." multiline={true} />
+              <p className="font-body text-[14px] text-[#5C5148] italic border-t border-[#E8DDD0] pt-4 leading-[1.6]">
+                <EditableText 
+                  settingKey="home.wellness.disclaimer" 
+                  defaultText="Disclaimer: Varma treatment sessions are intended to support general well-being and are not a substitute for professional medical diagnosis or emergency care. Treatment outcomes vary based on individual assessment and condition." 
+                  multiline={true} 
+                />
               </p>
             </div>
 
@@ -312,50 +331,93 @@ export const Home: React.FC = () => {
       </section>
 
       {/* 5. TRAINING AT JADMAA SECTION */}
-      <section className="py-16 bg-white border-b border-[#E8DDD0] text-left">
-        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 space-y-10">
+      <section className="py-8 sm:py-12 bg-[#F3ECE0] border-b border-[#E8DDD0] text-left">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
           
-          <div className="text-center max-w-2xl mx-auto space-y-2" data-aos="fade-up">
-            <span className="text-[12px] md:text-[13px] font-bold text-[#B12B2B] uppercase tracking-[1.2px] font-body block">
-              <EditableText settingKey="home.training.eyebrow" defaultText="ACADEMY SYLLABUS" />
-            </span>
-            <h2 className="font-heading font-bold text-2xl sm:text-3xl lg:text-[34px] text-[#2B2521] leading-[1.2]">
+          <div className="text-center max-w-3xl mx-auto space-y-2" data-aos="fade-up">
+            <h2 className="font-heading font-bold text-2xl sm:text-3xl lg:text-[34px] text-[#2B2521] leading-[1.15]">
               <EditableText settingKey="home.training.title" defaultText="Training at JADMAA" />
             </h2>
-            <p className="text-[16px] text-[#5C5148] font-body">
+            <p className="font-body text-[16px] text-[#5C5148] leading-[1.6]">
               <EditableText settingKey="home.training.subtitle" defaultText="What we teach, who it is for, and what you gain from consistent practice." multiline={true} />
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             
-            <div className="bg-[#FAF6F0] p-6 rounded-2xl border border-[#E8DDD0] space-y-4 hover-lift scroll-card-settle">
-              <h3 className="font-heading font-bold text-[18px] text-[#2B2521] border-b border-[#E8DDD0] pb-2">What We Offer</h3>
-              <ul className="space-y-2.5 text-[15px] text-[#5C5148] font-body">
-                <li className="flex items-center space-x-2"><CheckCircle2 className="w-4 h-4 text-[#B12B2B] flex-shrink-0" /><span>108 Vital Varma Point Science</span></li>
-                <li className="flex items-center space-x-2"><CheckCircle2 className="w-4 h-4 text-[#B12B2B] flex-shrink-0" /><span>Adimurai Combat Formations</span></li>
-                <li className="flex items-center space-x-2"><CheckCircle2 className="w-4 h-4 text-[#B12B2B] flex-shrink-0" /><span>Women's Defensive Tactics</span></li>
-                <li className="flex items-center space-x-2"><CheckCircle2 className="w-4 h-4 text-[#B12B2B] flex-shrink-0" /><span>Kids Martial Arts & Focus</span></li>
+            {/* Box 1: What We Offer */}
+            <div className="bg-white p-5 sm:p-6 rounded-[14px] border border-[#E8DDD0] space-y-3">
+              <h3 className="font-heading font-semibold text-[22px] text-[#2B2521] leading-[1.2]">
+                What We Offer
+              </h3>
+              <ul className="space-y-2 text-[15px] text-[#2B2521] font-body">
+                {[
+                  'Varmakalai Training',
+                  'Kids Self-Defence Training',
+                  'Adult Self-Defence Training',
+                  "Women's Self-Defence Program",
+                  'School Workshops',
+                  'College Workshops',
+                  'Corporate Self-Defence Workshops',
+                  'Personal One-to-One Training',
+                  'Certification Programs',
+                  'Traditional Varma Treatment Sessions',
+                ].map((item) => (
+                  <li key={item} className="flex items-start space-x-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-[#B12B2B] flex-shrink-0 mt-0.5" />
+                    <span className="leading-[1.5]">{item}</span>
+                  </li>
+                ))}
               </ul>
             </div>
 
-            <div className="bg-[#FAF6F0] p-6 rounded-2xl border border-[#E8DDD0] space-y-4 hover-lift scroll-card-settle">
-              <h3 className="font-heading font-bold text-[18px] text-[#2B2521] border-b border-[#E8DDD0] pb-2">Who Can Join?</h3>
-              <ul className="space-y-2.5 text-[15px] text-[#5C5148] font-body">
-                <li className="flex items-center space-x-2"><CheckCircle2 className="w-4 h-4 text-[#B12B2B] flex-shrink-0" /><span>Children (Ages 6+)</span></li>
-                <li className="flex items-center space-x-2"><CheckCircle2 className="w-4 h-4 text-[#B12B2B] flex-shrink-0" /><span>College Students & Youth</span></li>
-                <li className="flex items-center space-x-2"><CheckCircle2 className="w-4 h-4 text-[#B12B2B] flex-shrink-0" /><span>Working Professionals</span></li>
-                <li className="flex items-center space-x-2"><CheckCircle2 className="w-4 h-4 text-[#B12B2B] flex-shrink-0" /><span>Seniors & Wellness Seekers</span></li>
+            {/* Box 2: Who Can Join? */}
+            <div className="bg-white p-5 sm:p-6 rounded-[14px] border border-[#E8DDD0] space-y-3">
+              <h3 className="font-heading font-semibold text-[22px] text-[#2B2521] leading-[1.2]">
+                Who Can Join?
+              </h3>
+              <ul className="space-y-2 text-[15px] text-[#2B2521] font-body">
+                {[
+                  'Children (6+ Years)',
+                  'School Students',
+                  'College Students',
+                  'Women',
+                  'Working Professionals',
+                  'Fitness Enthusiasts',
+                  'Martial Arts Learners',
+                  'Senior Adults (fitness assessment)',
+                ].map((item) => (
+                  <li key={item} className="flex items-start space-x-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-[#B12B2B] flex-shrink-0 mt-0.5" />
+                    <span className="leading-[1.5]">{item}</span>
+                  </li>
+                ))}
               </ul>
             </div>
 
-            <div className="bg-[#FAF6F0] p-6 rounded-2xl border border-[#E8DDD0] space-y-4 hover-lift scroll-card-settle">
-              <h3 className="font-heading font-bold text-[18px] text-[#2B2521] border-b border-[#E8DDD0] pb-2">Benefits of Training</h3>
-              <ul className="space-y-2.5 text-[15px] text-[#5C5148] font-body">
-                <li className="flex items-center space-x-2"><CheckCircle2 className="w-4 h-4 text-[#B12B2B] flex-shrink-0" /><span>Self-Defence Confidence</span></li>
-                <li className="flex items-center space-x-2"><CheckCircle2 className="w-4 h-4 text-[#B12B2B] flex-shrink-0" /><span>Physical Stamina & Flexibility</span></li>
-                <li className="flex items-center space-x-2"><CheckCircle2 className="w-4 h-4 text-[#B12B2B] flex-shrink-0" /><span>Mental Focus & Calmness</span></li>
-                <li className="flex items-center space-x-2"><CheckCircle2 className="w-4 h-4 text-[#B12B2B] flex-shrink-0" /><span>Bio-Energy Balance</span></li>
+            {/* Box 3: Benefits of Training */}
+            <div className="bg-white p-5 sm:p-6 rounded-[14px] border border-[#E8DDD0] space-y-3">
+              <h3 className="font-heading font-semibold text-[22px] text-[#2B2521] leading-[1.2]">
+                Benefits of Training
+              </h3>
+              <ul className="space-y-2 text-[15px] text-[#2B2521] font-body">
+                {[
+                  'Self-Defence Skills',
+                  'Improved Fitness',
+                  'Better Flexibility',
+                  'Faster Reflexes',
+                  'Increased Confidence',
+                  'Better Focus',
+                  'Mental Discipline',
+                  'Stress Management',
+                  'Leadership Skills',
+                  'Healthy Lifestyle',
+                ].map((item) => (
+                  <li key={item} className="flex items-start space-x-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-[#B12B2B] flex-shrink-0 mt-0.5" />
+                    <span className="leading-[1.5]">{item}</span>
+                  </li>
+                ))}
               </ul>
             </div>
 
@@ -364,35 +426,41 @@ export const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* 6. GROWTH & LEADERSHIP SECTION */}
-      <section className="py-16 bg-[#FAF6F0] border-b border-[#E8DDD0] text-left overflow-hidden">
-        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+      {/* 6. GROWTH & LEADERSHIP / BUILD YOUR FUTURE SECTION */}
+      <section className="py-8 sm:py-12 bg-[#FAF6F0] border-b border-[#E8DDD0] text-left overflow-hidden">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             
-            <div className="lg:col-span-7 space-y-4" data-aos="fade-right">
-              <span className="text-[12px] md:text-[13px] font-bold text-[#B12B2B] uppercase tracking-[1.2px] font-body block">
-                <EditableText settingKey="home.growth.eyebrow" defaultText="GROWTH & LEADERSHIP" />
+            <div className="lg:col-span-7 space-y-3" data-aos="fade-right">
+              <span className="text-[12px] font-bold text-[#B12B2B] uppercase tracking-[1.2px] font-body block">
+                <EditableText settingKey="home.growth.eyebrow" defaultText="Growth & Leadership" />
               </span>
-              <h2 className="font-heading font-bold text-2xl sm:text-3xl lg:text-[34px] text-[#2B2521] leading-[1.2]">
-                <EditableText settingKey="home.growth.title" defaultText="Build Your Future Through Traditional Martial Art" />
+              <h2 className="font-heading font-bold text-2xl sm:text-3xl lg:text-[34px] text-[#2B2521] leading-[1.15]">
+                <EditableText settingKey="home.growth.title" defaultText="Build Your Future Through Traditional Martial Arts (Varmakalai)" />
               </h2>
-              <p className="font-body text-[16px] text-[#5C5148] leading-[1.65]">
-                <EditableText settingKey="home.growth.description" defaultText="Unlock career pathways as a certified Varmakalai instructor, self-defence coach, or wellness practitioner under official JADMAA academy certification." multiline={true} />
+              <p className="font-body text-[16px] text-[#5C5148] leading-[1.6]">
+                <EditableText 
+                  settingKey="home.growth.description" 
+                  defaultText="Learning doesn't end with a certificate. Dedicated students can grow from student to certified instructor and branch trainer — building a meaningful career while preserving an ancient tradition." 
+                  multiline={true} 
+                />
               </p>
               <div className="pt-2">
-                <Link to="/careers" className="inline-flex items-center space-x-1.5 font-semibold text-[15px] text-[#B12B2B] hover:text-[#8F2020] group font-body">
-                  <span><EditableText settingKey="home.growth.cta" defaultText="Enquire Instructor Path" /></span>
-                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                <Link 
+                  to="/careers" 
+                  className="inline-flex items-center space-x-1.5 font-semibold text-[15px] text-[#B12B2B] hover:text-[#8F2020] transition-colors group font-body"
+                >
+                  <span><EditableText settingKey="home.growth.cta" defaultText="Learn More →" /></span>
                 </Link>
               </div>
             </div>
 
             <div className="lg:col-span-5 flex justify-center" data-aos="fade-left" data-aos-delay="100">
-              <div className="img-interactive-frame w-full border border-[#E8DDD0] shadow-md">
+              <div className="w-full max-w-[480px] overflow-hidden rounded-[14px]">
                 <img 
-                  src="/images/course-womens.jpg" 
-                  alt="JADMAA Training Session" 
-                  className="w-full max-h-[360px] object-cover"
+                  src="https://jadmaa.com/wp-content/uploads/2026/08/file_000000008884820b9a3c789a8c0be531-1024x683.png" 
+                  alt="Varmakalai martial arts training session at JADMAA" 
+                  className="w-full h-auto object-cover rounded-[14px] hover:scale-105 transition-transform duration-500 ease-out"
                 />
               </div>
             </div>
