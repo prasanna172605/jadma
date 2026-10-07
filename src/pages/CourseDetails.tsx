@@ -164,34 +164,8 @@ export const CourseDetails: React.FC = () => {
           email: prefill?.email || user?.email || '',
           contact: prefill?.contact || '',
         },
-        // Explicitly define blocks to force UPI to appear alongside other methods
-        config: {
-          display: {
-            blocks: {
-              upi: {
-                name: 'Pay by any UPI App',
-                instruments: [
-                  {
-                    method: 'upi',
-                    flows: ['qr', 'intent']
-                  }
-                ]
-              },
-              other: {
-                name: 'Cards, Netbanking & Wallets',
-                instruments: [
-                  { method: 'card' },
-                  { method: 'netbanking' },
-                  { method: 'wallet' }
-                ]
-              }
-            },
-            sequence: ['block.upi', 'block.other'],
-            preferences: {
-              show_default_blocks: false,
-            },
-          },
-        },
+        // Use the exact custom Payment Configuration created in the Razorpay Dashboard
+        config_id: 'config_TkzeThxteaJycd',
         theme: {
           color: '#B12B2B',
           backdrop_color: 'rgba(0, 0, 0, 0.65)',
