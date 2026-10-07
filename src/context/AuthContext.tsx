@@ -106,6 +106,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         sessionStorage.removeItem('jadmaa_enrollments_cache');
         sessionStorage.removeItem('jadmaa_dashboard_cache');
       } catch (_) {}
+      // Force a hard reload to clear all module memory caches
+      window.location.href = '/login';
     }
   };
 

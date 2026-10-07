@@ -4,6 +4,15 @@ let memoryEnrollmentsCache: any[] | null = null;
 let memoryDashboardCache: any = null;
 
 export const progressApi = {
+  clearCache: () => {
+    memoryEnrollmentsCache = null;
+    memoryDashboardCache = null;
+    try {
+      sessionStorage.removeItem('jadmaa_enrollments_cache');
+      sessionStorage.removeItem('jadmaa_dashboard_cache');
+    } catch (_) {}
+  },
+  
   getCachedEnrollments: (): any[] => {
     if (memoryEnrollmentsCache && memoryEnrollmentsCache.length > 0) {
       return memoryEnrollmentsCache;
