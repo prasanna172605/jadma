@@ -147,7 +147,9 @@ export const CourseDetails: React.FC = () => {
       const isMobile = isMobileDevice();
 
       // 2. Configure Razorpay Standard Checkout
-      // Prioritizes UPI Intent on Mobile, and dynamic UPI QR on Desktop
+      // NOTE: config.display.blocks is ONLY for Razorpay Custom Checkout (Hosted Checkout v2).
+      // For Standard Checkout (new Razorpay(options)), use the `method` key to control payment methods.
+      // UPI Intent (mobile deep-link) and UPI QR (desktop) are shown automatically when UPI is enabled.
       const options = {
         key: keyId,
         amount,
@@ -158,38 +160,22 @@ export const CourseDetails: React.FC = () => {
           ? { image: `${window.location.origin}/logo.png` }
           : {}),
         order_id: orderId,
+        // Prefill contact info only — do NOT set prefill.method as it hides other payment methods
         prefill: {
           name: prefill?.name || user?.name || '',
           email: prefill?.email || user?.email || '',
           contact: prefill?.contact || '',
-          method: 'upi',
         },
-        config: {
-          display: {
-            blocks: {
-              upi: {
-                name: isMobile ? 'Pay via UPI Apps (GPay, PhonePe, Paytm)' : 'Scan & Pay via UPI QR',
-                instruments: [
-                  {
-                    method: 'upi',
-                    flows: isMobile ? ['intent', 'qr', 'collect'] : ['qr', 'collect', 'intent'],
-                  },
-                ],
-              },
-              other: {
-                name: 'Cards & Netbanking',
-                instruments: [
-                  { method: 'card' },
-                  { method: 'netbanking' },
-                  { method: 'wallet' },
-                ],
-              },
-            },
-            sequence: ['block.upi', 'block.other'],
-            preferences: {
-              show_default_blocks: true,
-            },
-          },
+        // Explicitly enable all desired payment methods for Standard Checkout.
+        // When method.upi = true, Razorpay Standard Checkout automatically:
+        //   - Mobile: shows UPI Intent (opens GPay/PhonePe/Paytm/BHIM)
+        //   - Desktop: shows UPI QR code
+        method: {
+          upi: true,
+          card: true,
+          netbanking: true,
+          wallet: true,
+          emi: false,
         },
         theme: {
           color: '#B12B2B',
