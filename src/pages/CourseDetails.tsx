@@ -147,9 +147,7 @@ export const CourseDetails: React.FC = () => {
       const isMobile = isMobileDevice();
 
       // 2. Configure Razorpay Standard Checkout
-      // NOTE: config.display.blocks is ONLY for Razorpay Custom Checkout (Hosted Checkout v2).
-      // For Standard Checkout (new Razorpay(options)), use the `method` key to control payment methods.
-      // UPI Intent (mobile deep-link) and UPI QR (desktop) are shown automatically when UPI is enabled.
+      // We use config.display.blocks to explicitly enforce the rendering of the UPI block.
       const options = {
         key: keyId,
         amount,
@@ -166,16 +164,32 @@ export const CourseDetails: React.FC = () => {
           email: prefill?.email || user?.email || '',
           contact: prefill?.contact || '',
         },
-        // Explicitly enable all desired payment methods for Standard Checkout.
-        // When method.upi = true, Razorpay Standard Checkout automatically:
-        //   - Mobile: shows UPI Intent (opens GPay/PhonePe/Paytm/BHIM)
-        //   - Desktop: shows UPI QR code
-        method: {
-          upi: true,
-          card: true,
-          netbanking: true,
-          wallet: true,
-          emi: false,
+        // Explicitly define blocks to force UPI to appear alongside other methods
+        config: {
+          display: {
+            blocks: {
+              upi: {
+                name: 'Pay by any UPI App',
+                instruments: [
+                  {
+                    method: 'upi'
+                  }
+                ]
+              },
+              other: {
+                name: 'Cards, Netbanking & Wallets',
+                instruments: [
+                  { method: 'card' },
+                  { method: 'netbanking' },
+                  { method: 'wallet' }
+                ]
+              }
+            },
+            sequence: ['block.upi', 'block.other'],
+            preferences: {
+              show_default_blocks: false,
+            },
+          },
         },
         theme: {
           color: '#B12B2B',
