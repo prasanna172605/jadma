@@ -71,7 +71,10 @@ export const createOrder = async (req: Request, res: Response) => {
     // Generate unique local receipt / transaction reference
     const receipt = `RCP_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`;
 
-    console.log(`[Razorpay:createOrder] Calling Razorpay Orders API (amount: ${amountInPaise} paise, receipt: ${receipt})`);
+    console.log(`[Razorpay] Creating order`);
+    console.log(`[Razorpay] amount: ${amountInPaise}`);
+    console.log(`[Razorpay] currency: INR`);
+    console.log(`[Razorpay] configuration: config_TkzeThxteaJycd`);
 
     // Create Razorpay order on server
     const rzpOrder = await razorpayService.createOrder({
@@ -86,7 +89,7 @@ export const createOrder = async (req: Request, res: Response) => {
       },
     });
 
-    console.log(`[Razorpay:createOrder] Razorpay order created successfully: ${rzpOrder.id}`);
+    console.log(`[Razorpay] order_id: ${rzpOrder.id}`);
 
     // Store local Payment record with PENDING status and gateway RAZORPAY
     const paymentRecord = await prisma.payment.create({

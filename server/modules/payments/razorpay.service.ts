@@ -90,11 +90,14 @@ export class RazorpayService {
    */
   public async createOrder(params: CreateRazorpayOrderParams) {
     const rzp = this.getClient();
-    const options = {
+    const options: any = {
       amount: Math.round(params.amountInPaise),
       currency: params.currency || 'INR',
       receipt: params.receipt,
       notes: params.notes || {},
+      // Enforce the specific payment configuration created in the Dashboard
+      // This MUST be applied server-side during order creation.
+      checkout_config_id: 'config_TkzeThxteaJycd',
     };
 
     try {
