@@ -83,10 +83,11 @@
 .btn-jadmaa-primary {
   background-color: #B12B2B;
   color: #ffffff;
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Work Sans', sans-serif;
   font-weight: 600;
   font-size: 15px;
   line-height: 1.4;
+  letter-spacing: 0.2px;
   padding: 13px 28px;
   border-radius: 8px;
   display: inline-flex;
@@ -117,11 +118,12 @@
 .btn-jadmaa-outline {
   background-color: transparent;
   color: #B12B2B;
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Work Sans', sans-serif;
   font-weight: 600;
   font-size: 15px;
   line-height: 1.4;
-  padding: 12px 28px;
+  letter-spacing: 0.2px;
+  padding: 13px 28px;
   border-radius: 8px;
   display: inline-flex;
   align-items: center;
