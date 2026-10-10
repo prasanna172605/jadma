@@ -550,4 +550,29 @@ a[role="button"]:active {
   }
 }
 
+/* ==========================================
+   CONSISTENT SCROLL REVEAL (AOS OVERRIDE)
+   Enforces a strict 12px upward fade, overriding random directions.
+   ========================================== */
+body [data-aos] {
+  opacity: 0 !important;
+  transform: translateY(12px) !important;
+  transition-property: transform, opacity !important;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1) !important;
+  transition-duration: 550ms !important;
+}
+
+body [data-aos].aos-animate {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body [data-aos] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
 

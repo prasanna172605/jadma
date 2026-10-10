@@ -13,10 +13,10 @@ export const ScrollObserver: React.FC = () => {
 
   useEffect(() => {
     AOS.init({
-      duration: 500, // Very subtle, quick animation
-      easing: 'ease-out-cubic',
-      once: true, // Only animate once when scrolling down
-      offset: 40, // Trigger early
+      duration: 550, // Consistent duration
+      easing: 'ease-out',
+      once: true, // Only animate once
+      offset: 30, // Trigger early
       disable: 'mobile' // Avoid jumping on mobile
     });
   }, []);
