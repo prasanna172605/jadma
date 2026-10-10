@@ -471,10 +471,10 @@ export const CourseDetails: React.FC = () => {
                     <p>
                       <strong className="text-[#1E293B]">Branches:</strong> JADMAA centers in Thanjavur, Kumbakonam and Ariyalur.
                     </p>
-                    <p className="flex items-center space-x-2">
+                    <p className="flex flex-wrap items-center gap-x-2 gap-y-1">
                       <strong className="text-[#1E293B]">Questions about batch timings or seats:</strong>
-                      <a href="tel:+919345220020" className="text-jadmaa-red font-semibold hover:underline inline-flex items-center space-x-1">
-                        <Phone className="w-3.5 h-3.5 mr-1 inline" />
+                      <a href="tel:+919345220020" className="text-jadmaa-red font-semibold hover:underline inline-flex items-center whitespace-nowrap">
+                        <Phone className="w-3.5 h-3.5 mr-1" />
                         <span>+91 93452 20020</span>
                       </a>
                     </p>
