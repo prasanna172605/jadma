@@ -45,16 +45,9 @@ export const ScrollObserver: React.FC = () => {
           (el as HTMLElement).style.transitionDelay = `${delay}ms`;
         }
 
+        // We rely completely on the IntersectionObserver to fire for elements already in view.
+        // It fires asynchronously, allowing the browser to paint the opacity: 0 state first.
         observer.observe(el);
-
-        // Immediate reveal for elements above the fold on initial load
-        const rect = el.getBoundingClientRect();
-        if (rect.top < window.innerHeight) {
-          // Micro-delay ensures the browser registers the initial opacity:0 before transitioning
-          setTimeout(() => {
-            el.classList.add('is-visible');
-          }, 40);
-        }
       });
     };
 

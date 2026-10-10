@@ -474,8 +474,7 @@ a[role="button"]:active {
    cubic-bezier(0.22, 0.61, 0.36, 1) spring
    ========================================== */
 .jd-pop {
-  opacity: 1 !important;
-  transform: none !important;
+  /* Removed !important overrides that broke .reveal animations */
 }
 
 /* ==========================================
