@@ -567,12 +567,6 @@ body [data-aos].aos-animate {
   transform: translateY(0) !important;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  body [data-aos] {
-    opacity: 1 !important;
-    transform: none !important;
-    transition: none !important;
-  }
-}
+
 
 
