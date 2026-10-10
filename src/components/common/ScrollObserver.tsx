@@ -19,9 +19,17 @@ export const ScrollObserver: React.FC = () => {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible');
             // Animate only once per the requirements
             observer.unobserve(entry.target);
+            
+            // CRITICAL FIX: Ensure the browser paints the initial opacity: 0 
+            // state before adding .is-visible. Without this, elements above the fold
+            // transition instantly from 1 to 1 because both classes are applied before paint.
+            requestAnimationFrame(() => {
+              requestAnimationFrame(() => {
+                entry.target.classList.add('is-visible');
+              });
+            });
           }
         });
       },
