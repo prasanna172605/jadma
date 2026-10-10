@@ -241,21 +241,21 @@ export const Home: React.FC = () => {
                   <EditableText settingKey="home.why.box.title" defaultText="Why Students Choose JADMAA" />
                 </h3>
                 <ul className="space-y-3 text-[15px] md:text-[16px] text-[#5C5148] font-body">
-                  <li className="flex items-start space-x-2.5">
-                    <CheckCircle2 className="w-5 h-5 text-[#B12B2B] flex-shrink-0 mt-0.5" />
-                    <span><EditableText settingKey="home.why.point1" defaultText="Authentic Gurukulam Varma Training preserved free from commercial dilution." /></span>
+                  <li className="flex items-start space-x-2.5 animate-list-item group">
+                    <CheckCircle2 className="w-5 h-5 text-[#B12B2B] flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
+                    <span className="group-hover:text-[#B12B2B] transition-colors"><EditableText settingKey="home.why.point1" defaultText="Authentic Gurukulam Varma Training preserved free from commercial dilution." /></span>
                   </li>
-                  <li className="flex items-start space-x-2.5">
-                    <CheckCircle2 className="w-5 h-5 text-[#B12B2B] flex-shrink-0 mt-0.5" />
-                    <span><EditableText settingKey="home.why.point2" defaultText="Experienced Instructors under Grandmaster A. Jeyaraj guidance." /></span>
+                  <li className="flex items-start space-x-2.5 animate-list-item group">
+                    <CheckCircle2 className="w-5 h-5 text-[#B12B2B] flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
+                    <span className="group-hover:text-[#B12B2B] transition-colors"><EditableText settingKey="home.why.point2" defaultText="Experienced Instructors under Grandmaster A. Jeyaraj guidance." /></span>
                   </li>
-                  <li className="flex items-start space-x-2.5">
-                    <CheckCircle2 className="w-5 h-5 text-[#B12B2B] flex-shrink-0 mt-0.5" />
-                    <span><EditableText settingKey="home.why.point3" defaultText="Dedicated branch centers in Thanjavur, Kumbakonam, and Ariyalur." /></span>
+                  <li className="flex items-start space-x-2.5 animate-list-item group">
+                    <CheckCircle2 className="w-5 h-5 text-[#B12B2B] flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
+                    <span className="group-hover:text-[#B12B2B] transition-colors"><EditableText settingKey="home.why.point3" defaultText="Dedicated branch centers in Thanjavur, Kumbakonam, and Ariyalur." /></span>
                   </li>
-                  <li className="flex items-start space-x-2.5">
-                    <CheckCircle2 className="w-5 h-5 text-[#B12B2B] flex-shrink-0 mt-0.5" />
-                    <span><EditableText settingKey="home.why.point4" defaultText="Systematic level progression & recognized academy certifications." /></span>
+                  <li className="flex items-start space-x-2.5 animate-list-item group">
+                    <CheckCircle2 className="w-5 h-5 text-[#B12B2B] flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
+                    <span className="group-hover:text-[#B12B2B] transition-colors"><EditableText settingKey="home.why.point4" defaultText="Systematic level progression & recognized academy certifications." /></span>
                   </li>
                 </ul>
               </div>
@@ -307,8 +307,9 @@ export const Home: React.FC = () => {
                     </h4>
                     <ul className="space-y-1.5 text-[15px] text-[#2B2521] font-body">
                       {service.items.map((item) => (
-                        <li key={item} className="flex items-start">
-                          <span className="text-[#5C5148] leading-[1.5]">{item}</span>
+                        <li key={item} className="flex items-start space-x-2.5 animate-list-item group">
+                          <CheckCircle2 className="w-4 h-4 text-[#B12B2B] flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
+                          <span className="text-[#5C5148] leading-[1.5] group-hover:text-[#2B2521] transition-colors">{item}</span>
                         </li>
                       ))}
                     </ul>
@@ -363,9 +364,9 @@ export const Home: React.FC = () => {
                   'Certification Programs',
                   'Traditional Varma Treatment Sessions',
                 ].map((item) => (
-                  <li key={item} className="flex items-start space-x-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-[#B12B2B] flex-shrink-0 mt-0.5" />
-                    <span className="leading-[1.5]">{item}</span>
+                  <li key={item} className="flex items-start space-x-2.5 animate-list-item group">
+                    <CheckCircle2 className="w-4 h-4 text-[#B12B2B] flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
+                    <span className="leading-[1.5] group-hover:text-[#B12B2B] transition-colors">{item}</span>
                   </li>
                 ))}
               </ul>
@@ -387,9 +388,9 @@ export const Home: React.FC = () => {
                   'Martial Arts Learners',
                   'Senior Adults (fitness assessment)',
                 ].map((item) => (
-                  <li key={item} className="flex items-start space-x-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-[#B12B2B] flex-shrink-0 mt-0.5" />
-                    <span className="leading-[1.5]">{item}</span>
+                  <li key={item} className="flex items-start space-x-2.5 animate-list-item group">
+                    <CheckCircle2 className="w-4 h-4 text-[#B12B2B] flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
+                    <span className="leading-[1.5] group-hover:text-[#B12B2B] transition-colors">{item}</span>
                   </li>
                 ))}
               </ul>
@@ -413,9 +414,9 @@ export const Home: React.FC = () => {
                   'Leadership Skills',
                   'Healthy Lifestyle',
                 ].map((item) => (
-                  <li key={item} className="flex items-start space-x-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-[#B12B2B] flex-shrink-0 mt-0.5" />
-                    <span className="leading-[1.5]">{item}</span>
+                  <li key={item} className="flex items-start space-x-2.5 animate-list-item group">
+                    <CheckCircle2 className="w-4 h-4 text-[#B12B2B] flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
+                    <span className="leading-[1.5] group-hover:text-[#B12B2B] transition-colors">{item}</span>
                   </li>
                 ))}
               </ul>

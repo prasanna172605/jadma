@@ -16,6 +16,7 @@ export const LearnCourse: React.FC = () => {
   const [completedLessons, setCompletedLessons] = useState<Record<string, boolean>>({});
   const [progressPercent, setProgressPercent] = useState<number>(0);
   const [loading, setLoading] = useState(true);
+  const [loadingCompletes, setLoadingCompletes] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     if (authLoading) return;
@@ -65,10 +66,13 @@ export const LearnCourse: React.FC = () => {
 
   const toggleComplete = async (id: string, forceStatus?: boolean) => {
     const isCompleted = forceStatus !== undefined ? forceStatus : !completedLessons[id];
-    setCompletedLessons(prev => ({ ...prev, [id]: isCompleted }));
+    setLoadingCompletes(prev => ({ ...prev, [id]: true }));
     
     try {
       await progressApi.updateLessonProgress(id, 0, isCompleted);
+      // Update state only after success
+      setCompletedLessons(prev => ({ ...prev, [id]: isCompleted }));
+      
       if (course) {
         const progRes = await progressApi.getCourseProgress(course.id);
         if (progRes.success && progRes.data) {
@@ -76,7 +80,9 @@ export const LearnCourse: React.FC = () => {
         }
       }
     } catch (err) {
-      setCompletedLessons(prev => ({ ...prev, [id]: !isCompleted }));
+      console.error('Failed to update progress', err);
+    } finally {
+      setLoadingCompletes(prev => ({ ...prev, [id]: false }));
     }
   };
 
@@ -139,6 +145,7 @@ export const LearnCourse: React.FC = () => {
   const nextLessonId = getNextLessonId(activeLessonId);
   const prevLessonId = getPrevLessonId(activeLessonId);
   const isCurrentCompleted = completedLessons[activeLessonId];
+  const isCurrentCompleting = loadingCompletes[activeLessonId];
 
   return (
     <>
@@ -159,8 +166,8 @@ export const LearnCourse: React.FC = () => {
             Progress:
           </span>
           <div className="flex items-center gap-2">
-            <div className="w-16 sm:w-24 bg-gray-200 rounded-full h-2">
-              <div className="bg-green-500 h-2 rounded-full transition-all" style={{ width: `${progressPercent}%` }}></div>
+            <div className="w-16 sm:w-24 bg-gray-200 rounded-full h-2 overflow-hidden">
+              <div className="bg-green-500 h-2 rounded-full animate-progress-fill transition-all" style={{ width: `${progressPercent}%` }}></div>
             </div>
             <span className="text-gray-900">{progressPercent}%</span>
           </div>
@@ -202,13 +209,18 @@ export const LearnCourse: React.FC = () => {
               <div className="flex items-center gap-3 self-start sm:self-center shrink-0">
                 <button
                   onClick={() => toggleComplete(activeLessonId)}
+                  disabled={isCurrentCompleting}
                   className={`px-5 py-2.5 rounded text-sm font-bold flex items-center gap-2 transition ${
                     isCurrentCompleted 
                       ? 'bg-green-100 text-green-700 hover:bg-green-200' 
                       : 'bg-jadmaa-red text-white hover:bg-red-800'
-                  }`}
+                  } ${isCurrentCompleting ? 'opacity-70 cursor-not-allowed' : ''}`}
                 >
-                  <CheckCircle className={`w-4 h-4 ${isCurrentCompleted ? 'text-green-600' : ''}`} />
+                  {isCurrentCompleting ? (
+                    <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin"></div>
+                  ) : (
+                    <CheckCircle className={`w-4 h-4 ${isCurrentCompleted ? 'text-green-600' : ''}`} />
+                  )}
                   {isCurrentCompleted ? 'Completed' : 'Mark as Complete'}
                 </button>
               </div>

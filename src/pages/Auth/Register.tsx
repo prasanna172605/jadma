@@ -69,7 +69,7 @@ export const Register: React.FC = () => {
                   placeholder="Senthil Kumar"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-[#E8DDD0] text-xs text-[#2B2521] focus:border-[#B12B2B] outline-none"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-[#E8DDD0] text-xs text-[#2B2521] focus:border-[#B12B2B] focus:ring-1 focus:ring-[#B12B2B] outline-none"
                 />
               </div>
             </div>
@@ -84,7 +84,7 @@ export const Register: React.FC = () => {
                   placeholder="senthil@example.com"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-[#E8DDD0] text-xs text-[#2B2521] focus:border-[#B12B2B] outline-none"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-[#E8DDD0] text-xs text-[#2B2521] focus:border-[#B12B2B] focus:ring-1 focus:ring-[#B12B2B] outline-none"
                 />
               </div>
             </div>
@@ -99,7 +99,7 @@ export const Register: React.FC = () => {
                   placeholder="+91 98765 43210"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-[#E8DDD0] text-xs text-[#2B2521] focus:border-[#B12B2B] outline-none"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-[#E8DDD0] text-xs text-[#2B2521] focus:border-[#B12B2B] focus:ring-1 focus:ring-[#B12B2B] outline-none"
                 />
               </div>
             </div>
@@ -115,7 +115,7 @@ export const Register: React.FC = () => {
                     placeholder="••••••••"
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-[#E8DDD0] text-xs text-[#2B2521] focus:border-[#B12B2B] outline-none"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-[#E8DDD0] text-xs text-[#2B2521] focus:border-[#B12B2B] focus:ring-1 focus:ring-[#B12B2B] outline-none"
                   />
                 </div>
               </div>
@@ -130,7 +130,7 @@ export const Register: React.FC = () => {
                     placeholder="••••••••"
                     value={formData.confirmPassword}
                     onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-[#E8DDD0] text-xs text-[#2B2521] focus:border-[#B12B2B] outline-none"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-[#E8DDD0] text-xs text-[#2B2521] focus:border-[#B12B2B] focus:ring-1 focus:ring-[#B12B2B] outline-none"
                   />
                 </div>
               </div>

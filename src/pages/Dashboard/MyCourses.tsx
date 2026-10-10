@@ -153,7 +153,7 @@ export const MyCourses: React.FC = () => {
                             <span className="text-gray-600">{progress}% completed</span>
                           </div>
                           <div className="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
-                            <div className={`h-1.5 rounded-full ${isCompleted ? 'bg-green-500' : 'bg-jadmaa-red'}`} style={{ width: `${progress}%` }}></div>
+                            <div className={`h-1.5 rounded-full animate-progress-fill ${isCompleted ? 'bg-green-500' : 'bg-jadmaa-red'}`} style={{ width: `${progress}%` }}></div>
                           </div>
                         </div>
                         

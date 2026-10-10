@@ -141,9 +141,9 @@ export const About: React.FC = () => {
             <div className="bg-white p-6 sm:p-8 rounded-[14px] border border-[#E8DDD0]">
               <ul className="grid grid-cols-1 md:grid-cols-2 gap-y-3 gap-x-8 font-body text-[15px] text-[#2B2521]">
                 {whyChooseItems.map((item) => (
-                  <li key={item} className="flex items-start space-x-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-[#B12B2B] flex-shrink-0 mt-0.5" />
-                    <span className="leading-[1.5]">{item}</span>
+                  <li key={item} className="flex items-start space-x-2.5 animate-list-item group">
+                    <CheckCircle2 className="w-4 h-4 text-[#B12B2B] flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
+                    <span className="leading-[1.5] group-hover:text-[#B12B2B] transition-colors">{item}</span>
                   </li>
                 ))}
               </ul>
@@ -201,9 +201,9 @@ export const About: React.FC = () => {
                 </p>
                 <ul className="space-y-2 font-body text-[15px] text-[#2B2521]">
                   {structuredLevels.map((lvl) => (
-                    <li key={lvl} className="flex items-center space-x-2.5">
-                      <CheckCircle2 className="w-4 h-4 text-[#B12B2B] flex-shrink-0" />
-                      <span>{lvl}</span>
+                    <li key={lvl} className="flex items-center space-x-2.5 animate-list-item group">
+                      <CheckCircle2 className="w-4 h-4 text-[#B12B2B] flex-shrink-0 group-hover:scale-110 transition-transform" />
+                      <span className="group-hover:text-[#B12B2B] transition-colors">{lvl}</span>
                     </li>
                   ))}
                 </ul>

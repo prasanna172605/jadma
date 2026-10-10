@@ -63,6 +63,9 @@
   input, textarea, select, button {
     font-family: 'Poppins', sans-serif;
   }
+  input, textarea, select {
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  }
 }
 
 /* Explicit typography utilities */
@@ -106,6 +109,11 @@
   transform: translateY(0) scale(0.985);
 }
 
+.btn-jadmaa-primary:focus-visible {
+  outline: 2px solid #B12B2B;
+  outline-offset: 2px;
+}
+
 .btn-jadmaa-outline {
   background-color: transparent;
   color: #B12B2B;
@@ -132,6 +140,11 @@
 
 .btn-jadmaa-outline:active {
   transform: translateY(0) scale(0.985);
+}
+
+.btn-jadmaa-outline:focus-visible {
+  outline: 2px solid #B12B2B;
+  outline-offset: 2px;
 }
 
 /* ==========================================
@@ -207,21 +220,10 @@
    Elements render immediately without awkward lag/revealing transitions.
    Interactive hover effects are fully preserved.
    ========================================== */
-.reveal-on-scroll,
-.reveal-left,
-.reveal-right,
-.reveal-scale,
-.reveal-stagger,
-.reveal-stagger .reveal-child,
-.jd-pop,
-.scroll-card-settle,
-.page-enter,
-[data-aos] {
-  opacity: 1 !important;
-  transform: none !important;
-  transition: none !important;
-  animation: none !important;
-}
+/* 
+   Scroll reveal animations are enabled and handled via AOS.
+   Hover effects remain interactive.
+*/
 
 /* ==========================================
    SUBTLE, MINIMAL & FEEL-GOOD ANIMATION SYSTEM
@@ -230,6 +232,21 @@
 /* 1. Smooth Native In-Page Scrolling */
 html {
   scroll-behavior: smooth;
+}
+
+@keyframes drawerSlideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-drawer {
+  animation: drawerSlideDown 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes progressFill {
+  from { width: 0%; }
+}
+.animate-progress-fill {
+  animation: progressFill 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* 2. Silky Page Route Cross-Dissolve */
@@ -269,6 +286,13 @@ html {
 .hover-lift:hover {
   transform: translateY(-3px);
   box-shadow: 0 12px 26px -6px rgba(43, 37, 33, 0.09);
+}
+
+.animate-list-item {
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.animate-list-item:hover {
+  transform: translateX(4px);
 }
 
 /* 4. Tactile Touch / Click Feedback */
