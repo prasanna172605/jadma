@@ -146,12 +146,12 @@ export const Home: React.FC = () => {
             </div>
 
             {/* Right Column: Hero Image */}
-            <div className="lg:col-span-5 flex justify-center lg:justify-end items-center relative min-h-[440px]" data-aos="fade-left" data-aos-delay="150">
-              <div className="relative group cursor-pointer w-full overflow-hidden rounded-[18px]">
+            <div className="lg:col-span-5 flex justify-center lg:justify-end items-end relative min-h-[440px]" data-aos="fade-left" data-aos-delay="150">
+              <div className="relative group cursor-pointer w-full flex justify-center lg:justify-end">
                 <img 
                   src="/images/hero-kick-action-transparent.png" 
                   alt="Varmakalai Training" 
-                  className="w-full h-auto object-cover hover:scale-105 transition-transform duration-700 ease-out"
+                  className="max-h-[500px] lg:max-h-[600px] xl:max-h-[650px] w-auto object-contain object-bottom drop-shadow-[0_20px_40px_rgba(177,43,43,0.25)] hover:scale-105 transition-transform duration-700 ease-out"
                 />
               </div>
             </div>
